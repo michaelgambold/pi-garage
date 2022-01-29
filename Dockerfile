@@ -1,4 +1,4 @@
-FROM node:16-alpine as build
+FROM node:16-slim as build
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY . .
 RUN npm run build
 
 
-FROM node:16-alpine as prod-deps
+FROM node:16-slim as prod-deps
 
 WORKDIR /app
 
