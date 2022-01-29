@@ -20,7 +20,7 @@ COPY package*.json ./
 RUN npm ci --production
 
 
-FROM node:16-alpine
+FROM node:16-slim
 
 ENV NODE_ENV=production
 
