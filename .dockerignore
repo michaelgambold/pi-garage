@@ -1,0 +1,9 @@
+.dockerignore
+.eslintrc.js
+.gitignore
+.prettierrc
+
+.git/
+.vscode/
+node_modules/
+test/
