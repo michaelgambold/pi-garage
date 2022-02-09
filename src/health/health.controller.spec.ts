@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { HealthController } from './health.controller';
@@ -8,7 +9,7 @@ describe('HealthController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [AutomationHatService],
+      providers: [ConfigService, AutomationHatService],
     }).compile();
 
     controller = module.get<HealthController>(HealthController);
