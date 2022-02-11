@@ -4,10 +4,14 @@ import { AutomationHat } from 'automation-hat';
 
 @Injectable()
 export class AutomationHatService {
-  readonly automationHat: AutomationHat;
+  public get automationHat(): AutomationHat {
+    return this.#automationHat;
+  }
+
+  readonly #automationHat: AutomationHat;
 
   constructor(private readonly configService: ConfigService) {
-    this.automationHat = new AutomationHat();
+    this.#automationHat = new AutomationHat();
 
     if (configService.get('LED_BRIGHTNESS')) {
       const value = parseInt(configService.get('LED_BRIGHTNESS'));

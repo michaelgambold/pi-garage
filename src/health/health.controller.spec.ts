@@ -18,4 +18,8 @@ describe('HealthController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  it('should return ok message', () => {
+    expect(controller.getHealth()).toEqual({ message: 'ok' });
+  });
 });
