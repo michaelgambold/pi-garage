@@ -1,16 +1,18 @@
 import {
   Controller,
   Param,
-  Put,
   BadRequestException,
   ParseIntPipe,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
+import { ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 
-@Controller('api/v1/doors')
 @UseGuards(ApiKeyAuthGuard)
+@ApiSecurity('api-key')
+@Controller('api/v1/doors')
 export class DoorsController {
   constructor(private readonly automationHatService: AutomationHatService) {}
 
@@ -29,7 +31,7 @@ export class DoorsController {
   //   return this.doorsService.findOne(+doorNumber);
   // }
 
-  @Put(':doorNumber')
+  @Patch(':doorNumber')
   update(
     @Param('doorNumber', ParseIntPipe) doorNumber: number,
     // @Body() updateDoorDto: UpdateDoorDto,
