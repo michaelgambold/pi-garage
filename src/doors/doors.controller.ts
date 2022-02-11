@@ -4,10 +4,13 @@ import {
   Put,
   BadRequestException,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '../auth/auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 
 @Controller('api/v1/doors')
+@UseGuards(AuthGuard)
 export class DoorsController {
   constructor(private readonly automationHatService: AutomationHatService) {}
 

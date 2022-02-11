@@ -2,17 +2,19 @@ import { ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from './auth.guard';
+import { AuthService } from './auth.service';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
-  let configService: ConfigService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthGuard, ConfigService],
+      providers: [AuthGuard, AuthService, ConfigService],
     }).compile();
+
     guard = module.get<AuthGuard>(AuthGuard);
-    configService = module.get<ConfigService>(ConfigService);
+    authService = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
@@ -20,14 +22,16 @@ describe('AuthGuard', () => {
   });
 
   it('should return true when no api key in config service', () => {
-    const spy = jest.spyOn(configService, 'get');
-    spy.mockImplementationOnce(() => {
+    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
       return undefined;
     });
 
     const mockContext = {
       switchToHttp: () => ({
-        getRequest: () => ({}),
+        getRequest: () => ({
+          headers: {},
+          url: '',
+        }),
       }),
     };
 
@@ -35,9 +39,8 @@ describe('AuthGuard', () => {
   });
 
   it('should return true when api key header matches', () => {
-    const spy = jest.spyOn(configService, 'get');
-    spy.mockImplementationOnce(() => {
-      return 'abc123';
+    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
+      return true;
     });
 
     const mockContext = {
@@ -52,9 +55,8 @@ describe('AuthGuard', () => {
   });
 
   it('should return false when api key header mismatches', () => {
-    const spy = jest.spyOn(configService, 'get');
-    spy.mockImplementationOnce(() => {
-      return 'abc123';
+    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
+      return false;
     });
 
     const mockContext = {
@@ -70,9 +72,8 @@ describe('AuthGuard', () => {
   });
 
   it('should return true when api key query param matches', () => {
-    const spy = jest.spyOn(configService, 'get');
-    spy.mockImplementationOnce(() => {
-      return 'abc123';
+    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
+      return true;
     });
 
     const mockContext = {
@@ -88,9 +89,8 @@ describe('AuthGuard', () => {
   });
 
   it('should return false when api key query param mismatches', () => {
-    const spy = jest.spyOn(configService, 'get');
-    spy.mockImplementationOnce(() => {
-      return 'abc123';
+    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
+      return false;
     });
 
     const mockContext = {
