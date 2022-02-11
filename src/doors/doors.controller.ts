@@ -6,11 +6,11 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '../auth/auth.guard';
+import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 
 @Controller('api/v1/doors')
-@UseGuards(AuthGuard)
+@UseGuards(ApiKeyAuthGuard)
 export class DoorsController {
   constructor(private readonly automationHatService: AutomationHatService) {}
 

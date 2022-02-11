@@ -1,19 +1,19 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthGuard } from './auth.guard';
+import { ApiKeyAuthGuard } from './api-key-auth.guard';
 import { AuthService } from './auth.service';
 
 describe('AuthGuard', () => {
-  let guard: AuthGuard;
+  let guard: ApiKeyAuthGuard;
   let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthGuard, AuthService, ConfigService],
+      providers: [ApiKeyAuthGuard, AuthService, ConfigService],
     }).compile();
 
-    guard = module.get<AuthGuard>(AuthGuard);
+    guard = module.get<ApiKeyAuthGuard>(ApiKeyAuthGuard);
     authService = module.get<AuthService>(AuthService);
   });
 
@@ -21,9 +21,9 @@ describe('AuthGuard', () => {
     expect(guard).toBeDefined();
   });
 
-  it('should return true when no api key in config service', () => {
-    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
-      return undefined;
+  it('should return true when no api key in auth service', () => {
+    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
+      return false;
     });
 
     const mockContext = {
@@ -39,6 +39,10 @@ describe('AuthGuard', () => {
   });
 
   it('should return true when api key header matches', () => {
+    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
+      return true;
+    });
+
     jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
       return true;
     });
@@ -55,6 +59,10 @@ describe('AuthGuard', () => {
   });
 
   it('should return false when api key header mismatches', () => {
+    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
+      return true;
+    });
+
     jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
       return false;
     });
@@ -72,6 +80,10 @@ describe('AuthGuard', () => {
   });
 
   it('should return true when api key query param matches', () => {
+    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
+      return true;
+    });
+
     jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
       return true;
     });
@@ -89,6 +101,10 @@ describe('AuthGuard', () => {
   });
 
   it('should return false when api key query param mismatches', () => {
+    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
+      return true;
+    });
+
     jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
       return false;
     });
@@ -103,5 +119,24 @@ describe('AuthGuard', () => {
     };
 
     expect(guard.canActivate(mockContext as ExecutionContext)).toEqual(false);
+  });
+
+  it('should throw unauthorized error when key defined and no query/header key defined', () => {
+    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
+      return true;
+    });
+
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          headers: {},
+          url: '/api/v1/doors/1',
+        }),
+      }),
+    };
+
+    expect(() => {
+      guard.canActivate(mockContext as ExecutionContext);
+    }).toThrowError(UnauthorizedException);
   });
 });

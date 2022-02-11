@@ -1,16 +1,29 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
+/**
+ * Auth guard that checks
+ */
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class ApiKeyAuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest<IncomingMessage>();
+
+    // if the auth service does not have a key defined then allow request
+    if (!this.authService.hasApiKey()) {
+      return true;
+    }
 
     if (req.headers['x-api-key']) {
       return this.authService.validateApiKey(
@@ -21,10 +34,10 @@ export class AuthGuard implements CanActivate {
     // get api key from query parameter and check if it matches key in config
     const matches = req.url.match(/[\?|&]api_key=([a-zA-Z0-9]*)*&?/);
 
-    if (matches && matches[1]) {
+    if (matches) {
       return this.authService.validateApiKey(matches[1]);
     }
 
-    return true;
+    throw new UnauthorizedException();
   }
 }

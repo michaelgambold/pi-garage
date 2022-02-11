@@ -9,6 +9,10 @@ export class AuthService {
     return this.configService.get('API_KEY');
   }
 
+  hasApiKey(): boolean {
+    return Boolean(this.getApiKey());
+  }
+
   validateApiKey(apiKey: string): boolean {
     return this.getApiKey() === apiKey;
   }

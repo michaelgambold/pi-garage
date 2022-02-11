@@ -19,6 +19,22 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
+  it('should return true if we have an api key defined', () => {
+    jest.spyOn(configService, 'get').mockImplementation(() => {
+      return 'abc123';
+    });
+
+    expect(service.hasApiKey()).toEqual(true);
+  });
+
+  it('should return false if we do not have an api key defined', () => {
+    jest.spyOn(configService, 'get').mockImplementation(() => {
+      return undefined;
+    });
+
+    expect(service.hasApiKey()).toEqual(false);
+  });
+
   it('should validate api key', () => {
     jest.spyOn(configService, 'get').mockImplementation(() => {
       return 'abc123';
