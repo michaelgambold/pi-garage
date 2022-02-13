@@ -5,52 +5,88 @@ import {
   ParseIntPipe,
   UseGuards,
   Patch,
+  Get,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
-import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { DoorsService } from './doors.service';
+import { GetAllDoorsDto } from './dto/get-all-doors.dto';
+import { GetDoorDto } from './dto/get-door.dto';
+import { UpdateAllDoorsDto } from './dto/update-all-doors.dto';
+import { UpdateDoorDto } from './dto/update-door.dto';
+import { Door } from './models/door';
 
 @UseGuards(ApiKeyAuthGuard)
 @ApiSecurity('api-key')
 @Controller('api/v1/doors')
 export class DoorsController {
-  constructor(private readonly automationHatService: AutomationHatService) {}
+  constructor(private readonly doorsService: DoorsService) {}
 
-  // @Put()
-  // updateAll(@Body() updateAllDto: UpdateAllDoorsDto) {
-  //   return this.autom.create(createDoorDto);
-  // }
+  @Get()
+  getAll(): GetAllDoorsDto[] {
+    return [
+      {
+        door: 1,
+        state: this.doorsService.door1.state,
+      },
+      {
+        door: 2,
+        state: this.doorsService.door2.state,
+      },
+      {
+        door: 3,
+        state: this.doorsService.door3.state,
+      },
+    ];
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.doorsService.findAll();
-  // }
+  @Get(':doorNumber')
+  get(@Param('doorNumber', ParseIntPipe) doorNumber: number): GetDoorDto {
+    let door: Door;
 
-  // @Get(':doorNumber')
-  // findOne(@Param('doorNumber') doorNumber: string) {
-  //   return this.doorsService.findOne(+doorNumber);
-  // }
+    switch (doorNumber) {
+      case 1:
+        door = this.doorsService.door1;
+        break;
+      case 2:
+        door = this.doorsService.door2;
+        break;
+      case 3:
+        door = this.doorsService.door3;
+        break;
+      default:
+        throw new BadRequestException('Invalid door number');
+    }
+
+    return {
+      state: door.state,
+    };
+  }
+
+  @Post()
+  updateAll(@Body() body: UpdateAllDoorsDto[]) {
+    if (!body.every((dto) => [1, 2, 3].includes(dto.door))) {
+      throw new BadRequestException('Invalid door number');
+    }
+
+    body.forEach((dto) => {
+      this.doorsService.update(dto.door, dto.action);
+    });
+  }
 
   @Patch(':doorNumber')
   update(
     @Param('doorNumber', ParseIntPipe) doorNumber: number,
+    @Body() body: UpdateDoorDto,
     // @Body() updateDoorDto: UpdateDoorDto,
   ) {
-    switch (doorNumber) {
-      case 1:
-        this.automationHatService.automationHat.relays.relay1.toggle();
-        break;
-
-      case 2:
-        this.automationHatService.automationHat.relays.relay2.toggle();
-        break;
-
-      case 3:
-        this.automationHatService.automationHat.relays.relay3.toggle();
-        break;
-
-      default:
-        throw new BadRequestException('Invalid Door Number');
+    // check for door number
+    if (![1, 2, 3].includes(doorNumber)) {
+      throw new BadRequestException('Invalid Door Number');
     }
+
+    this.doorsService.update(doorNumber, body.action);
   }
 }
