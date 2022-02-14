@@ -1,3 +1,5 @@
 export class UpdateDoorDto {
-  action: 'open' | 'close' | 'toggle';
+  id?: number;
+  label: string;
+  isEnabled: boolean;
 }

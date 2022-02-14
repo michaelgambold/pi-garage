@@ -21,6 +21,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@mikro-orm/core": "^5.0.1",
+    "@mikro-orm/migrations": "^5.0.1",
+    "@mikro-orm/nestjs": "^4.3.1",
+    "@mikro-orm/reflection": "^5.0.1",
+    "@mikro-orm/seeder": "^5.0.1",
+    "@mikro-orm/sqlite": "^5.0.1",
     "@nestjs/common": "^8.2.6",
     "@nestjs/config": "^1.1.6",
     "@nestjs/core": "^8.2.6",
@@ -33,6 +39,7 @@
     "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
+    "@mikro-orm/cli": "^5.0.1",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
@@ -71,5 +78,12 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./dist/mikro-orm.config.js"
+    ]
   }
 }

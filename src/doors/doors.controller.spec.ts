@@ -68,15 +68,15 @@ describe('DoorsController', () => {
       controller.updateAll([
         {
           action: 'close',
-          door: 1,
+          id: 1,
         },
         {
           action: 'open',
-          door: 2,
+          id: 2,
         },
         {
           action: 'toggle',
-          door: 3,
+          id: 3,
         },
       ]);
     });
@@ -87,7 +87,7 @@ describe('DoorsController', () => {
           controller.updateAll([
             {
               action: 'close',
-              door: doorNumber,
+              id: doorNumber,
             },
           ]);
         }).toThrow(BadRequestException);
