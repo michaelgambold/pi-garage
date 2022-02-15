@@ -17,6 +17,17 @@ export class DoorsService {
 
     // get sequence
     // execute sequence
+    switch (id) {
+      case 1:
+        this.automationHatService.automationHat.relays.relay1.toggle();
+        break;
+      case 2:
+        this.automationHatService.automationHat.relays.relay2.toggle();
+        break;
+      case 3:
+        this.automationHatService.automationHat.relays.relay3.toggle();
+        break;
+    }
 
     // update door state
     door.state = 'closed';
@@ -35,6 +46,17 @@ export class DoorsService {
     const door = await this.findOne(id);
 
     // perform sequences
+    switch (id) {
+      case 1:
+        this.automationHatService.automationHat.relays.relay1.toggle();
+        break;
+      case 2:
+        this.automationHatService.automationHat.relays.relay2.toggle();
+        break;
+      case 3:
+        this.automationHatService.automationHat.relays.relay3.toggle();
+        break;
+    }
 
     // update door state
     door.state = 'open';

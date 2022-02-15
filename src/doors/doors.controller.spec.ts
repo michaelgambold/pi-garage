@@ -8,22 +8,57 @@ import { DoorsService } from './doors.service';
 
 describe('DoorsController', () => {
   let controller: DoorsController;
-  let automationHatService: AutomationHatService;
+
+  const mockDoorsService = {
+    close: jest.fn().mockResolvedValue(undefined),
+    findAll: jest.fn().mockResolvedValue([
+      {
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'open',
+      },
+      {
+        id: 2,
+        isEnabled: true,
+        label: 'door2',
+        state: 'open',
+      },
+      {
+        id: 3,
+        isEnabled: true,
+        label: 'door3',
+        state: 'open',
+      },
+    ]),
+    findOne: jest.fn().mockImplementation((id: number) => {
+      return Promise.resolve({
+        id,
+        isEnabled: true,
+        label: `door${id}`,
+        state: 'open',
+      });
+    }),
+    open: jest.fn().mockResolvedValue(undefined),
+    toggle: jest.fn().mockResolvedValue(undefined),
+    update: jest.fn().mockResolvedValue(undefined),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [DoorsController],
       providers: [
         ConfigService,
-        DoorsService,
         AutomationHatService,
         AuthService,
+        {
+          provide: DoorsService,
+          useValue: mockDoorsService,
+        },
       ],
     }).compile();
 
     controller = module.get<DoorsController>(DoorsController);
-    automationHatService =
-      module.get<AutomationHatService>(AutomationHatService);
   });
 
   it('should be defined', () => {
@@ -31,92 +66,79 @@ describe('DoorsController', () => {
   });
 
   describe('Get All Doors', () => {
-    it('should get all doors', () => {
-      const dtos = controller.getAll();
+    it('should get all doors', async () => {
+      const dtos = await controller.getAll();
       expect(dtos.length).toEqual(3);
 
-      expect(dtos.filter((dto) => dto.door === 1).length).toEqual(1);
-      expect(dtos.filter((dto) => dto.door === 2).length).toEqual(1);
-      expect(dtos.filter((dto) => dto.door === 3).length).toEqual(1);
+      expect(dtos.filter((dto) => dto.id === 1).length).toEqual(1);
+      expect(dtos.filter((dto) => dto.id === 2).length).toEqual(1);
+      expect(dtos.filter((dto) => dto.id === 3).length).toEqual(1);
 
       dtos.forEach((dto) => {
+        expect(dto.isEnabled).toBeTruthy();
+        expect(dto.label).toBeTruthy();
         expect(dto.state).toBeTruthy();
       });
     });
   });
 
   describe('Get Door', () => {
-    it('should get a door', () => {
-      [1, 2, 3].forEach((doorNumber) => {
-        const door = controller.get(doorNumber);
-        expect(door).toBeDefined();
-        expect(door.state).toBeTruthy();
-      });
-    });
-
-    it('should return 400 for invalid door number', () => {
-      [-1, 0, 4].forEach((doorNumber) => {
-        expect(() => {
-          controller.get(doorNumber);
-        }).toThrowError(BadRequestException);
-      });
+    it('should get a door', async () => {
+      const door = await controller.get(1);
+      expect(door).toBeDefined();
+      expect(door.state).toBeTruthy();
+      expect(door.isEnabled).toBeTruthy();
+      expect(door.label).toBeTruthy();
     });
   });
 
-  describe('Update all Doors', () => {
-    it('should return 200 when given valid update all request', () => {
-      controller.updateAll([
-        {
-          action: 'close',
-          id: 1,
-        },
-        {
-          action: 'open',
-          id: 2,
-        },
-        {
-          action: 'toggle',
-          id: 3,
-        },
-      ]);
-    });
+  it('should return 400 for invalid door number', async () => {
+    const badIds = [-1, 0, 4];
 
-    it('should return 400 when given invalid update all request', () => {
-      [-1, 0, 4].forEach((doorNumber) => {
-        expect(() => {
-          controller.updateAll([
-            {
-              action: 'close',
-              id: doorNumber,
-            },
-          ]);
-        }).toThrow(BadRequestException);
-      });
-    });
+    for (const id of badIds) {
+      await expect(controller.get(id)).rejects.toThrow(BadRequestException);
+    }
   });
 
   describe('Update Door', () => {
-    it('should return 200 when given valid update request', () => {
-      const spy = jest.spyOn(automationHatService, 'automationHat', 'get');
-      controller.update(1, { action: 'close' });
-      controller.update(2, { action: 'open' });
-      controller.update(3, { action: 'toggle' });
-
-      expect(spy).toBeCalledTimes(3);
+    it('should return 200 when given valid update request', async () => {
+      await controller.update(1, { isEnabled: true, label: 'new label' });
     });
 
-    it('should return 400 when given invalid door number', () => {
-      expect(() => {
-        controller.update(-1, { action: 'toggle' });
-      }).toThrowError(BadRequestException);
+    it('should return 400 when given invalid door number', async () => {
+      const badIds = [-1, 0, 4];
 
-      expect(() => {
-        controller.update(0, { action: 'toggle' });
-      }).toThrowError(BadRequestException);
+      for (const id of badIds) {
+        await expect(controller.get(id)).rejects.toThrowError(
+          BadRequestException,
+        );
+      }
+    });
+  });
 
-      expect(() => {
-        controller.update(4, { action: 'toggle' });
-      }).toThrowError(BadRequestException);
+  describe('Update Door State', () => {
+    it('should update doors state', async () => {
+      await controller.updateState(1, {
+        state: 'close',
+      });
+
+      await controller.updateState(1, {
+        state: 'open',
+      });
+
+      await controller.updateState(1, {
+        state: 'toggle',
+      });
+    });
+
+    it('should return 400 for invalid door id', async () => {
+      const badIds = [-1, 0, 4];
+
+      for (const id of badIds) {
+        await expect(controller.get(id)).rejects.toThrowError(
+          BadRequestException,
+        );
+      }
     });
   });
 });
