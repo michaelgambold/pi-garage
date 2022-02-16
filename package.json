@@ -14,6 +14,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "migration:create": "npx mikro-orm migration:create",
+    "migration:up": "npx mikro-orm migration:up",
+    "seeder:run": "npx mikro-orm seeder:run",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -21,6 +24,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@mikro-orm/cli": "^5.0.1",
     "@mikro-orm/core": "^5.0.1",
     "@mikro-orm/migrations": "^5.0.1",
     "@mikro-orm/nestjs": "^4.3.1",
@@ -39,7 +43,6 @@
     "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^5.0.1",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
@@ -80,10 +83,6 @@
     "testEnvironment": "node"
   },
   "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./src/mikro-orm.config.ts",
-      "./dist/mikro-orm.config.js"
-    ]
+    "useTsNode": true
   }
 }

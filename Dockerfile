@@ -26,8 +26,8 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/dist ./
 
 COPY --from=prod-deps /app/node_modules ./node_modules
 
-ENTRYPOINT [ "node", "dist/main.js" ]
+ENTRYPOINT [ "node", "src/main.js" ]

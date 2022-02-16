@@ -5,10 +5,18 @@ import { Sequence } from './src/entities/Sequence';
 
 const config = {
   entities: [Door, Sequence],
-  dbName: 'pi-garage.sqlite3',
+  dbName: 'data/pi-garage.sqlite3',
   forceUtcTimezone: true, // sqlite does this by default
   type: 'sqlite',
   metadataProvider: TsMorphMetadataProvider,
+  migrations: {
+    path: 'migrations',
+    pathTs: 'migrations',
+  },
+  seeder: {
+    path: 'seeders',
+    pathTs: 'seeders',
+  },
 } as Options;
 
 export default config;
