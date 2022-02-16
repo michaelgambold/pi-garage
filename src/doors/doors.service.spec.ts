@@ -20,6 +20,15 @@ describe('DoorsService', () => {
       label: 'door1',
       isEnabled: true,
       state: 'closed',
+      sequences: [
+        {
+          id: 1,
+          index: 1,
+          action: 'on',
+          target: 'relay1',
+          duration: 50,
+        },
+      ],
     }),
     persistAndFlush: jest.fn().mockResolvedValue(null),
   };
