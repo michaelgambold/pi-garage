@@ -17,7 +17,10 @@ export class DoorsService {
   ) {}
 
   async close(id: number): Promise<void> {
-    const door = await this.findOne(id);
+    const door = await this.doorRepository.findOne(
+      { id },
+      { populate: ['sequences'] },
+    );
 
     for (const sequence of door.sequences) {
       await this.runSequence(sequence);
@@ -37,7 +40,10 @@ export class DoorsService {
   }
 
   async open(id: number): Promise<void> {
-    const door = await this.findOne(id);
+    const door = await this.doorRepository.findOne(
+      { id },
+      { populate: ['sequences'] },
+    );
 
     for (const sequence of door.sequences) {
       await this.runSequence(sequence);
