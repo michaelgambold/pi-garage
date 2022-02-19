@@ -1,6 +1,6 @@
 {
   "name": "pi-garage",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "author": "",
   "private": true,
@@ -84,6 +84,10 @@
     "testEnvironment": "node"
   },
   "mikro-orm": {
-    "useTsNode": true
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./dist/mikro-orm.config.js"
+    ]
   }
 }
