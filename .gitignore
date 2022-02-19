@@ -1,6 +1,10 @@
 # compiled output
 /dist
 /node_modules
+/temp
+
+# Files
+*.sqlite3
 
 # Logs
 logs
