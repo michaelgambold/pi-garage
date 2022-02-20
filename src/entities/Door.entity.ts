@@ -6,7 +6,7 @@ import {
   Property,
   QueryOrder,
 } from '@mikro-orm/core';
-import { Sequence } from './Sequence';
+import { Sequence } from './Sequence.entity';
 
 @Entity()
 export class Door {

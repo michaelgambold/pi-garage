@@ -2,7 +2,7 @@ import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
-import { Door } from '../entities/Door';
+import { Door } from '../entities/Door.entity';
 import { DoorsService } from './doors.service';
 
 describe('DoorsService', () => {

@@ -5,8 +5,8 @@ import { DigitalOutputState } from 'automation-hat/dist/io/digital-output';
 import { RelayState } from 'automation-hat/dist/io/relay';
 import delay from 'delay';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
-import { Door } from '../entities/Door';
-import { Sequence } from '../entities/Sequence';
+import { Door } from '../entities/Door.entity';
+import { Sequence } from '../entities/Sequence.entity';
 
 @Injectable()
 export class DoorsService {

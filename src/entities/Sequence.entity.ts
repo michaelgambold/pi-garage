@@ -1,5 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { Door } from './Door';
+import { Door } from './Door.entity';
 
 @Entity()
 export class Sequence {
