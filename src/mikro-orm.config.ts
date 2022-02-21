@@ -12,7 +12,6 @@ const config: Options = {
   loadStrategy: LoadStrategy.JOINED,
   highlighter: new SqlHighlighter(),
   metadataProvider: TsMorphMetadataProvider,
-  registerRequestContext: false,
   migrations: {
     path: 'dist/migrations',
     pathTs: 'src/migrations',
