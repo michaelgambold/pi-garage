@@ -8,7 +8,7 @@ const config: Options = {
   dbName: 'data/pi-garage.sqlite3',
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
-  debug: true,
+  debug: false,
   loadStrategy: LoadStrategy.JOINED,
   highlighter: new SqlHighlighter(),
   metadataProvider: TsMorphMetadataProvider,

@@ -1,6 +1,6 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable, LoggerService } from '@nestjs/common';
 import { DigitalOutputState } from 'automation-hat/dist/io/digital-output';
 import { RelayState } from 'automation-hat/dist/io/relay';
 import delay from 'delay';
@@ -10,13 +10,18 @@ import { Sequence } from '../entities/Sequence.entity';
 
 @Injectable()
 export class DoorsService {
+  #logger: LoggerService;
+
   constructor(
     @InjectRepository(Door)
     private readonly doorRepository: EntityRepository<Door>,
     private readonly automationHatService: AutomationHatService,
-  ) {}
+  ) {
+    this.#logger = new ConsoleLogger(DoorsService.name);
+  }
 
   async close(id: number): Promise<void> {
+    this.#logger.log(`Closing door ${id}`);
     const door = await this.doorRepository.findOne(
       { id },
       { populate: ['sequences'] },
@@ -40,6 +45,7 @@ export class DoorsService {
   }
 
   async open(id: number): Promise<void> {
+    this.#logger.log(`Opening door ${id}`);
     const door = await this.doorRepository.findOne(
       { id },
       { populate: ['sequences'] },
@@ -56,6 +62,8 @@ export class DoorsService {
 
   private async runSequence(sequence: Sequence) {
     let prevState: RelayState | DigitalOutputState;
+
+    this.#logger.log(`Setting ${sequence.target} to ${sequence.action}`);
 
     switch (sequence.target) {
       case 'digitalOutput1':
@@ -124,7 +132,13 @@ export class DoorsService {
 
     if (!sequence.duration) return;
 
+    this.#logger.log(`Duration of ${sequence.duration} detected`);
+
     await delay(sequence.duration);
+
+    this.#logger.log(
+      `Setting ${sequence.target} to previous state of ${prevState}`,
+    );
 
     // set back to initial state
     switch (sequence.target) {
@@ -179,6 +193,7 @@ export class DoorsService {
   }
 
   async toggle(id: number): Promise<void> {
+    this.#logger.log(`Toggle door ${id}`);
     const door = await this.findOne(id);
 
     if (door.state === 'closed') {
