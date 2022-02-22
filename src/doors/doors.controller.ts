@@ -8,6 +8,8 @@ import {
   Get,
   Body,
   Put,
+  LoggerService,
+  ConsoleLogger,
 } from '@nestjs/common';
 import { ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
@@ -20,10 +22,16 @@ import { UpdateStateDto } from './dto/update-state.dto';
 @ApiSecurity('api-key')
 @Controller('api/v1/doors')
 export class DoorsController {
-  constructor(private readonly doorsService: DoorsService) {}
+  #logger: LoggerService;
+
+  constructor(private readonly doorsService: DoorsService) {
+    this.#logger = new ConsoleLogger(DoorsController.name);
+  }
 
   @Get()
   async getAll(): Promise<GetDoorDto[]> {
+    this.#logger.log('GET /api/v1/doors invoked');
+
     const doors = await this.doorsService.findAll();
 
     return doors.map((d) => {
@@ -38,6 +46,8 @@ export class DoorsController {
 
   @Get(':id')
   async get(@Param('id', ParseIntPipe) id: number): Promise<GetDoorDto> {
+    this.#logger.log(`GET /api/v1/doors/${id} invoked`);
+
     if (![1, 2, 3].includes(id)) {
       throw new BadRequestException('Invalid door id');
     }
@@ -58,6 +68,8 @@ export class DoorsController {
     @Body() body: UpdateDoorDto,
     // @Body() updateDoorDto: UpdateDoorDto,
   ) {
+    this.#logger.log(`PUT /api/v1/doors/${id} invoked`);
+
     if (![1, 2, 3].includes(id)) {
       throw new BadRequestException('Invalid Door id');
     }
@@ -74,6 +86,8 @@ export class DoorsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateStateDto,
   ): Promise<void> {
+    this.#logger.log(`PATCH /api/v1/doors/${id}/state invoked`);
+
     if (![1, 2, 3].includes(id)) {
       throw new BadRequestException('Invalid Door id');
     }
