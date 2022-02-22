@@ -85,15 +85,6 @@
           "nullable": false,
           "mappedType": "text"
         },
-        "another_property": {
-          "name": "another_property",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "text"
-        },
         "target": {
           "name": "target",
           "type": "text",
