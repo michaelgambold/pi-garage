@@ -10,7 +10,7 @@ import { Sequence } from './Sequence.entity';
 
 @Entity()
 export class Door {
-  @PrimaryKey({ autoincrement: false })
+  @PrimaryKey()
   id: number;
 
   @Property()
