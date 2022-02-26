@@ -6,8 +6,8 @@
         "id": {
           "name": "id",
           "type": "integer",
-          "unsigned": false,
-          "autoincrement": false,
+          "unsigned": true,
+          "autoincrement": true,
           "primary": true,
           "nullable": false,
           "mappedType": "integer"
