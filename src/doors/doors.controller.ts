@@ -4,7 +4,7 @@ import {
   BadRequestException,
   ParseIntPipe,
   UseGuards,
-  Patch,
+  Post,
   Get,
   Body,
   Put,
@@ -81,7 +81,7 @@ export class DoorsController {
     await this.doorsService.update(door);
   }
 
-  @Patch(':id/state')
+  @Post(':id/state')
   async updateState(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateStateDto,
