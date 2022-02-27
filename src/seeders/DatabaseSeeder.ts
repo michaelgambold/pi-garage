@@ -12,7 +12,7 @@ export class DatabaseSeeder extends Seeder {
         label: `Door 1`,
         isEnabled: true,
         state: 'closed',
-        sequences: [
+        sequence: [
           {
             action: 'on',
             door: 1,
@@ -32,7 +32,7 @@ export class DatabaseSeeder extends Seeder {
         label: `Door 2`,
         isEnabled: true,
         state: 'closed',
-        sequences: [
+        sequence: [
           {
             action: 'on',
             door: 2,
@@ -52,7 +52,7 @@ export class DatabaseSeeder extends Seeder {
         label: `Door 3`,
         isEnabled: true,
         state: 'closed',
-        sequences: [
+        sequence: [
           {
             action: 'on',
             door: 3,

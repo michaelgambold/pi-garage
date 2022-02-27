@@ -113,14 +113,14 @@
           "mappedType": "integer"
         }
       },
-      "name": "sequence",
+      "name": "sequence_object",
       "indexes": [
         {
           "columnNames": [
             "door_id"
           ],
           "composite": false,
-          "keyName": "sequence_door_id_index",
+          "keyName": "sequence_object_door_id_index",
           "primary": false,
           "unique": false
         },
@@ -136,12 +136,12 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "sequence_door_id_foreign": {
-          "constraintName": "sequence_door_id_foreign",
+        "sequence_object_door_id_foreign": {
+          "constraintName": "sequence_object_door_id_foreign",
           "columnNames": [
             "door_id"
           ],
-          "localTableName": "sequence",
+          "localTableName": "sequence_object",
           "referencedColumnNames": [
             "id"
           ],

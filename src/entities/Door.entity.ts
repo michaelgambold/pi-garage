@@ -6,7 +6,7 @@ import {
   Property,
   QueryOrder,
 } from '@mikro-orm/core';
-import { Sequence } from './Sequence.entity';
+import { SequenceObject } from './SequenceObject.entity';
 
 @Entity()
 export class Door {
@@ -22,8 +22,8 @@ export class Door {
   @Property()
   state: 'open' | 'closed';
 
-  @OneToMany(() => Sequence, (sequence) => sequence.door, {
+  @OneToMany(() => SequenceObject, (sequenceObject) => sequenceObject.door, {
     orderBy: { index: QueryOrder.ASC },
   })
-  sequences = new Collection<Sequence>(this);
+  sequence = new Collection<SequenceObject>(this);
 }
