@@ -6,7 +6,7 @@ import { RelayState } from 'automation-hat/dist/io/relay';
 import delay from 'delay';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { Door } from '../entities/Door.entity';
-import { Sequence } from '../entities/Sequence.entity';
+import { SequenceObject } from '../entities/SequenceObject.entity';
 
 @Injectable()
 export class DoorsService {
@@ -24,11 +24,11 @@ export class DoorsService {
     this.#logger.log(`Closing door ${id}`);
     const door = await this.doorRepository.findOne(
       { id },
-      { populate: ['sequences'] },
+      { populate: ['sequence'] },
     );
 
-    for (const sequence of door.sequences) {
-      await this.runSequence(sequence);
+    for (const sequenceObject of door.sequence) {
+      await this.runSequenceObject(sequenceObject);
     }
 
     // update door state
@@ -48,11 +48,11 @@ export class DoorsService {
     this.#logger.log(`Opening door ${id}`);
     const door = await this.doorRepository.findOne(
       { id },
-      { populate: ['sequences'] },
+      { populate: ['sequence'] },
     );
 
-    for (const sequence of door.sequences) {
-      await this.runSequence(sequence);
+    for (const sequenceObject of door.sequence) {
+      await this.runSequenceObject(sequenceObject);
     }
 
     // update door state
@@ -60,19 +60,21 @@ export class DoorsService {
     this.update(door);
   }
 
-  private async runSequence(sequence: Sequence) {
+  private async runSequenceObject(sequenceObject: SequenceObject) {
     let prevState: RelayState | DigitalOutputState;
 
-    this.#logger.log(`Setting ${sequence.target} to ${sequence.action}`);
+    this.#logger.log(
+      `Setting ${sequenceObject.target} to ${sequenceObject.action}`,
+    );
 
-    switch (sequence.target) {
+    switch (sequenceObject.target) {
       case 'digitalOutput1':
         prevState =
           this.automationHatService.automationHat.digitalOutputs.output1.state;
 
-        if (sequence.action === 'high') {
+        if (sequenceObject.action === 'high') {
           this.automationHatService.automationHat.digitalOutputs.output1.high();
-        } else if (sequence.action === 'low') {
+        } else if (sequenceObject.action === 'low') {
           this.automationHatService.automationHat.digitalOutputs.output1.low();
         }
         break;
@@ -81,9 +83,9 @@ export class DoorsService {
         prevState =
           this.automationHatService.automationHat.digitalOutputs.output2.state;
 
-        if (sequence.action === 'high') {
+        if (sequenceObject.action === 'high') {
           this.automationHatService.automationHat.digitalOutputs.output2.high();
-        } else if (sequence.action === 'low') {
+        } else if (sequenceObject.action === 'low') {
           this.automationHatService.automationHat.digitalOutputs.output2.low();
         }
         break;
@@ -92,9 +94,9 @@ export class DoorsService {
         prevState =
           this.automationHatService.automationHat.digitalOutputs.output3.state;
 
-        if (sequence.action === 'high') {
+        if (sequenceObject.action === 'high') {
           this.automationHatService.automationHat.digitalOutputs.output3.high();
-        } else if (sequence.action === 'low') {
+        } else if (sequenceObject.action === 'low') {
           this.automationHatService.automationHat.digitalOutputs.output3.low();
         }
         break;
@@ -102,9 +104,9 @@ export class DoorsService {
       case 'relay1':
         prevState = this.automationHatService.automationHat.relays.relay1.state;
 
-        if (sequence.action === 'on') {
+        if (sequenceObject.action === 'on') {
           this.automationHatService.automationHat.relays.relay1.on();
-        } else if (sequence.action === 'off') {
+        } else if (sequenceObject.action === 'off') {
           this.automationHatService.automationHat.relays.relay1.off();
         }
         break;
@@ -112,9 +114,9 @@ export class DoorsService {
       case 'relay2':
         prevState = this.automationHatService.automationHat.relays.relay2.state;
 
-        if (sequence.action === 'on') {
+        if (sequenceObject.action === 'on') {
           this.automationHatService.automationHat.relays.relay2.on();
-        } else if (sequence.action === 'off') {
+        } else if (sequenceObject.action === 'off') {
           this.automationHatService.automationHat.relays.relay2.off();
         }
         break;
@@ -122,26 +124,26 @@ export class DoorsService {
       case 'relay3':
         prevState = this.automationHatService.automationHat.relays.relay3.state;
 
-        if (sequence.action === 'on') {
+        if (sequenceObject.action === 'on') {
           this.automationHatService.automationHat.relays.relay3.on();
-        } else if (sequence.action === 'off') {
+        } else if (sequenceObject.action === 'off') {
           this.automationHatService.automationHat.relays.relay3.off();
         }
         break;
     }
 
-    if (!sequence.duration) return;
+    if (!sequenceObject.duration) return;
 
-    this.#logger.log(`Duration of ${sequence.duration} detected`);
+    this.#logger.log(`Duration of ${sequenceObject.duration} detected`);
 
-    await delay(sequence.duration);
+    await delay(sequenceObject.duration);
 
     this.#logger.log(
-      `Setting ${sequence.target} to previous state of ${prevState}`,
+      `Setting ${sequenceObject.target} to previous state of ${prevState}`,
     );
 
     // set back to initial state
-    switch (sequence.target) {
+    switch (sequenceObject.target) {
       case 'digitalOutput1':
         if (prevState === 'high') {
           this.automationHatService.automationHat.digitalOutputs.output1.high();

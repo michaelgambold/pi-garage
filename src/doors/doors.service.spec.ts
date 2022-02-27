@@ -20,7 +20,7 @@ describe('DoorsService', () => {
       label: 'door1',
       isEnabled: true,
       state: 'closed',
-      sequences: [
+      sequence: [
         {
           id: 1,
           index: 1,
