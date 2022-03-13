@@ -19,7 +19,7 @@ describe('HealthController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should return ok message', () => {
-    expect(controller.getHealth()).toEqual({ message: 'ok' });
+  it('should return ok message', async () => {
+    expect(controller.getHealth()).resolves.toEqual({ message: 'ok' });
   });
 });
