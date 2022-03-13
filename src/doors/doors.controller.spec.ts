@@ -8,6 +8,10 @@ import { DoorsService } from './doors.service';
 
 describe('DoorsController', () => {
   let controller: DoorsController;
+  let automationHatService: AutomationHatService;
+
+  let commsOffSpy: jest.SpyInstance<void, []>;
+  let commsOnSpy: jest.SpyInstance<void, []>;
 
   const mockDoorsService = {
     close: jest.fn().mockResolvedValue(undefined),
@@ -59,6 +63,11 @@ describe('DoorsController', () => {
     }).compile();
 
     controller = module.get<DoorsController>(DoorsController);
+    automationHatService =
+      module.get<AutomationHatService>(AutomationHatService);
+
+    commsOffSpy = jest.spyOn(automationHatService, 'turnOffCommsLight');
+    commsOnSpy = jest.spyOn(automationHatService, 'turnOnCommsLight');
   });
 
   it('should be defined', () => {
@@ -79,6 +88,9 @@ describe('DoorsController', () => {
         expect(dto.label).toBeTruthy();
         expect(dto.state).toBeTruthy();
       });
+
+      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
     });
   });
 
@@ -89,6 +101,9 @@ describe('DoorsController', () => {
       expect(door.state).toBeTruthy();
       expect(door.isEnabled).toBeTruthy();
       expect(door.label).toBeTruthy();
+
+      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
     });
   });
 
@@ -98,11 +113,17 @@ describe('DoorsController', () => {
     for (const id of badIds) {
       await expect(controller.get(id)).rejects.toThrow(BadRequestException);
     }
+
+    expect(commsOffSpy).toBeCalled();
+    expect(commsOnSpy).toBeCalled();
   });
 
   describe('Update Door', () => {
     it('should return 200 when given valid update request', async () => {
       await controller.update(1, { isEnabled: true, label: 'new label' });
+
+      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
     });
 
     it('should return 400 when given invalid door number', async () => {
@@ -113,6 +134,9 @@ describe('DoorsController', () => {
           BadRequestException,
         );
       }
+
+      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
     });
   });
 
@@ -129,6 +153,9 @@ describe('DoorsController', () => {
       await controller.updateState(1, {
         state: 'toggle',
       });
+
+      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
     });
 
     it('should return 400 for invalid door id', async () => {
@@ -139,6 +166,9 @@ describe('DoorsController', () => {
           BadRequestException,
         );
       }
+
+      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
     });
   });
 });
