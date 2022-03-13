@@ -8,7 +8,6 @@ import { SequenceObject } from 'src/entities/SequenceObject.entity';
 
 @Injectable()
 export class AutomationHatService {
-
   readonly #automationHat: AutomationHat;
   readonly #logger: LoggerService;
 
@@ -38,8 +37,7 @@ export class AutomationHatService {
 
     switch (sequenceObject.target) {
       case 'digitalOutput1':
-        prevState =
-          this.#automationHat.digitalOutputs.output1.state;
+        prevState = this.#automationHat.digitalOutputs.output1.state;
 
         if (sequenceObject.action === 'high') {
           this.#automationHat.digitalOutputs.output1.high();
@@ -49,8 +47,7 @@ export class AutomationHatService {
         break;
 
       case 'digitalOutput2':
-        prevState =
-          this.#automationHat.digitalOutputs.output2.state;
+        prevState = this.#automationHat.digitalOutputs.output2.state;
 
         if (sequenceObject.action === 'high') {
           this.#automationHat.digitalOutputs.output2.high();
@@ -60,8 +57,7 @@ export class AutomationHatService {
         break;
 
       case 'digitalOutput3':
-        prevState =
-          this.#automationHat.digitalOutputs.output3.state;
+        prevState = this.#automationHat.digitalOutputs.output3.state;
 
         if (sequenceObject.action === 'high') {
           this.#automationHat.digitalOutputs.output3.high();
@@ -165,9 +161,11 @@ export class AutomationHatService {
 
   turnOffCommsLight() {
     this.#automationHat.lights.comms.off();
+    this.#automationHat.lights.update();
   }
 
   turnOnCommsLight() {
     this.#automationHat.lights.comms.on();
+    this.#automationHat.lights.update();
   }
 }
