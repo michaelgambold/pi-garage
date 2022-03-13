@@ -28,6 +28,6 @@ version-resolver:
       - 'patch'
   default: patch
 template: |
-  ## Release Notes (DD-MM-YYYY)
+  ## Release Notes (DD MM YYYY)
 
   $CHANGES
