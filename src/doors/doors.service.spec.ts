@@ -56,7 +56,7 @@ describe('DoorsService', () => {
   });
 
   it('should close door', async () => {
-    const spy = jest.spyOn(automationHatService, 'automationHat', 'get');
+    const spy = jest.spyOn(automationHatService, 'runSequenceObject');
     await service.close(1);
     expect(spy).toBeCalled();
   });
@@ -75,13 +75,13 @@ describe('DoorsService', () => {
   });
 
   it('should open a door', async () => {
-    const spy = jest.spyOn(automationHatService, 'automationHat', 'get');
+    const spy = jest.spyOn(automationHatService, 'runSequenceObject');
     await service.open(1);
     expect(spy).toBeCalled();
   });
 
   it('should toggle a door', async () => {
-    const spy = jest.spyOn(automationHatService, 'automationHat', 'get');
+    const spy = jest.spyOn(automationHatService, 'runSequenceObject');
     await service.toggle(1);
     expect(spy).toBeCalled();
   });

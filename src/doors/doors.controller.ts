@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
+import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { DoorsService } from './doors.service';
 import { GetDoorDto } from './dto/get-door.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
@@ -24,7 +25,10 @@ import { UpdateStateDto } from './dto/update-state.dto';
 export class DoorsController {
   #logger: LoggerService;
 
-  constructor(private readonly doorsService: DoorsService) {
+  constructor(
+    private readonly doorsService: DoorsService,
+    private readonly automationHatService: AutomationHatService,
+  ) {
     this.#logger = new ConsoleLogger(DoorsController.name);
   }
 
@@ -32,7 +36,11 @@ export class DoorsController {
   async getAll(): Promise<GetDoorDto[]> {
     this.#logger.log('GET /api/v1/doors invoked');
 
+    this.automationHatService.turnOnCommsLight();
+
     const doors = await this.doorsService.findAll();
+
+    this.automationHatService.turnOffCommsLight();
 
     return doors.map((d) => {
       return {
@@ -48,11 +56,16 @@ export class DoorsController {
   async get(@Param('id', ParseIntPipe) id: number): Promise<GetDoorDto> {
     this.#logger.log(`GET /api/v1/doors/${id} invoked`);
 
+    this.automationHatService.turnOnCommsLight();
+
     if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
       throw new BadRequestException('Invalid door id');
     }
 
     const door = await this.doorsService.findOne(id);
+
+    this.automationHatService.turnOffCommsLight();
 
     return {
       id: door.id,
@@ -66,11 +79,13 @@ export class DoorsController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateDoorDto,
-    // @Body() updateDoorDto: UpdateDoorDto,
   ) {
     this.#logger.log(`PUT /api/v1/doors/${id} invoked`);
 
+    this.automationHatService.turnOnCommsLight();
+
     if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
       throw new BadRequestException('Invalid Door id');
     }
 
@@ -79,6 +94,8 @@ export class DoorsController {
     door.label = body.label;
 
     await this.doorsService.update(door);
+
+    this.automationHatService.turnOffCommsLight();
   }
 
   @Post(':id/state')
@@ -87,6 +104,8 @@ export class DoorsController {
     @Body() body: UpdateStateDto,
   ): Promise<void> {
     this.#logger.log(`PATCH /api/v1/doors/${id}/state invoked`);
+
+    this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
       throw new BadRequestException('Invalid Door id');
@@ -105,5 +124,7 @@ export class DoorsController {
       default:
         throw new BadRequestException('Invalid state');
     }
+
+    this.automationHatService.turnOffCommsLight();
   }
 }
