@@ -11,11 +11,13 @@ import {
   LoggerService,
   ConsoleLogger,
 } from '@nestjs/common';
-import { ApiSecurity } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsService } from './doors.service';
 import { GetDoorDto } from './dto/get-door.dto';
+import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
 
@@ -75,6 +77,32 @@ export class DoorsController {
     };
   }
 
+  @ApiResponse({ status: 200, type: SequenceObjectDto, isArray: true })
+  @Get(':id/sequence')
+  async getSequence(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<SequenceObjectDto[]> {
+    this.#logger.log(`GET /api/v1/doors/${id}/sequence invoked`);
+
+    this.automationHatService.turnOnCommsLight();
+
+    if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
+      throw new BadRequestException('Invalid door id');
+    }
+
+    const door = await this.doorsService.findOne(id);
+    await door.sequence.init();
+
+    this.automationHatService.turnOffCommsLight();
+
+    return door.sequence.getItems().map((d) => ({
+      action: d.action,
+      duration: d.duration,
+      target: d.target,
+    }));
+  }
+
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -93,6 +121,79 @@ export class DoorsController {
     door.isEnabled = body.isEnabled;
     door.label = body.label;
 
+    await this.doorsService.update(door);
+
+    this.automationHatService.turnOffCommsLight();
+  }
+
+  @ApiBody({ type: [SequenceObjectDto] })
+  @Put(':id/sequence')
+  async updateSequence(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: SequenceObjectDto[],
+  ): Promise<void> {
+    this.#logger.log(`PUT /api/v1/doors/${id}/sequence invoked`);
+
+    this.automationHatService.turnOnCommsLight();
+
+    if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
+      throw new BadRequestException('Invalid Door id');
+    }
+
+    // check invalid action/target combos passed
+    body.forEach((dto) => {
+      if (
+        dto.target.startsWith('relay') &&
+        ['low', 'high'].includes(dto.action)
+      ) {
+        this.automationHatService.turnOffCommsLight();
+        throw new BadRequestException(
+          `Invalid action ${dto.action} for target ${dto.target}`,
+        );
+      }
+
+      if (
+        dto.target.startsWith('digitalOutput') &&
+        ['off', 'on'].includes(dto.action)
+      ) {
+        this.automationHatService.turnOffCommsLight();
+        throw new BadRequestException(
+          `Invalid action ${dto.action} for target ${dto.target}`,
+        );
+      }
+    });
+
+    if (body.some((x) => x.duration < 0)) {
+      this.automationHatService.turnOffCommsLight();
+      throw new BadRequestException('Duration cannot be negative');
+    }
+
+    const door = await this.doorsService.findOne(id);
+    await door.sequence.init();
+    const sequence = door.sequence.getItems();
+
+    // remove sequences if we have more in the DB than the DTO
+    while (sequence.length > body.length) {
+      sequence.pop();
+    }
+
+    body.forEach((dto, index) => {
+      let sequenceObject = sequence[index];
+
+      if (!sequenceObject) {
+        sequenceObject = new SequenceObject();
+        sequence.push(sequenceObject);
+      }
+
+      sequenceObject.action = dto.action;
+      sequenceObject.door = door;
+      sequenceObject.duration = dto.duration;
+      sequenceObject.index = index;
+      sequenceObject.target = dto.target;
+    });
+
+    door.sequence.set(sequence);
     await this.doorsService.update(door);
 
     this.automationHatService.turnOffCommsLight();
