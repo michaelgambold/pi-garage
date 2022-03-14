@@ -1,5 +1,9 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class UpdateDoorDto {
-  id?: number;
+  @ApiProperty()
   label: string;
+
+  @ApiProperty()
   isEnabled: boolean;
 }

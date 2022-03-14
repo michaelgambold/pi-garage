@@ -34,6 +34,7 @@ export class DoorsController {
     this.#logger = new ConsoleLogger(DoorsController.name);
   }
 
+  @ApiResponse({ type: GetDoorDto, isArray: true, status: 200 })
   @Get()
   async getAll(): Promise<GetDoorDto[]> {
     this.#logger.log('GET /api/v1/doors invoked');
@@ -54,6 +55,7 @@ export class DoorsController {
     });
   }
 
+  @ApiResponse({ type: GetDoorDto, status: 200 })
   @Get(':id')
   async get(@Param('id', ParseIntPipe) id: number): Promise<GetDoorDto> {
     this.#logger.log(`GET /api/v1/doors/${id} invoked`);
@@ -204,7 +206,7 @@ export class DoorsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateStateDto,
   ): Promise<void> {
-    this.#logger.log(`PATCH /api/v1/doors/${id}/state invoked`);
+    this.#logger.log(`POST /api/v1/doors/${id}/state invoked`);
 
     this.automationHatService.turnOnCommsLight();
 
