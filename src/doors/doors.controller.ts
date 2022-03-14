@@ -34,6 +34,7 @@ export class DoorsController {
     this.#logger = new ConsoleLogger(DoorsController.name);
   }
 
+  @ApiResponse({ type: GetDoorDto, isArray: true, status: 200 })
   @Get()
   async getAll(): Promise<GetDoorDto[]> {
     this.#logger.log('GET /api/v1/doors invoked');
