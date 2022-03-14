@@ -1,10 +1,14 @@
+import { Collection } from '@mikro-orm/core';
 import { BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth/auth.service';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { Door } from '../entities/Door.entity';
+import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsController } from './doors.controller';
 import { DoorsService } from './doors.service';
+import { SequenceObjectDto } from './dto/sequence-object.dto';
 
 describe('DoorsController', () => {
   let controller: DoorsController;
@@ -35,13 +39,31 @@ describe('DoorsController', () => {
         state: 'open',
       },
     ]),
-    findOne: jest.fn().mockImplementation((id: number) => {
-      return Promise.resolve({
+    findOne: jest.fn().mockImplementation(async (id: number) => {
+      const partialSequence: Partial<Collection<SequenceObject, unknown>> = {
+        init: jest.fn().mockResolvedValue(null),
+        getItems: jest.fn().mockImplementation(() => {
+          const partialSequence: Partial<SequenceObject>[] = [
+            {
+              action: 'on',
+              duration: 1000,
+              index: 1,
+              target: 'relay1',
+            },
+          ];
+          return partialSequence;
+        }),
+      };
+
+      const partialDoor: Partial<Door> = {
         id,
         isEnabled: true,
         label: `door${id}`,
         state: 'open',
-      });
+        sequence: partialSequence as Collection<SequenceObject, unknown>,
+      };
+
+      return partialDoor;
     }),
     open: jest.fn().mockResolvedValue(undefined),
     toggle: jest.fn().mockResolvedValue(undefined),
@@ -105,17 +127,29 @@ describe('DoorsController', () => {
       expect(commsOffSpy).toBeCalled();
       expect(commsOnSpy).toBeCalled();
     });
+
+    it('should return 400 for invalid door number', async () => {
+      const badIds = [-1, 0, 4];
+
+      for (const id of badIds) {
+        await expect(controller.get(id)).rejects.toThrow(BadRequestException);
+      }
+
+      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
+    });
   });
 
-  it('should return 400 for invalid door number', async () => {
-    const badIds = [-1, 0, 4];
+  describe('Get Door Sequence', () => {
+    it('should get a door sequence', async () => {
+      const sequence = await controller.getSequence(1);
+      expect(sequence.length).toEqual(1);
 
-    for (const id of badIds) {
-      await expect(controller.get(id)).rejects.toThrow(BadRequestException);
-    }
-
-    expect(commsOffSpy).toBeCalled();
-    expect(commsOnSpy).toBeCalled();
+      const sequenceObject = sequence[0];
+      expect(sequenceObject.action).toEqual('on');
+      expect(sequenceObject.duration).toEqual(1000);
+      expect(sequenceObject.target).toEqual('relay1');
+    });
   });
 
   describe('Update Door', () => {
@@ -137,6 +171,42 @@ describe('DoorsController', () => {
 
       expect(commsOffSpy).toBeCalled();
       expect(commsOnSpy).toBeCalled();
+    });
+  });
+
+  describe('Update Door sequence', () => {
+    it('should update door sequence', async () => {
+      const dto: SequenceObjectDto[] = [
+        {
+          action: 'on',
+          duration: 1000,
+          target: 'relay1',
+        },
+      ];
+
+      await controller.updateSequence(1, dto);
+
+      // check that service to update was actually called
+    });
+
+    it('should fail to update for invalid action/target combinations', async () => {
+      // todo
+    });
+
+    it('should fail to update for invalid door id', async () => {
+      // todo
+    });
+
+    it('should fail to update for negative duration', async () => {
+      //todo
+    });
+
+    it('should fail if unknown action is passed', async () => {
+      // todo
+    });
+
+    it('should fail if unkown target is passed', async () => {
+      // todo
     });
   });
 

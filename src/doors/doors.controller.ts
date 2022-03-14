@@ -11,11 +11,12 @@ import {
   LoggerService,
   ConsoleLogger,
 } from '@nestjs/common';
-import { ApiSecurity } from '@nestjs/swagger';
+import { ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { DoorsService } from './doors.service';
 import { GetDoorDto } from './dto/get-door.dto';
+import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
 
@@ -75,6 +76,32 @@ export class DoorsController {
     };
   }
 
+  @ApiResponse({ status: 200, type: SequenceObjectDto, isArray: true })
+  @Get(':id/sequence')
+  async getSequence(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<SequenceObjectDto[]> {
+    this.#logger.log(`GET /api/v1/doors/${id}/sequence invoked`);
+
+    this.automationHatService.turnOnCommsLight();
+
+    if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
+      throw new BadRequestException('Invalid door id');
+    }
+
+    const door = await this.doorsService.findOne(id);
+    await door.sequence.init();
+
+    this.automationHatService.turnOffCommsLight();
+
+    return door.sequence.getItems().map((d) => ({
+      action: d.action,
+      duration: d.duration,
+      target: d.target,
+    }));
+  }
+
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -94,6 +121,29 @@ export class DoorsController {
     door.label = body.label;
 
     await this.doorsService.update(door);
+
+    this.automationHatService.turnOffCommsLight();
+  }
+
+  @Put(':id/sequence')
+  async updateSequence(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: SequenceObjectDto[],
+  ): Promise<void> {
+    this.#logger.log(`PUT /api/v1/doors/${id}/sequence invoked`);
+
+    this.automationHatService.turnOnCommsLight();
+
+    if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
+      throw new BadRequestException('Invalid Door id');
+    }
+
+    const door = this.doorsService.findOne(id);
+
+    // todo: fix swagger type as it's [ string ]
+
+    // todo: update this to actually do something
 
     this.automationHatService.turnOffCommsLight();
   }
