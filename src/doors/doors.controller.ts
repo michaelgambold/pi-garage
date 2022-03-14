@@ -11,9 +11,10 @@ import {
   LoggerService,
   ConsoleLogger,
 } from '@nestjs/common';
-import { ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsService } from './doors.service';
 import { GetDoorDto } from './dto/get-door.dto';
 import { SequenceObjectDto } from './dto/sequence-object.dto';
@@ -125,6 +126,7 @@ export class DoorsController {
     this.automationHatService.turnOffCommsLight();
   }
 
+  @ApiBody({ type: [SequenceObjectDto] })
   @Put(':id/sequence')
   async updateSequence(
     @Param('id', ParseIntPipe) id: number,
@@ -139,11 +141,60 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
-    const door = this.doorsService.findOne(id);
+    // check invalid action/target combos passed
+    body.forEach((dto) => {
+      if (
+        dto.target.startsWith('relay') &&
+        ['low', 'high'].includes(dto.action)
+      ) {
+        this.automationHatService.turnOffCommsLight();
+        throw new BadRequestException(
+          `Invalid action ${dto.action} for target ${dto.target}`,
+        );
+      }
 
-    // todo: fix swagger type as it's [ string ]
+      if (
+        dto.target.startsWith('digitalOutput') &&
+        ['off', 'on'].includes(dto.action)
+      ) {
+        this.automationHatService.turnOffCommsLight();
+        throw new BadRequestException(
+          `Invalid action ${dto.action} for target ${dto.target}`,
+        );
+      }
+    });
 
-    // todo: update this to actually do something
+    if (body.some((x) => x.duration < 0)) {
+      this.automationHatService.turnOffCommsLight();
+      throw new BadRequestException('Duration cannot be negative');
+    }
+
+    const door = await this.doorsService.findOne(id);
+    await door.sequence.init();
+    const sequence = door.sequence.getItems();
+
+    // remove sequences if we have more in the DB than the DTO
+    while (sequence.length > body.length) {
+      sequence.pop();
+    }
+
+    body.forEach((dto, index) => {
+      let sequenceObject = sequence[index];
+
+      if (!sequenceObject) {
+        sequenceObject = new SequenceObject();
+        sequence.push(sequenceObject);
+      }
+
+      sequenceObject.action = dto.action;
+      sequenceObject.door = door;
+      sequenceObject.duration = dto.duration;
+      sequenceObject.index = index;
+      sequenceObject.target = dto.target;
+    });
+
+    door.sequence.set(sequence);
+    await this.doorsService.update(door);
 
     this.automationHatService.turnOffCommsLight();
   }

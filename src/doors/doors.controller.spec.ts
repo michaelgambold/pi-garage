@@ -1,5 +1,5 @@
 import { Collection } from '@mikro-orm/core';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth/auth.service';
@@ -53,6 +53,7 @@ describe('DoorsController', () => {
           ];
           return partialSequence;
         }),
+        set: jest.fn().mockResolvedValue(null),
       };
 
       const partialDoor: Partial<Door> = {
@@ -149,6 +150,22 @@ describe('DoorsController', () => {
       expect(sequenceObject.action).toEqual('on');
       expect(sequenceObject.duration).toEqual(1000);
       expect(sequenceObject.target).toEqual('relay1');
+
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
+    });
+
+    it('should throw an error when an invalid door is passed', async () => {
+      let failed = false;
+      try {
+        await controller.getSequence(100);
+      } catch (e) {
+        failed = true;
+      }
+
+      expect(failed).toEqual(true);
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
   });
 
@@ -186,27 +203,82 @@ describe('DoorsController', () => {
 
       await controller.updateSequence(1, dto);
 
-      // check that service to update was actually called
+      expect(mockDoorsService.update).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
 
-    it('should fail to update for invalid action/target combinations', async () => {
-      // todo
+    it('should fail to update for invalid action/target combos', async () => {
+      const dtos: SequenceObjectDto[] = [
+        {
+          action: 'high',
+          duration: 1000,
+          target: 'relay1',
+        },
+        {
+          action: 'low',
+          duration: 1000,
+          target: 'relay1',
+        },
+        {
+          action: 'on',
+          duration: 1000,
+          target: 'digitalOutput1',
+        },
+        {
+          action: 'off',
+          duration: 1000,
+          target: 'digitalOutput1',
+        },
+      ];
+
+      for (const dto of dtos) {
+        let error: Error;
+
+        try {
+          await controller.updateSequence(1, [dto]);
+        } catch (e) {
+          error = e;
+        }
+
+        expect(error).toBeDefined();
+        expect(commsOnSpy).toBeCalled();
+        expect(commsOffSpy).toBeCalled();
+      }
     });
 
     it('should fail to update for invalid door id', async () => {
-      // todo
+      let error: HttpException;
+
+      try {
+        await controller.updateSequence(100, []);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error).toBeDefined();
+      expect(error.getStatus()).toEqual(400);
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
 
     it('should fail to update for negative duration', async () => {
-      //todo
-    });
+      const dto: SequenceObjectDto[] = [
+        {
+          action: 'on',
+          duration: -1,
+          target: 'relay1',
+        },
+      ];
 
-    it('should fail if unknown action is passed', async () => {
-      // todo
-    });
+      expect(
+        controller.updateSequence(1, dto).catch((e) => {
+          expect(e).toBeDefined();
+        }),
+      );
 
-    it('should fail if unkown target is passed', async () => {
-      // todo
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
   });
 
