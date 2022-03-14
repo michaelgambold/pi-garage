@@ -55,6 +55,7 @@ export class DoorsController {
     });
   }
 
+  @ApiResponse({ type: GetDoorDto, status: 200 })
   @Get(':id')
   async get(@Param('id', ParseIntPipe) id: number): Promise<GetDoorDto> {
     this.#logger.log(`GET /api/v1/doors/${id} invoked`);
