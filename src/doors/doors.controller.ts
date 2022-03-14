@@ -204,7 +204,7 @@ export class DoorsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateStateDto,
   ): Promise<void> {
-    this.#logger.log(`PATCH /api/v1/doors/${id}/state invoked`);
+    this.#logger.log(`POST /api/v1/doors/${id}/state invoked`);
 
     this.automationHatService.turnOnCommsLight();
 
