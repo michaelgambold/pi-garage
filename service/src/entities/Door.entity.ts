@@ -20,7 +20,7 @@ export class Door {
   isEnabled: boolean;
 
   @Property()
-  state: 'open' | 'closed';
+  state: 'open' | 'opening' | 'closed' | 'closing';
 
   @OneToMany(() => SequenceObject, (sequenceObject) => sequenceObject.door, {
     orderBy: { index: QueryOrder.ASC },

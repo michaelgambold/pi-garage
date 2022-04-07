@@ -1,5 +1,9 @@
 import { Collection } from '@mikro-orm/core';
-import { BadRequestException, HttpException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  HttpException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth/auth.service';
@@ -17,61 +21,63 @@ describe('DoorsController', () => {
   let commsOffSpy: jest.SpyInstance<void, []>;
   let commsOnSpy: jest.SpyInstance<void, []>;
 
-  const mockDoorsService = {
-    close: jest.fn().mockResolvedValue(undefined),
-    findAll: jest.fn().mockResolvedValue([
-      {
-        id: 1,
-        isEnabled: true,
-        label: 'door1',
-        state: 'open',
-      },
-      {
-        id: 2,
-        isEnabled: true,
-        label: 'door2',
-        state: 'open',
-      },
-      {
-        id: 3,
-        isEnabled: true,
-        label: 'door3',
-        state: 'open',
-      },
-    ]),
-    findOne: jest.fn().mockImplementation(async (id: number) => {
-      const partialSequence: Partial<Collection<SequenceObject, unknown>> = {
-        init: jest.fn().mockResolvedValue(null),
-        getItems: jest.fn().mockImplementation(() => {
-          const partialSequence: Partial<SequenceObject>[] = [
-            {
-              action: 'on',
-              duration: 1000,
-              index: 1,
-              target: 'relay1',
-            },
-          ];
-          return partialSequence;
-        }),
-        set: jest.fn().mockResolvedValue(null),
-      };
-
-      const partialDoor: Partial<Door> = {
-        id,
-        isEnabled: true,
-        label: `door${id}`,
-        state: 'open',
-        sequence: partialSequence as Collection<SequenceObject, unknown>,
-      };
-
-      return partialDoor;
-    }),
-    open: jest.fn().mockResolvedValue(undefined),
-    toggle: jest.fn().mockResolvedValue(undefined),
-    update: jest.fn().mockResolvedValue(undefined),
-  };
+  let mockDoorsService: any;
 
   beforeEach(async () => {
+    mockDoorsService = {
+      close: jest.fn().mockResolvedValue(undefined),
+      findAll: jest.fn().mockResolvedValue([
+        {
+          id: 1,
+          isEnabled: true,
+          label: 'door1',
+          state: 'open',
+        },
+        {
+          id: 2,
+          isEnabled: true,
+          label: 'door2',
+          state: 'open',
+        },
+        {
+          id: 3,
+          isEnabled: true,
+          label: 'door3',
+          state: 'open',
+        },
+      ]),
+      findOne: jest.fn().mockImplementation(async (id: number) => {
+        const partialSequence: Partial<Collection<SequenceObject, unknown>> = {
+          init: jest.fn().mockResolvedValue(null),
+          getItems: jest.fn().mockImplementation(() => {
+            const partialSequence: Partial<SequenceObject>[] = [
+              {
+                action: 'on',
+                duration: 1000,
+                index: 1,
+                target: 'relay1',
+              },
+            ];
+            return partialSequence;
+          }),
+          set: jest.fn().mockResolvedValue(null),
+        };
+
+        const partialDoor: Partial<Door> = {
+          id,
+          isEnabled: true,
+          label: `door${id}`,
+          state: 'open',
+          sequence: partialSequence as Collection<SequenceObject, unknown>,
+        };
+
+        return partialDoor;
+      }),
+      open: jest.fn().mockResolvedValue(undefined),
+      toggle: jest.fn().mockResolvedValue(undefined),
+      update: jest.fn().mockResolvedValue(undefined),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [DoorsController],
       providers: [
@@ -283,21 +289,42 @@ describe('DoorsController', () => {
   });
 
   describe('Update Door State', () => {
-    it('should update doors state', async () => {
-      await controller.updateState(1, {
-        state: 'close',
+    it('should update state to open', async () => {
+      mockDoorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'closed',
       });
 
-      await controller.updateState(1, {
+      await controller.updateState(1, { state: 'open' });
+
+      expect(mockDoorsService.open).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
+    });
+
+    it('should toggle doors state', async () => {
+      await controller.updateState(1, { state: 'toggle' });
+
+      expect(mockDoorsService.toggle).toBeCalled();
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
+    });
+
+    it('should update state to closed', async () => {
+      mockDoorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
         state: 'open',
       });
 
-      await controller.updateState(1, {
-        state: 'toggle',
-      });
+      await controller.updateState(1, { state: 'close' });
 
-      expect(commsOffSpy).toBeCalled();
+      expect(mockDoorsService.close).toBeCalled();
       expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
 
     it('should return 400 for invalid door id', async () => {
@@ -311,6 +338,66 @@ describe('DoorsController', () => {
 
       expect(commsOffSpy).toBeCalledTimes(3);
       expect(commsOnSpy).toBeCalledTimes(3);
+    });
+
+    it('should return 409 when door is opening', async () => {
+      mockDoorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'opening',
+      });
+
+      await expect(
+        controller.updateState(1, { state: 'toggle' }),
+      ).rejects.toThrowError(ConflictException);
+
+      mockDoorsService.findOne.mockReset();
+    });
+
+    it('should return 409 when door is closing', async () => {
+      mockDoorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'closing',
+      });
+
+      await expect(
+        controller.updateState(1, { state: 'toggle' }),
+      ).rejects.toThrowError(ConflictException);
+
+      mockDoorsService.findOne.mockReset();
+    });
+
+    it('should not try and open door if already open', async () => {
+      mockDoorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'open',
+      });
+
+      await controller.updateState(1, { state: 'open' });
+
+      expect(mockDoorsService.open).not.toBeCalled();
+
+      mockDoorsService.findOne.mockReset();
+    });
+
+    it('should not try and close door if already closed', async () => {
+      mockDoorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'closed',
+      });
+
+      await controller.updateState(1, { state: 'close' });
+
+      expect(mockDoorsService.close).not.toBeCalled();
+
+      mockDoorsService.findOne.mockReset();
     });
   });
 });
