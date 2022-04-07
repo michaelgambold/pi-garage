@@ -211,6 +211,7 @@ export class DoorsController {
     this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
       throw new BadRequestException('Invalid Door id');
     }
 

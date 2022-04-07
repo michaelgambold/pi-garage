@@ -304,13 +304,13 @@ describe('DoorsController', () => {
       const badIds = [-1, 0, 4];
 
       for (const id of badIds) {
-        await expect(controller.get(id)).rejects.toThrowError(
-          BadRequestException,
-        );
+        await expect(
+          controller.updateState(id, { state: 'toggle' }),
+        ).rejects.toThrowError(BadRequestException);
       }
 
-      expect(commsOffSpy).toBeCalled();
-      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalledTimes(3);
+      expect(commsOnSpy).toBeCalledTimes(3);
     });
   });
 });
