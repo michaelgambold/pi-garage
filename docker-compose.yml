@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  service:
+    container_name: service
+    build:
+      context: ./service
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./service/data:/app/data
