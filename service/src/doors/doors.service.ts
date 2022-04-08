@@ -18,18 +18,22 @@ export class DoorsService {
 
   async close(id: number): Promise<void> {
     this.#logger.log(`Closing door ${id}`);
+
+    // get door with sequence
     const door = await this.doorRepository.findOne(
       { id },
       { populate: ['sequence'] },
     );
 
+    door.state = 'closing';
+    await this.update(door);
+
     for (const sequenceObject of door.sequence) {
       await this.automationHatService.runSequenceObject(sequenceObject);
     }
 
-    // update door state
     door.state = 'closed';
-    this.update(door);
+    await this.update(door);
   }
 
   findAll() {
@@ -42,18 +46,22 @@ export class DoorsService {
 
   async open(id: number): Promise<void> {
     this.#logger.log(`Opening door ${id}`);
+
+    // get door with sequence
     const door = await this.doorRepository.findOne(
       { id },
       { populate: ['sequence'] },
     );
 
+    door.state = 'opening';
+    await this.update(door);
+
     for (const sequenceObject of door.sequence) {
       await this.automationHatService.runSequenceObject(sequenceObject);
     }
 
-    // update door state
     door.state = 'open';
-    this.update(door);
+    await this.update(door);
   }
 
   async toggle(id: number): Promise<void> {

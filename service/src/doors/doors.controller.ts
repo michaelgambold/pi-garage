@@ -10,6 +10,7 @@ import {
   Put,
   LoggerService,
   ConsoleLogger,
+  ConflictException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
@@ -215,6 +216,25 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
+    const door = await this.doorsService.findOne(1);
+
+    // don't process any requests when we are opening/closing the doors
+    if (door.state === 'closing' || door.state === 'opening') {
+      throw new ConflictException('Door state currently changing');
+    }
+
+    // don't open the door if it's already open
+    if (door.state === 'open' && body.state === 'open') {
+      this.automationHatService.turnOffCommsLight();
+      return;
+    }
+
+    // don't close the door if it's already closed
+    if (door.state === 'closed' && body.state === 'close') {
+      this.automationHatService.turnOffCommsLight();
+      return;
+    }
+
     switch (body.state) {
       case 'close':
         await this.doorsService.close(id);
@@ -226,6 +246,7 @@ export class DoorsController {
         await this.doorsService.toggle(id);
         break;
       default:
+        this.automationHatService.turnOffCommsLight();
         throw new BadRequestException('Invalid state');
     }
 
