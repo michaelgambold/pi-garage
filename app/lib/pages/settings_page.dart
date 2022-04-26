@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import '../my_shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key, required this.title}) : super(key: key);
@@ -12,21 +13,31 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   String _fqdn = '';
+  String _apiKey = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
+  _SettingsPageState() {
+    MySharedPreferences.instance
+        .getStringValue('settings_fqdn')
+        .then((value) => setState(() {
+              _fqdn = value;
+            }));
+
+    MySharedPreferences.instance
+        .getStringValue('settings_api_key')
+        .then((value) => setState(
+              () {
+                _apiKey = value;
+              },
+            ));
   }
 
-  void _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    _fqdn = (prefs.getString('fqdn') ?? '');
-  }
-
-  void _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('fqdn', "http://pi-garage.gamboldcomputer.com.au");
+  Future<bool> _testConnection() async {
+    return http
+        .get(Uri.parse(_fqdn + '/health'))
+        .then((value) => value.statusCode == 200)
+        .catchError((error) {
+      return false;
+    });
   }
 
   @override
@@ -55,7 +66,7 @@ class _SettingsPageState extends State<SettingsPage> {
             children: <Widget>[
               TextFormField(
                 decoration: const InputDecoration(
-                  hintText: 'Enter Pi Garage FQDN',
+                  hintText: 'FQDN',
                 ),
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
@@ -63,24 +74,86 @@ class _SettingsPageState extends State<SettingsPage> {
                   }
                   return null;
                 },
+                onSaved: (value) {
+                  MySharedPreferences.instance
+                      .setStringValue('settings_fqdn', value ?? '');
+                },
+                onChanged: (value) {
+                  _fqdn = value;
+                },
+                initialValue: _fqdn,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(hintText: 'API Key'),
+                initialValue: _apiKey,
+                onSaved: (value) {
+                  MySharedPreferences.instance
+                      .setStringValue('settings_api_key', value ?? '');
+                },
+                onChanged: (value) {
+                  _apiKey = value;
+                },
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Validate will return true if the form is valid, or false if
-                    // the form is invalid.
-                    if (_formKey.currentState!.validate()) {
-                      _saveSettings();
-                      // Process data.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Saving Data')),
-                      );
-                    }
-                  },
-                  child: const Text('Save'),
-                ),
-              ),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () async {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+
+                              if (await _testConnection()) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Test Successful'),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Test Failed'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text('Test')),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // Validate will return true if the form is valid, or false if
+                            // the form is invalid.
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Settings Saved'),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ])),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(vertical: 16.0),
+              //   child: ElevatedButton(
+              //     onPressed: () async {
+              //       // Validate will return true if the form is valid, or false if
+              //       // the form is invalid.
+              //       if (_formKey.currentState!.validate()) {
+              //         _formKey.currentState!.save();
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(
+              //             content: Text('Settings Saved'),
+              //           ),
+              //         );
+              //       }
+              //     },
+              //     child: const Text('Save'),
+              //   ),
+              // ),
             ],
           ),
         ));

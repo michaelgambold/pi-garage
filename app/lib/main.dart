@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
 import 'pages/settings_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+SharedPreferences? sp;
+
+void main() async {
+  sp = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -21,7 +25,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const HomePage(title: 'Pi Garage'),
-          '/settings': (context) => const SettingsPage(title: 'Pi Garage')
+          '/settings': (context) => const SettingsPage(title: 'Settings')
         });
   }
 }
