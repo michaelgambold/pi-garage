@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-SharedPreferences? sp;
-
-void main() async {
-  sp = await SharedPreferences.getInstance();
+void main() {
   runApp(const MyApp());
 }
 
