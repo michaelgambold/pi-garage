@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'pages/home_page.dart';
-import 'pages/settings_page.dart';
+import 'screens/home_screen.dart';
+import 'screens/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences? sp;
@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
         // home: const MyHomePage(title: 'Pi Garage'),
         initialRoute: '/',
         routes: {
-          '/': (context) => const HomePage(title: 'Pi Garage'),
-          '/settings': (context) => const SettingsPage(title: 'Settings')
+          '/': (context) => const HomeScreen(title: 'Pi Garage'),
+          '/settings': (context) => const SettingsScreen(title: 'Settings')
         });
   }
 }

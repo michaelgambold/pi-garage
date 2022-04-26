@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../my_shared_preferences.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key, required this.title}) : super(key: key);
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsScreenState extends State<SettingsScreen> {
   String _fqdn = '';
   String _apiKey = '';
 
-  _SettingsPageState() {
+  _SettingsScreenState() {
     MySharedPreferences.instance
         .getStringValue('settings_fqdn')
         .then((value) => setState(() {
