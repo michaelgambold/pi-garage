@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../my_shared_preferences.dart';
+import '../services/local_storage_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key, required this.title}) : super(key: key);
@@ -16,13 +16,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _apiKey = '';
 
   _SettingsScreenState() {
-    MySharedPreferences.instance
+    LocalStorageService.instance
         .getStringValue('settings_fqdn')
         .then((value) => setState(() {
               _fqdn = value;
             }));
 
-    MySharedPreferences.instance
+    LocalStorageService.instance
         .getStringValue('settings_api_key')
         .then((value) => setState(
               () {
@@ -75,7 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  MySharedPreferences.instance
+                  LocalStorageService.instance
                       .setStringValue('settings_fqdn', value ?? '');
                 },
                 onChanged: (value) {
@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 decoration: const InputDecoration(hintText: 'API Key'),
                 initialValue: _apiKey,
                 onSaved: (value) {
-                  MySharedPreferences.instance
+                  LocalStorageService.instance
                       .setStringValue('settings_api_key', value ?? '');
                 },
                 onChanged: (value) {

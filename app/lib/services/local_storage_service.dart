@@ -1,10 +1,10 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MySharedPreferences {
-  MySharedPreferences._privateConstructor();
+class LocalStorageService {
+  LocalStorageService._privateConstructor();
 
-  static final MySharedPreferences instance =
-      MySharedPreferences._privateConstructor();
+  static final LocalStorageService instance =
+      LocalStorageService._privateConstructor();
 
   Future<bool> containsKey(String key) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
