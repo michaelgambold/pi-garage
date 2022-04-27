@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: 'Open shopping cart',
+            tooltip: 'Global Settings',
             onPressed: () {
               Navigator.pushNamed(context, '/settings');
             },

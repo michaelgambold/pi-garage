@@ -12,29 +12,25 @@ class DoorListItem extends StatefulWidget {
 }
 
 class _DoorListItemState extends State<DoorListItem> {
-  handleMenuClick(String value) {
-    switch (value) {
-      case 'Settings':
-        print('navigate to door settings');
-        break;
-      case 'Sequence':
-        print('navigate to sequence');
-        break;
-      case 'Enable':
-        print('enable door');
-        break;
-      case 'Disable':
-        print('disable door');
-        break;
-    }
-  }
-
   handleDoorIconPressed() {
     print('hi');
   }
 
   @override
   Widget build(BuildContext context) {
+    handleMenuClick(String value) {
+      switch (value) {
+        case 'Settings':
+          Navigator.pushNamed(
+              context, '/doors/' + widget.door.id.toString() + '/settings');
+          break;
+        case 'Sequence':
+          Navigator.pushNamed(
+              context, '/doors/' + widget.door.id.toString() + '/sequence');
+          break;
+      }
+    }
+
     return Container(
       // color: Colors.red,
       padding: EdgeInsets.all(8.0),
@@ -53,7 +49,6 @@ class _DoorListItemState extends State<DoorListItem> {
             return {
               'Settings',
               'Sequence',
-              widget.door.isEnabled ? 'Disable' : 'Enable'
             }.map((String choice) {
               return PopupMenuItem<String>(
                 value: choice,

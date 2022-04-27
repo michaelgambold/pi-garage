@@ -49,15 +49,15 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.settings),
-              tooltip: 'Open settings',
-              onPressed: () {
-                // handle the press
-              },
-            ),
-          ],
+          // actions: <Widget>[
+          //   IconButton(
+          //     icon: const Icon(Icons.settings),
+          //     tooltip: 'Global Settings',
+          //     onPressed: () {
+          //       // handle the press
+          //     },
+          //   ),
+          // ],
         ),
         body: Form(
           key: _formKey,

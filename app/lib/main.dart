@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'screens/door_sequence_screen.dart';
+import 'screens/door_settings_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/global_settings_screen.dart';
 
@@ -17,12 +19,33 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        // home: const MyHomePage(title: 'Pi Garage'),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const HomeScreen(title: 'Pi Garage'),
-          '/settings': (context) =>
-              const GlobalSettingsScreen(title: 'Settings')
+        home: const HomeScreen(title: 'Pi Garage'),
+        onGenerateRoute: (settings) {
+          if (settings.name == '/settings') {
+            return MaterialPageRoute(
+                builder: (context) =>
+                    const GlobalSettingsScreen(title: 'Global Settings'));
+          }
+
+          var uri = Uri.parse(settings.name ?? '');
+
+          print(uri.pathSegments);
+
+          if (uri.pathSegments.first == 'doors' &&
+              uri.pathSegments.elementAt(2) == 'settings') {
+            return MaterialPageRoute(
+                builder: (context) => DoorSettingsScreen(
+                    title: 'Door ${uri.pathSegments.elementAt(1)} Settings'));
+          }
+
+          if (uri.pathSegments.first == 'doors' &&
+              uri.pathSegments.elementAt(2) == 'sequence') {
+            return MaterialPageRoute(
+                builder: (context) => DoorSequenceScreen(
+                    title: 'Door ${uri.pathSegments.elementAt(1)} Sequence'));
+          }
+
+          return null;
         });
   }
 }
