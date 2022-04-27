@@ -16,11 +16,11 @@ class _DoorListState extends State<DoorList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green,
+      // color: Colors.green,
       child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        // mainAxisSize: MainAxisSize.max,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: widget.doors
             .map((door) => DoorListItem(
                   door: door,

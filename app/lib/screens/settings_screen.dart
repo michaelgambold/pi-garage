@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import '../services/http_service.dart';
 import '../services/local_storage_service.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -17,13 +17,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   _SettingsScreenState() {
     LocalStorageService.instance
-        .getStringValue('settings_fqdn')
+        .getStringValue('global_fqdn')
         .then((value) => setState(() {
               _fqdn = value;
             }));
 
     LocalStorageService.instance
-        .getStringValue('settings_api_key')
+        .getStringValue('global_api_key')
         .then((value) => setState(
               () {
                 _apiKey = value;
@@ -32,7 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<bool> _testConnection() async {
-    return http
+    return HttpService()
         .get(Uri.parse(_fqdn + '/health'))
         .then((value) => value.statusCode == 200)
         .catchError((error) {
@@ -76,7 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
                 onSaved: (value) {
                   LocalStorageService.instance
-                      .setStringValue('settings_fqdn', value ?? '');
+                      .setStringValue('global_fqdn', value ?? '');
                 },
                 onChanged: (value) {
                   _fqdn = value;
@@ -88,7 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 initialValue: _apiKey,
                 onSaved: (value) {
                   LocalStorageService.instance
-                      .setStringValue('settings_api_key', value ?? '');
+                      .setStringValue('global_api_key', value ?? '');
                 },
                 onChanged: (value) {
                   _apiKey = value;
