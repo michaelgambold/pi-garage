@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-import 'screens/settings_screen.dart';
+import 'screens/global_settings_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,8 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const HomeScreen(title: 'Pi Garage'),
-          '/settings': (context) => const SettingsScreen(title: 'Settings')
+          '/settings': (context) =>
+              const GlobalSettingsScreen(title: 'Settings')
         });
   }
 }

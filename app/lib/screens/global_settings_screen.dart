@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import '../services/http_service.dart';
 import '../services/local_storage_service.dart';
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key, required this.title}) : super(key: key);
+class GlobalSettingsScreen extends StatefulWidget {
+  const GlobalSettingsScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  State<GlobalSettingsScreen> createState() => _GlobalSettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   String _fqdn = '';
   String _apiKey = '';
 
-  _SettingsScreenState() {
+  _GlobalSettingsScreenState() {
     LocalStorageService.instance
         .getStringValue('global_fqdn')
         .then((value) => setState(() {
