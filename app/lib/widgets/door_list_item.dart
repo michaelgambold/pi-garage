@@ -17,8 +17,8 @@ class _DoorListItemState extends State<DoorListItem> {
       case 'Settings':
         print('navigate to door settings');
         break;
-      case 'Sequences':
-        print('navigate to sequences');
+      case 'Sequence':
+        print('navigate to sequence');
         break;
       case 'Enable':
         print('enable door');
@@ -50,8 +50,11 @@ class _DoorListItemState extends State<DoorListItem> {
           icon: Icon(Icons.more_vert),
           onSelected: handleMenuClick,
           itemBuilder: (BuildContext context) {
-            return {'Settings', 'Sequences', 'Enable', 'Disable'}
-                .map((String choice) {
+            return {
+              'Settings',
+              'Sequence',
+              widget.door.isEnabled ? 'Disable' : 'Enable'
+            }.map((String choice) {
               return PopupMenuItem<String>(
                 value: choice,
                 child: Text(choice),
