@@ -20,32 +20,48 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: const HomeScreen(title: 'Pi Garage'),
+        onUnknownRoute: (settings) {
+          // do somthing better here. this shows the back arrow on the home
+          // screen
+          return MaterialPageRoute<void>(
+              settings: settings,
+              builder: (BuildContext context) =>
+                  const HomeScreen(title: 'Pi Garage'));
+        },
         onGenerateRoute: (settings) {
-          if (settings.name == '/settings') {
-            return MaterialPageRoute(
-                builder: (context) =>
-                    const GlobalSettingsScreen(title: 'Global Settings'));
-          }
-
           var uri = Uri.parse(settings.name ?? '');
 
-          print(uri.pathSegments);
+          try {
+            switch (uri.pathSegments.first) {
+              case 'settings':
+                return MaterialPageRoute(
+                    builder: (context) =>
+                        const GlobalSettingsScreen(title: 'Global Settings'));
 
-          if (uri.pathSegments.first == 'doors' &&
-              uri.pathSegments.elementAt(2) == 'settings') {
-            return MaterialPageRoute(
-                builder: (context) => DoorSettingsScreen(
-                    title: 'Door ${uri.pathSegments.elementAt(1)} Settings'));
+              case 'doors':
+                var doorId = uri.pathSegments.elementAt(1);
+                var childPath = uri.pathSegments.elementAt(2);
+
+                if (childPath == 'settings') {
+                  return MaterialPageRoute(
+                      builder: (context) =>
+                          DoorSettingsScreen(title: 'Door $doorId Settings'));
+                }
+
+                if (childPath == 'sequence') {
+                  return MaterialPageRoute(
+                      builder: (context) =>
+                          DoorSequenceScreen(title: 'Door $doorId Sequence'));
+                }
+
+                return null;
+
+              default:
+                return null;
+            }
+          } on StateError catch (_) {
+            return null;
           }
-
-          if (uri.pathSegments.first == 'doors' &&
-              uri.pathSegments.elementAt(2) == 'sequence') {
-            return MaterialPageRoute(
-                builder: (context) => DoorSequenceScreen(
-                    title: 'Door ${uri.pathSegments.elementAt(1)} Sequence'));
-          }
-
-          return null;
         });
   }
 }
