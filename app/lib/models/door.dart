@@ -4,17 +4,11 @@ class Door {
   final bool isEnabled;
   final String state;
 
-  const Door(
-      {required this.id,
-      required this.label,
-      required this.isEnabled,
-      required this.state});
+  const Door(this.id, this.label, this.isEnabled, this.state);
 
-  factory Door.fromJson(Map<String, dynamic> json) {
-    return Door(
-        id: json['id'] as int,
-        label: json['label'] as String,
-        isEnabled: json['isEnabled'] as bool,
-        state: json['state'] as String);
-  }
+  Door.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        label = json['label'],
+        isEnabled = json['isEnabled'],
+        state = json['state'] as String;
 }

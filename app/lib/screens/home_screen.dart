@@ -17,14 +17,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late DoorRepository _doorRepository;
+  final _doorRepository = DoorRepository();
+
   List<Door> _doors = [];
   late Timer _timer;
   static const int _updateInterval = 10;
-
-  _HomeScreenState() {
-    _doorRepository = DoorRepository();
-  }
 
   void refreshDoors() {
     _doorRepository

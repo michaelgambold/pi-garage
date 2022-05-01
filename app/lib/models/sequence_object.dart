@@ -3,13 +3,10 @@ class SequenceObject {
   final int duration;
   final String target;
 
-  const SequenceObject(
-      {required this.action, required this.duration, required this.target});
+  const SequenceObject(this.action, this.duration, this.target);
 
-  factory SequenceObject.fromJson(Map<String, dynamic> json) {
-    return SequenceObject(
-        action: json['action'] as String,
-        duration: json['duration'] as int,
-        target: json['target'] as String);
-  }
+  SequenceObject.fromJson(Map<String, dynamic> json)
+      : action = json['action'],
+        duration = json['duration'],
+        target = json['target'];
 }

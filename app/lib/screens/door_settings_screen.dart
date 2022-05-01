@@ -73,9 +73,9 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
               // onSaved: (value) {
               //   print('onSaved: $value');
               // },
-              onChanged: (value) {
-                _labelController.text = value;
-              },
+              // onChanged: (value) {
+              //   _labelController.text = value;
+              // },
             ),
             CheckboxListTile(
               title: const Text('Enabled'),
@@ -97,6 +97,12 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
                 // the form is invalid.
                 // if (_formKey.currentState!.validate()) {
                 // _formKey.currentState!.save();
+
+                await _doorRepository.updateDoor(
+                    widget.doorId,
+                    UpdateDoor(
+                        label: _labelController.text, isEnabled: _isEnabled));
+
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

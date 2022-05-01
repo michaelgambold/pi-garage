@@ -7,12 +7,8 @@ import '../services/local_storage_service.dart';
 import '../services/http_service.dart';
 
 class DoorRepository {
-  late HttpService _httpService;
-  late LocalStorageService _localStorageService;
-  DoorRepository() {
-    _httpService = HttpService();
-    _localStorageService = LocalStorageService.instance;
-  }
+  final _httpService = HttpService();
+  final _localStorageService = LocalStorageService.instance;
 
   Future<List<Door>> findAllDoors() async {
     String apiKey = await _localStorageService.getStringValue('global_api_key');
@@ -72,13 +68,15 @@ class DoorRepository {
     throw Exception(res.reasonPhrase);
   }
 
-  Future<void> updateDoor(int doorId, UpdateDoor door) async {
+  Future<void> updateDoor(int doorId, UpdateDoor updateDoor) async {
+    print(updateDoor);
+
     String apiKey = await _localStorageService.getStringValue('global_api_key');
 
     String fqdn = await _localStorageService.getStringValue('global_fqdn');
 
-    final res =
-        await _httpService.put(Uri.parse('$fqdn/api/v1/doors/$doorId'), {});
+    final res = await _httpService.put(
+        Uri.parse('$fqdn/api/v1/doors/$doorId'), updateDoor);
 
     if (res.statusCode == 200) {
       return;
