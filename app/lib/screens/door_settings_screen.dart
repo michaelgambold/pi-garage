@@ -50,7 +50,6 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('door settings screen: ' + widget.doorId.toString());
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),

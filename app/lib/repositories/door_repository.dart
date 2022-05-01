@@ -19,8 +19,6 @@ class DoorRepository {
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
 
-      print(body);
-
       List<Door> doors = body
           .map(
             (dynamic item) => Door.fromJson(item),
@@ -34,8 +32,6 @@ class DoorRepository {
   }
 
   Future<Door> findDoor(int doorId) async {
-    print('repo id: $doorId');
-
     String apiKey =
         await LocalStorageService.instance.getStringValue('global_api_key');
 
@@ -63,7 +59,15 @@ class DoorRepository {
         await HttpService().get(Uri.parse('$fqdn/api/v1/doors/$doorId'));
 
     if (res.statusCode == 200) {
-      return List<SequenceObject>.from(jsonDecode(res.body));
+      List<dynamic> body = jsonDecode(res.body);
+
+      List<SequenceObject> doors = body
+          .map(
+            (dynamic item) => SequenceObject.fromJson(item),
+          )
+          .toList();
+
+      return doors;
     }
 
     throw Exception(res.reasonPhrase);

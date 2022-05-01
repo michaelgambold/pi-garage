@@ -24,7 +24,6 @@ class _DoorListItemState extends State<DoorListItem> {
 
   @override
   Widget build(BuildContext context) {
-    print('w id: ${widget.door.id}');
     handleMenuClick(String value) {
       switch (value) {
         case 'Settings':

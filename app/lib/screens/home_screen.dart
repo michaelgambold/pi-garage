@@ -20,9 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
   late DoorRepository _doorRepository;
   List<Door> _doors = [];
   late Timer _timer;
+  static const int _updateInterval = 10;
 
   _HomeScreenState() {
-    print('home screen constructor');
     _doorRepository = DoorRepository();
   }
 
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     refreshDoors();
 
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: _updateInterval), (timer) {
       refreshDoors();
     });
   }
@@ -45,28 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     super.dispose();
-    print('dispose');
     _timer.cancel();
   }
 
   @override
-  void didUpdateWidget(covariant HomeScreen oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    print('did update widget');
-  }
-
-  // List<Door> doors = [
-  //   const Door(id: 1, label: 'Door 1', isEnabled: true, state: 'open'),
-  //   const Door(id: 2, label: 'Door 2', isEnabled: true, state: 'closed'),
-  //   const Door(id: 3, label: 'Door 3', isEnabled: false, state: 'closed')
-  // ];
-
-  @override
   Widget build(BuildContext context) {
-    print('home screen build');
-    // _doorRepository.findAllDoors().then((value) => print(jsonEncode(value)));
-    // print(jsonEncode(_doors));
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
