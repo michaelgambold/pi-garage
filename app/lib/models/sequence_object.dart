@@ -3,7 +3,7 @@ class SequenceObject {
   final int duration;
   final String target;
 
-  SequenceObject(
+  const SequenceObject(
       {required this.action, required this.duration, required this.target});
 
   factory SequenceObject.fromJson(Map<String, dynamic> json) {
