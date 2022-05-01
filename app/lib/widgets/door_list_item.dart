@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../models/door.dart';
+// import '../repositories//door_repository.dart';
 
 class DoorListItem extends StatefulWidget {
   const DoorListItem({Key? key, required this.door}) : super(key: key);
@@ -12,12 +12,19 @@ class DoorListItem extends StatefulWidget {
 }
 
 class _DoorListItemState extends State<DoorListItem> {
+  // DoorRepository _doorRepository = DoorRepository();
+
+  // _DoorListItemState() {
+
+  // }
+
   handleDoorIconPressed() {
-    print('hi');
+    print('handle door pressed');
   }
 
   @override
   Widget build(BuildContext context) {
+    print('w id: ${widget.door.id}');
     handleMenuClick(String value) {
       switch (value) {
         case 'Settings':

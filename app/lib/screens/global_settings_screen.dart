@@ -16,6 +16,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   String _apiKey = '';
 
   _GlobalSettingsScreenState() {
+    print('global state constructor');
     LocalStorageService.instance
         .getStringValue('global_fqdn')
         .then((value) => setState(() {
@@ -29,6 +30,12 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                 _apiKey = value;
               },
             ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('global settings init state');
   }
 
   Future<bool> _testConnection() async {

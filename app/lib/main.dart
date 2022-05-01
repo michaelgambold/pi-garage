@@ -39,13 +39,15 @@ class MyApp extends StatelessWidget {
                         const GlobalSettingsScreen(title: 'Global Settings'));
 
               case 'doors':
-                var doorId = uri.pathSegments.elementAt(1);
+                var doorId = int.parse(uri.pathSegments.elementAt(1));
                 var childPath = uri.pathSegments.elementAt(2);
 
                 if (childPath == 'settings') {
                   return MaterialPageRoute(
-                      builder: (context) =>
-                          DoorSettingsScreen(title: 'Door $doorId Settings'));
+                      builder: (context) => DoorSettingsScreen(
+                            title: 'Door $doorId Settings',
+                            doorId: doorId,
+                          ));
                 }
 
                 if (childPath == 'sequence') {

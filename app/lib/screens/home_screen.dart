@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../models/door.dart';
+import '../repositories/door_repository.dart';
 import '../widgets/door_list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,14 +17,56 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Door> doors = [
-    Door(1, 'Door 1', true, 'open'),
-    Door(2, 'Door 2', true, 'closed'),
-    Door(3, 'Door 3', false, 'closed')
-  ];
+  late DoorRepository _doorRepository;
+  List<Door> _doors = [];
+  late Timer _timer;
+
+  _HomeScreenState() {
+    print('home screen constructor');
+    _doorRepository = DoorRepository();
+  }
+
+  void refreshDoors() {
+    _doorRepository
+        .findAllDoors()
+        .then((value) => setState(() => _doors = value));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    refreshDoors();
+
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      refreshDoors();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('dispose');
+    _timer.cancel();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print('did update widget');
+  }
+
+  // List<Door> doors = [
+  //   const Door(id: 1, label: 'Door 1', isEnabled: true, state: 'open'),
+  //   const Door(id: 2, label: 'Door 2', isEnabled: true, state: 'closed'),
+  //   const Door(id: 3, label: 'Door 3', isEnabled: false, state: 'closed')
+  // ];
 
   @override
   Widget build(BuildContext context) {
+    print('home screen build');
+    // _doorRepository.findAllDoors().then((value) => print(jsonEncode(value)));
+    // print(jsonEncode(_doors));
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -34,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(child: DoorList(doors: doors)),
+      body: Center(child: DoorList(doors: _doors)),
     );
   }
 }
