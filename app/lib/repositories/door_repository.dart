@@ -51,9 +51,12 @@ class DoorRepository {
 
     String fqdn = await _localStorageService.getStringValue('global_fqdn');
 
-    final res = await _httpService.get(Uri.parse('$fqdn/api/v1/doors/$doorId'));
+    final res = await _httpService
+        .get(Uri.parse('$fqdn/api/v1/doors/$doorId/sequence'));
 
     if (res.statusCode == 200) {
+      print(res.body);
+
       List<dynamic> body = jsonDecode(res.body);
 
       List<SequenceObject> doors = body

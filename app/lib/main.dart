@@ -52,8 +52,10 @@ class MyApp extends StatelessWidget {
 
                 if (childPath == 'sequence') {
                   return MaterialPageRoute(
-                      builder: (context) =>
-                          DoorSequenceScreen(title: 'Door $doorId Sequence'));
+                      builder: (context) => DoorSequenceScreen(
+                            title: 'Door $doorId Sequence',
+                            doorId: doorId,
+                          ));
                 }
 
                 return null;
