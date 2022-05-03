@@ -18,6 +18,7 @@ class DoorSequenceScreen extends StatefulWidget {
 
 class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   final _doorRepository = DoorRepository();
+
   List<SequenceObject> _sequence = [];
 
   @override
@@ -61,28 +62,33 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
           ],
         ),
         body: Container(
+            padding: const EdgeInsets.all(8.0),
             child: Stack(children: [
-          RefreshIndicator(
-            child: ListView(
-              children: [
-                SequenceList(
-                  sequence: _sequence,
+              RefreshIndicator(
+                child: ListView(
+                  children: [
+                    SequenceList(
+                      sequence: _sequence,
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(40)),
+                        onPressed: () => save(),
+                        child: const Text('Save')),
+                  ],
                 ),
-                ElevatedButton(onPressed: () => save(), child: Text('Save')),
-              ],
-            ),
-            onRefresh: () async {
-              await _refresh();
-            },
-            color: Colors.purple,
-          ),
-          const Positioned(
-              bottom: 20,
-              right: 20,
-              child: FloatingActionButton(
-                onPressed: null,
-                child: Icon(Icons.add),
-              ))
-        ])));
+                onRefresh: () async {
+                  await _refresh();
+                },
+                color: Colors.purple,
+              ),
+              const Positioned(
+                  bottom: 30,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: null,
+                    child: Icon(Icons.add),
+                  ))
+            ])));
   }
 }
