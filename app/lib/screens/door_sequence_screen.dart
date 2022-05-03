@@ -23,7 +23,11 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   @override
   void initState() {
     super.initState();
-    _doorRepository
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    await _doorRepository
         .findDoorSequence(widget.doorId)
         .then((value) => setState(() {
               _sequence = value;
@@ -31,7 +35,13 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   }
 
   void save() {
-    return;
+    // _doorRepository.updateDoor(widget.doorId, updateDoor)
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Sequence Saved'),
+      ),
+    );
   }
 
   @override
@@ -51,16 +61,28 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
           ],
         ),
         body: Container(
-            child: Column(children: [
-          Center(
-              child: SequenceList(
-            sequence: _sequence,
-          )),
-          ElevatedButton(onPressed: () => save(), child: Text('Save')),
-          FloatingActionButton(
-            onPressed: null,
-            child: Icon(Icons.add),
-          )
+            child: Stack(children: [
+          RefreshIndicator(
+            child: ListView(
+              children: [
+                SequenceList(
+                  sequence: _sequence,
+                ),
+                ElevatedButton(onPressed: () => save(), child: Text('Save')),
+              ],
+            ),
+            onRefresh: () async {
+              await _refresh();
+            },
+            color: Colors.purple,
+          ),
+          const Positioned(
+              bottom: 20,
+              right: 20,
+              child: FloatingActionButton(
+                onPressed: null,
+                child: Icon(Icons.add),
+              ))
         ])));
   }
 }

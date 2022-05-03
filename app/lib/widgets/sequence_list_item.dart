@@ -16,7 +16,8 @@ class SequenceListItem extends StatefulWidget {
 class _SequenceListItemState extends State<SequenceListItem> {
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+        child: Card(
       child: Container(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -95,6 +96,6 @@ class _SequenceListItemState extends State<SequenceListItem> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
