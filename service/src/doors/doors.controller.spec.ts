@@ -367,6 +367,9 @@ describe('DoorsController', () => {
         controller.updateState(1, { state: 'toggle' }),
       ).rejects.toThrowError(ConflictException);
 
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
+
       mockDoorsService.findOne.mockReset();
     });
 
@@ -381,6 +384,8 @@ describe('DoorsController', () => {
       await controller.updateState(1, { state: 'open' });
 
       expect(mockDoorsService.open).not.toBeCalled();
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
 
       mockDoorsService.findOne.mockReset();
     });
@@ -396,6 +401,8 @@ describe('DoorsController', () => {
       await controller.updateState(1, { state: 'close' });
 
       expect(mockDoorsService.close).not.toBeCalled();
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
 
       mockDoorsService.findOne.mockReset();
     });
