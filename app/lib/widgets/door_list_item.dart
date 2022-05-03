@@ -24,8 +24,9 @@ class DoorListItem extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      child: Card(
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         IconButton(
           onPressed: !door.isEnabled ? null : () => handleDoorIconPressed(),
           icon: const Icon(Icons.garage),
@@ -47,7 +48,7 @@ class DoorListItem extends StatelessWidget {
             }).toList();
           },
         ),
-      ]),
+      ])),
     );
   }
 }
