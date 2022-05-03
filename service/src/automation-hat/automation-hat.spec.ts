@@ -26,77 +26,77 @@ describe('AutomationHatService', () => {
         action: 'high',
         duration: 1,
         index: 1,
-        target: 'digitalOutput1'
+        target: 'digitalOutput1',
       },
       {
         action: 'high',
         duration: 1,
         index: 1,
-        target: 'digitalOutput2'
+        target: 'digitalOutput2',
       },
       {
         action: 'high',
         duration: 1,
         index: 1,
-        target: 'digitalOutput3'
+        target: 'digitalOutput3',
       },
       {
         action: 'low',
         duration: 1,
         index: 1,
-        target: 'digitalOutput1'
+        target: 'digitalOutput1',
       },
       {
         action: 'low',
         duration: 1,
         index: 1,
-        target: 'digitalOutput2'
+        target: 'digitalOutput2',
       },
       {
         action: 'low',
         duration: 1,
         index: 1,
-        target: 'digitalOutput3'
+        target: 'digitalOutput3',
       },
       {
         action: 'on',
         duration: 1,
         index: 1,
-        target: 'relay1'
+        target: 'relay1',
       },
       {
         action: 'on',
         duration: 1,
         index: 1,
-        target: 'relay2'
+        target: 'relay2',
       },
       {
         action: 'on',
         duration: 1,
         index: 1,
-        target: 'relay3'
+        target: 'relay3',
       },
       {
         action: 'off',
         duration: 1,
         index: 1,
-        target: 'relay1'
+        target: 'relay1',
       },
       {
         action: 'off',
         duration: 1,
         index: 1,
-        target: 'relay2'
+        target: 'relay2',
       },
       {
         action: 'off',
         duration: 1,
         index: 1,
-        target: 'relay3'
+        target: 'relay3',
       },
     ];
 
-    for (let sequenceObject of sequenceObjects) {
+    for (const sequenceObject of sequenceObjects) {
       await service.runSequenceObject(sequenceObject as SequenceObject);
     }
   });
@@ -107,5 +107,5 @@ describe('AutomationHatService', () => {
 
   it('should turn on comms light', () => {
     service.turnOnCommsLight();
-  })
+  });
 });
