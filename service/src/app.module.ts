@@ -1,10 +1,10 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { DoorsModule } from './doors/doors.module';
 import { HealthModule } from './health/health.module';
 import { AutomationHatModule } from './automation-hat/automation-hat.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { MikroOrmMiddleware, MikroOrmModule } from '@mikro-orm/nestjs';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM } from '@mikro-orm/core';
 import { DatabaseSeeder } from './seeders/DatabaseSeeder';
 
