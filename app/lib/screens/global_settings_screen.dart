@@ -16,7 +16,9 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   String _fqdn = '';
   String _apiKey = '';
 
-  _GlobalSettingsScreenState() {
+  @override
+  void initState() {
+    super.initState();
     LocalStorageService.instance
         .getStringValue('global_fqdn')
         .then((value) => setState(() {
@@ -30,11 +32,6 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                 _apiKey = value;
               },
             ));
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   Future<bool> _testConnection() async {
@@ -52,116 +49,89 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
-          // actions: <Widget>[
-          //   IconButton(
-          //     icon: const Icon(Icons.settings),
-          //     tooltip: 'Global Settings',
-          //     onPressed: () {
-          //       // handle the press
-          //     },
-          //   ),
-          // ],
         ),
-        body: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'FQDN',
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'A FQDN is required';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  LocalStorageService.instance
-                      .setStringValue('global_fqdn', value ?? '');
-                },
-                onChanged: (value) {
-                  _fqdn = value;
-                },
-                initialValue: _fqdn,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(hintText: 'API Key'),
-                initialValue: _apiKey,
-                onSaved: (value) {
-                  LocalStorageService.instance
-                      .setStringValue('global_api_key', value ?? '');
-                },
-                onChanged: (value) {
-                  _apiKey = value;
-                },
-              ),
-              Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                            onPressed: () async {
-                              ScaffoldMessenger.of(context).clearSnackBars();
+        body: Container(
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'FQDN',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'A FQDN is required';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      LocalStorageService.instance
+                          .setStringValue('global_fqdn', value ?? '');
+                    },
+                    onChanged: (value) {
+                      _fqdn = value;
+                    },
+                    initialValue: _fqdn,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(hintText: 'API Key'),
+                    initialValue: _apiKey,
+                    onSaved: (value) {
+                      LocalStorageService.instance
+                          .setStringValue('global_api_key', value ?? '');
+                    },
+                    onChanged: (value) {
+                      _apiKey = value;
+                    },
+                  ),
+                  const Spacer(),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.grey,
+                          minimumSize: Size.fromHeight(40)),
+                      onPressed: () async {
+                        ScaffoldMessenger.of(context).clearSnackBars();
 
-                              if (await _testConnection()) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Test Successful'),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Test Failed'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                            child: const Text('Test')),
-                        ElevatedButton(
-                          onPressed: () async {
-                            // Validate will return true if the form is valid, or false if
-                            // the form is invalid.
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Settings Saved'),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text('Save'),
-                        ),
-                      ])),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(vertical: 16.0),
-              //   child: ElevatedButton(
-              //     onPressed: () async {
-              //       // Validate will return true if the form is valid, or false if
-              //       // the form is invalid.
-              //       if (_formKey.currentState!.validate()) {
-              //         _formKey.currentState!.save();
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           const SnackBar(
-              //             content: Text('Settings Saved'),
-              //           ),
-              //         );
-              //       }
-              //     },
-              //     child: const Text('Save'),
-              //   ),
-              // ),
-            ],
-          ),
-        ));
+                        if (await _testConnection()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Test Successful'),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Test Failed'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text('Test')),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(40)),
+                    onPressed: () async {
+                      // Validate will return true if the form is valid, or false if
+                      // the form is invalid.
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Settings Saved'),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            )));
   }
 }
