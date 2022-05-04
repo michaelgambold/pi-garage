@@ -65,6 +65,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
+      this.#logger.warn('Invalid door id');
       throw new BadRequestException('Invalid door id');
     }
 
@@ -91,6 +92,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
+      this.#logger.warn('Invalid door id');
       throw new BadRequestException('Invalid door id');
     }
 
@@ -117,6 +119,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
+      this.#logger.warn('Invalid door id');
       throw new BadRequestException('Invalid Door id');
     }
 
@@ -141,6 +144,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
+      this.#logger.warn('Invalid door id');
       throw new BadRequestException('Invalid Door id');
     }
 
@@ -151,9 +155,9 @@ export class DoorsController {
         ['low', 'high'].includes(dto.action)
       ) {
         this.automationHatService.turnOffCommsLight();
-        throw new BadRequestException(
-          `Invalid action ${dto.action} for target ${dto.target}`,
-        );
+        const msg = `Invalid action ${dto.action} for target ${dto.target}`;
+        this.#logger.warn(msg);
+        throw new BadRequestException(msg);
       }
 
       if (
@@ -161,14 +165,15 @@ export class DoorsController {
         ['off', 'on'].includes(dto.action)
       ) {
         this.automationHatService.turnOffCommsLight();
-        throw new BadRequestException(
-          `Invalid action ${dto.action} for target ${dto.target}`,
-        );
+        const msg = `Invalid action ${dto.action} for target ${dto.target}`;
+        this.#logger.warn(msg);
+        throw new BadRequestException(msg);
       }
     });
 
     if (body.some((x) => x.duration < 0)) {
       this.automationHatService.turnOffCommsLight();
+      this.#logger.warn('Duration cannot be negative');
       throw new BadRequestException('Duration cannot be negative');
     }
 
@@ -213,6 +218,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
+      this.#logger.warn('Invalid door id');
       throw new BadRequestException('Invalid Door id');
     }
 
@@ -220,6 +226,8 @@ export class DoorsController {
 
     // don't process any requests when we are opening/closing the doors
     if (door.state === 'closing' || door.state === 'opening') {
+      this.automationHatService.turnOffCommsLight();
+      this.#logger.warn('Door state currently changing');
       throw new ConflictException('Door state currently changing');
     }
 
@@ -247,6 +255,7 @@ export class DoorsController {
         break;
       default:
         this.automationHatService.turnOffCommsLight();
+        this.#logger.warn(`Invalid state ${body.state}`);
         throw new BadRequestException('Invalid state');
     }
 

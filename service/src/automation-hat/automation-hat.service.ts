@@ -97,7 +97,11 @@ export class AutomationHatService {
         break;
     }
 
-    if (!sequenceObject.duration) return;
+    if (!sequenceObject.duration) {
+      // add a safety delay to try and prevent relay lockups
+      await delay(20);
+      return;
+    }
 
     this.#logger.log(`Duration of ${sequenceObject.duration} detected`);
 
@@ -157,6 +161,9 @@ export class AutomationHatService {
         }
         break;
     }
+
+    // add a safety delay to try and prevent relay lockups
+    await delay(20);
   }
 
   turnOffCommsLight() {
