@@ -1,7 +1,7 @@
-import 'package:app/widgets/sequence_list_item.dart';
 import 'package:flutter/material.dart';
 
 import '../models/sequence_object.dart';
+import '../widgets/sequence_list_item.dart';
 
 class SequenceList extends StatefulWidget {
   const SequenceList({Key? key, required this.sequence}) : super(key: key);
