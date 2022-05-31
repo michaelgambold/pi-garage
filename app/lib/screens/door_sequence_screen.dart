@@ -35,11 +35,17 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
             }));
   }
 
-  void addSequenceObject() {
+  void _addSequenceObject() {
     setState(() => {_sequence.add(const SequenceObject('on', 1000, 'relay1'))});
   }
 
-  void save() async {
+  void handleRemoveItem(int index) {
+    setState(() {
+      _sequence.removeAt(index);
+    });
+  }
+
+  void _save() async {
     try {
       await _doorRepository.updateDoorSequence(widget.doorId, _sequence);
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -82,11 +88,12 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                   children: [
                     SequenceList(
                       sequence: _sequence,
+                      removeItemHandler: handleRemoveItem,
                     ),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             minimumSize: const Size.fromHeight(40)),
-                        onPressed: () => save(),
+                        onPressed: () => _save(),
                         child: const Text('Save')),
                   ],
                 ),
@@ -99,7 +106,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                   right: 20,
                   child: FloatingActionButton(
                     onPressed: () {
-                      addSequenceObject();
+                      _addSequenceObject();
                     },
                     child: const Icon(Icons.add),
                   ))

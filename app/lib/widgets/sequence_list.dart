@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 
 import '../models/sequence_object.dart';
 import '../widgets/sequence_list_item.dart';
 
 class SequenceList extends StatefulWidget {
-  const SequenceList({Key? key, required this.sequence}) : super(key: key);
+  const SequenceList(
+      {Key? key, required this.sequence, required this.removeItemHandler})
+      : super(key: key);
 
   final List<SequenceObject> sequence;
+  final Function(int) removeItemHandler;
 
   @override
   State<SequenceList> createState() => _SequenceListState();
 }
 
 class _SequenceListState extends State<SequenceList> {
-  void _removeItem(int index) {
-    print('removing at index $index');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(
+    return Column(
       children: widget.sequence
-          .map((sequenceObject) => SequenceListItem(
+          .mapIndexed((index, sequenceObject) => SequenceListItem(
                 sequenceObject: sequenceObject,
-                onRemoveHandler: _removeItem,
+                index: index,
+                onRemoveHandler: widget.removeItemHandler,
               ))
           .toList(),
-    ));
+    );
   }
 }

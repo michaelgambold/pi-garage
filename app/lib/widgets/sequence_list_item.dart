@@ -3,10 +3,14 @@ import '../models/sequence_object.dart';
 
 class SequenceListItem extends StatefulWidget {
   SequenceListItem(
-      {Key? key, required this.sequenceObject, required this.onRemoveHandler})
+      {Key? key,
+      required this.sequenceObject,
+      required this.onRemoveHandler,
+      required this.index})
       : super(key: key);
 
   final SequenceObject sequenceObject;
+  final int index;
   final Function(int) onRemoveHandler;
 
   @override
@@ -16,8 +20,7 @@ class SequenceListItem extends StatefulWidget {
 class _SequenceListItemState extends State<SequenceListItem> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Card(
+    return Card(
       child: Container(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -91,11 +94,11 @@ class _SequenceListItemState extends State<SequenceListItem> {
                       minimumSize: Size.zero,
                       padding: EdgeInsets.zero,
                     ),
-                    onPressed: () => widget.onRemoveHandler(0),
+                    onPressed: () => widget.onRemoveHandler(widget.index),
                     child: const Icon(Icons.clear))),
           ],
         ),
       ),
-    ));
+    );
   }
 }
