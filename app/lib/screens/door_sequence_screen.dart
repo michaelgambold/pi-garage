@@ -35,6 +35,10 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
             }));
   }
 
+  void addSequenceObject() {
+    setState(() => {_sequence.add(const SequenceObject('on', 1000, 'relay1'))});
+  }
+
   void save() async {
     try {
       await _doorRepository.updateDoorSequence(widget.doorId, _sequence);
@@ -90,12 +94,14 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                   await _refresh();
                 },
               ),
-              const Positioned(
+              Positioned(
                   bottom: 30,
                   right: 20,
                   child: FloatingActionButton(
-                    onPressed: null,
-                    child: Icon(Icons.add),
+                    onPressed: () {
+                      addSequenceObject();
+                    },
+                    child: const Icon(Icons.add),
                   ))
             ])));
   }
