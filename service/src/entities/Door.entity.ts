@@ -24,6 +24,7 @@ export class Door {
 
   @OneToMany(() => SequenceObject, (sequenceObject) => sequenceObject.door, {
     orderBy: { index: QueryOrder.ASC },
+    orphanRemoval: true,
   })
   sequence = new Collection<SequenceObject>(this);
 }
