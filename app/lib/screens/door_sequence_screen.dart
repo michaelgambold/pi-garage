@@ -39,9 +39,15 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
     setState(() => {_sequence.add(const SequenceObject('on', 1000, 'relay1'))});
   }
 
-  void handleRemoveItem(int index) {
+  void _handleRemoveItem(int index) {
     setState(() {
       _sequence.removeAt(index);
+    });
+  }
+
+  void _handleUpdateItem(int index, SequenceObject sequenceObject) {
+    setState(() {
+      _sequence[index] = sequenceObject;
     });
   }
 
@@ -88,7 +94,8 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                   children: [
                     SequenceList(
                       sequence: _sequence,
-                      removeItemHandler: handleRemoveItem,
+                      handleRemoveItem: _handleRemoveItem,
+                      handleUpdateItem: _handleUpdateItem,
                     ),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
