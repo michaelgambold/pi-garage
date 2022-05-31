@@ -9,4 +9,7 @@ class SequenceObject {
       : action = json['action'],
         duration = json['duration'],
         target = json['target'];
+
+  Map<String, dynamic> toJson() =>
+      {'action': action, 'duration': duration, 'target': target};
 }

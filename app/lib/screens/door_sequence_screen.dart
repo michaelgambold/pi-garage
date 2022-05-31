@@ -35,19 +35,28 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
             }));
   }
 
-  void save() {
-    // _doorRepository.updateDoor(widget.doorId, updateDoor)
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Sequence Saved'),
-      ),
-    );
+  void save() async {
+    try {
+      await _doorRepository.updateDoorSequence(widget.doorId, _sequence);
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sequence Saved'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_sequence);
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -80,7 +89,6 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                 onRefresh: () async {
                   await _refresh();
                 },
-                color: Colors.purple,
               ),
               const Positioned(
                   bottom: 30,
