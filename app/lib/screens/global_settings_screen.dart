@@ -13,8 +13,8 @@ class GlobalSettingsScreen extends StatefulWidget {
 }
 
 class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
-  String _fqdn = '';
-  String _apiKey = '';
+  var _fqdn = '';
+  var _apiKey = '';
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
 
   Future<bool> _testConnection() async {
     return HttpService()
-        .get(Uri.parse(_fqdn + '/health'))
+        .get(Uri.parse(_fqdn + '/health'), null)
         .then((value) => value.statusCode == 200)
         .catchError((error) {
       return false;
