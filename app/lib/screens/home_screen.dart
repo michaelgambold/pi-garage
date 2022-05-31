@@ -17,13 +17,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _doorRepository = DoorRepository();
-
   List<Door> _doors = [];
-  late Timer _timer;
-  static const int _updateInterval = 10;
 
-  void refreshDoors() {
-    _doorRepository
+  Future<void> refreshDoors() async {
+    await _doorRepository
         .findAllDoors()
         .then((value) => setState(() => _doors = value));
   }
@@ -32,16 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     refreshDoors();
-
-    _timer = Timer.periodic(const Duration(seconds: _updateInterval), (timer) {
-      refreshDoors();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _timer.cancel();
   }
 
   @override
@@ -59,7 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(child: DoorList(doors: _doors)),
+      body: Container(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(children: [
+            RefreshIndicator(
+                onRefresh: () async {
+                  await refreshDoors();
+                },
+                child: ListView(children: [DoorList(doors: _doors)]))
+          ])),
     );
   }
 }
