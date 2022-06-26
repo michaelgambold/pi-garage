@@ -10,6 +10,24 @@ class DoorRepository {
   final _httpService = HttpService();
   final _localStorageService = LocalStorageService.instance;
 
+  Future<void> changeDoorState(int doorId, String state) async {
+    var apiKey = await _localStorageService.getStringValue('global_api_key');
+    var fqdn = await _localStorageService.getStringValue('global_fqdn');
+
+    var headers = <String, String>{'x-api-key': apiKey};
+
+    var res = await _httpService.post(
+        Uri.parse('$fqdn/api/v1/doors/$doorId/state'),
+        {'state': state},
+        headers);
+
+    if (res.statusCode == 200) {
+      return;
+    }
+
+    throw Exception(res.reasonPhrase);
+  }
+
   Future<List<Door>> findAllDoors() async {
     var apiKey = await _localStorageService.getStringValue('global_api_key');
     var fqdn = await _localStorageService.getStringValue('global_fqdn');
