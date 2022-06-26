@@ -112,7 +112,7 @@ class _SequenceListItemState extends State<SequenceListItem> {
                                 widget.index,
                                 SequenceObject(
                                     widget.sequenceObject.action,
-                                    int.parse(_durationController.text),
+                                    int.tryParse(_durationController.text) ?? 0,
                                     widget.sequenceObject.target)),
                           ))
                     ],
