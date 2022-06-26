@@ -1,8 +1,6 @@
 import { ConsoleLogger, Injectable, LoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AutomationHat } from 'automation-hat';
-import { DigitalOutputState } from 'automation-hat/dist/io/digital-output';
-import { RelayState } from 'automation-hat/dist/io/relay';
 import delay from 'delay';
 import { SequenceObject } from 'src/entities/SequenceObject.entity';
 
@@ -29,16 +27,12 @@ export class AutomationHatService {
   }
 
   async runSequenceObject(sequenceObject: SequenceObject) {
-    let prevState: RelayState | DigitalOutputState;
-
     this.#logger.log(
       `Setting ${sequenceObject.target} to ${sequenceObject.action}`,
     );
 
     switch (sequenceObject.target) {
       case 'digitalOutput1':
-        prevState = this.#automationHat.digitalOutputs.output1.state;
-
         if (sequenceObject.action === 'high') {
           this.#automationHat.digitalOutputs.output1.high();
         } else if (sequenceObject.action === 'low') {
@@ -47,8 +41,6 @@ export class AutomationHatService {
         break;
 
       case 'digitalOutput2':
-        prevState = this.#automationHat.digitalOutputs.output2.state;
-
         if (sequenceObject.action === 'high') {
           this.#automationHat.digitalOutputs.output2.high();
         } else if (sequenceObject.action === 'low') {
@@ -57,8 +49,6 @@ export class AutomationHatService {
         break;
 
       case 'digitalOutput3':
-        prevState = this.#automationHat.digitalOutputs.output3.state;
-
         if (sequenceObject.action === 'high') {
           this.#automationHat.digitalOutputs.output3.high();
         } else if (sequenceObject.action === 'low') {
@@ -67,8 +57,6 @@ export class AutomationHatService {
         break;
 
       case 'relay1':
-        prevState = this.#automationHat.relays.relay1.state;
-
         if (sequenceObject.action === 'on') {
           this.#automationHat.relays.relay1.on();
         } else if (sequenceObject.action === 'off') {
@@ -77,8 +65,6 @@ export class AutomationHatService {
         break;
 
       case 'relay2':
-        prevState = this.#automationHat.relays.relay2.state;
-
         if (sequenceObject.action === 'on') {
           this.#automationHat.relays.relay2.on();
         } else if (sequenceObject.action === 'off') {
@@ -87,8 +73,6 @@ export class AutomationHatService {
         break;
 
       case 'relay3':
-        prevState = this.#automationHat.relays.relay3.state;
-
         if (sequenceObject.action === 'on') {
           this.#automationHat.relays.relay3.on();
         } else if (sequenceObject.action === 'off') {
@@ -96,74 +80,8 @@ export class AutomationHatService {
         }
         break;
     }
-
-    if (!sequenceObject.duration) {
-      // add a safety delay to try and prevent relay lockups
-      await delay(20);
-      return;
-    }
-
-    this.#logger.log(`Duration of ${sequenceObject.duration} detected`);
 
     await delay(sequenceObject.duration);
-
-    this.#logger.log(
-      `Setting ${sequenceObject.target} to previous state of ${prevState}`,
-    );
-
-    // set back to initial state
-    switch (sequenceObject.target) {
-      case 'digitalOutput1':
-        if (prevState === 'high') {
-          this.#automationHat.digitalOutputs.output1.high();
-        } else if (prevState === 'low') {
-          this.#automationHat.digitalOutputs.output1.low();
-        }
-        break;
-
-      case 'digitalOutput2':
-        if (prevState === 'high') {
-          this.#automationHat.digitalOutputs.output2.high();
-        } else if (prevState === 'low') {
-          this.#automationHat.digitalOutputs.output2.low();
-        }
-        break;
-
-      case 'digitalOutput3':
-        if (prevState === 'high') {
-          this.#automationHat.digitalOutputs.output3.high();
-        } else if (prevState === 'low') {
-          this.#automationHat.digitalOutputs.output3.low();
-        }
-        break;
-
-      case 'relay1':
-        if (prevState === 'on') {
-          this.#automationHat.relays.relay1.on();
-        } else if (prevState === 'off') {
-          this.#automationHat.relays.relay1.off();
-        }
-        break;
-
-      case 'relay2':
-        if (prevState === 'on') {
-          this.#automationHat.relays.relay2.on();
-        } else if (prevState === 'off') {
-          this.#automationHat.relays.relay2.off();
-        }
-        break;
-
-      case 'relay3':
-        if (prevState === 'on') {
-          this.#automationHat.relays.relay3.on();
-        } else if (prevState === 'off') {
-          this.#automationHat.relays.relay3.off();
-        }
-        break;
-    }
-
-    // add a safety delay to try and prevent relay lockups
-    await delay(20);
   }
 
   turnOffCommsLight() {
