@@ -3,21 +3,40 @@ import '../models/sequence_object.dart';
 
 class SequenceListItem extends StatefulWidget {
   SequenceListItem(
-      {Key? key, required this.sequenceObject, required this.onRemoveHandler})
+      {Key? key,
+      required this.sequenceObject,
+      required this.onRemoveHandler,
+      required this.index,
+      required this.onUpdateHandler})
       : super(key: key);
 
   final SequenceObject sequenceObject;
+  final int index;
   final Function(int) onRemoveHandler;
+  final Function(int, SequenceObject) onUpdateHandler;
 
   @override
   State<SequenceListItem> createState() => _SequenceListItemState();
 }
 
 class _SequenceListItemState extends State<SequenceListItem> {
+  final _durationController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _durationController.text = widget.sequenceObject.duration.toString();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _durationController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Card(
+    return Card(
       child: Container(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -34,13 +53,18 @@ class _SequenceListItemState extends State<SequenceListItem> {
                           child: DropdownButton(
                               alignment: Alignment.centerRight,
                               value: widget.sequenceObject.action,
-                              items: ['on', 'off'].map((value) {
+                              items: ['on', 'off', 'high', 'low'].map((value) {
                                 return DropdownMenuItem(
                                   child: Text(value),
                                   value: value,
                                 );
                               }).toList(),
-                              onChanged: (value) => print(value)))
+                              onChanged: (value) => widget.onUpdateHandler(
+                                  widget.index,
+                                  SequenceObject(
+                                      value.toString(),
+                                      int.parse(_durationController.text),
+                                      widget.sequenceObject.target))))
                     ],
                   ),
                   Row(
@@ -65,10 +89,15 @@ class _SequenceListItemState extends State<SequenceListItem> {
                                     child: Text('Digital Output 2'),
                                     value: 'digitalOutput2'),
                                 DropdownMenuItem(
-                                    child: Text('Ditital Output 3'),
+                                    child: Text('Digital Output 3'),
                                     value: 'digitalOutput3')
                               ],
-                              onChanged: (value) => print(value)))
+                              onChanged: (value) => widget.onUpdateHandler(
+                                  widget.index,
+                                  SequenceObject(
+                                      widget.sequenceObject.action,
+                                      int.parse(_durationController.text),
+                                      value.toString()))))
                     ],
                   ),
                   Row(
@@ -78,7 +107,13 @@ class _SequenceListItemState extends State<SequenceListItem> {
                           flex: 2,
                           child: TextField(
                             keyboardType: TextInputType.number,
-                            onChanged: (value) => print(value),
+                            controller: _durationController,
+                            onChanged: (value) => widget.onUpdateHandler(
+                                widget.index,
+                                SequenceObject(
+                                    widget.sequenceObject.action,
+                                    int.tryParse(_durationController.text) ?? 0,
+                                    widget.sequenceObject.target)),
                           ))
                     ],
                   ),
@@ -91,11 +126,11 @@ class _SequenceListItemState extends State<SequenceListItem> {
                       minimumSize: Size.zero,
                       padding: EdgeInsets.zero,
                     ),
-                    onPressed: () => widget.onRemoveHandler(0),
+                    onPressed: () => widget.onRemoveHandler(widget.index),
                     child: const Icon(Icons.clear))),
           ],
         ),
       ),
-    ));
+    );
   }
 }

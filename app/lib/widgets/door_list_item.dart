@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import '../models/door.dart';
+import '../repositories/door_repository.dart';
 
-class DoorListItem extends StatelessWidget {
+class DoorListItem extends StatefulWidget {
   const DoorListItem({Key? key, required this.door}) : super(key: key);
-
   final Door door;
 
-  handleDoorIconPressed() {
-    print('handle door pressed');
+  @override
+  State<DoorListItem> createState() => _DoorListItemState();
+}
+
+class _DoorListItemState extends State<DoorListItem> {
+  final _doorRepository = DoorRepository();
+
+  _handleDoorIconPressed() {
+    _doorRepository.changeDoorState(widget.door.id, 'toggle');
   }
 
   @override
@@ -15,10 +22,12 @@ class DoorListItem extends StatelessWidget {
     handleMenuClick(String value) {
       switch (value) {
         case 'Settings':
-          Navigator.pushNamed(context, '/doors/${door.id.toString()}/settings');
+          Navigator.pushNamed(
+              context, '/doors/${widget.door.id.toString()}/settings');
           break;
         case 'Sequence':
-          Navigator.pushNamed(context, '/doors/${door.id.toString()}/sequence');
+          Navigator.pushNamed(
+              context, '/doors/${widget.door.id.toString()}/sequence');
           break;
       }
     }
@@ -28,11 +37,12 @@ class DoorListItem extends StatelessWidget {
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         IconButton(
-          onPressed: !door.isEnabled ? null : () => handleDoorIconPressed(),
+          onPressed:
+              !widget.door.isEnabled ? null : () => _handleDoorIconPressed(),
           icon: const Icon(Icons.garage),
           iconSize: 50,
         ),
-        Text('${door.label} (${door.state})'),
+        Text('${widget.door.label} (${widget.door.state})'),
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert),
           onSelected: handleMenuClick,
