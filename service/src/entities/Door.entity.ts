@@ -16,6 +16,9 @@ export class Door {
   @Property()
   label: string;
 
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
+
   @Property({ default: true })
   isEnabled: boolean;
 
