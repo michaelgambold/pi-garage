@@ -340,6 +340,22 @@ describe('DoorsController', () => {
       expect(commsOnSpy).toBeCalledTimes(3);
     });
 
+    it('should return 409 when trying to change state quickly', async () => {
+      mockDoorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        updatedAt: new Date(),
+        label: 'door1',
+        state: 'open',
+      });
+
+      await expect(
+        controller.updateState(1, { state: 'toggle' }),
+      ).rejects.toThrowError(ConflictException);
+
+      mockDoorsService.findOne.mockReset();
+    });
+
     it('should return 409 when door is opening', async () => {
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
