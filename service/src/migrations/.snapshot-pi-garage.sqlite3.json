@@ -21,6 +21,16 @@
           "nullable": false,
           "mappedType": "text"
         },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
         "is_enabled": {
           "name": "is_enabled",
           "type": "integer",

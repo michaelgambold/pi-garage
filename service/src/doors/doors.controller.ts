@@ -13,6 +13,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { differenceInSeconds } from 'date-fns';
 import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { SequenceObject } from '../entities/SequenceObject.entity';
@@ -222,7 +223,14 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
-    const door = await this.doorsService.findOne(1);
+    const door = await this.doorsService.findOne(id);
+
+    // don't process any requests if the last update time was less than 1 second ago
+    if (differenceInSeconds(new Date(), door.updatedAt) < 1000) {
+      throw new ConflictException(
+        'Cannot change door state faster than 1 second',
+      );
+    }
 
     // don't process any requests when we are opening/closing the doors
     if (door.state === 'closing' || door.state === 'opening') {

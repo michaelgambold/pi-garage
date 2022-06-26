@@ -20,6 +20,13 @@ export class DatabaseSeeder extends Seeder {
             index: 1,
             target: 'relay1',
           },
+          {
+            action: 'off',
+            door: 1,
+            duration: 1000,
+            index: 2,
+            target: 'relay1',
+          },
         ],
       });
     }
@@ -40,6 +47,13 @@ export class DatabaseSeeder extends Seeder {
             index: 1,
             target: 'relay2',
           },
+          {
+            action: 'off',
+            door: 2,
+            duration: 1000,
+            index: 2,
+            target: 'relay2',
+          },
         ],
       });
     }
@@ -58,6 +72,13 @@ export class DatabaseSeeder extends Seeder {
             door: 3,
             duration: 1000,
             index: 1,
+            target: 'relay3',
+          },
+          {
+            action: 'off',
+            door: 3,
+            duration: 1000,
+            index: 2,
             target: 'relay3',
           },
         ],
