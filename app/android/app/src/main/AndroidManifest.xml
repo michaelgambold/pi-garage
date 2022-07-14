@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.app">
+    package="com.pigarage.app">
    <application
         android:label="app"
         android:name="${applicationName}"
@@ -30,6 +30,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <uses-permission android:name="android.permission.INTERNET"/>
     </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
