@@ -1,8 +1,7 @@
-name: Docker Image CI
+name: Android Test
 
 on:
   push:
-  workflow_dispatch:
 
 jobs:
   android:
@@ -16,14 +15,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Set up ruby env
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 3.1.2
-      #     bundler-cache: true
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+          bundler-cache: true
 
       - name: Run tests
-        uses: maierj/fastlane-action@v2
+        uses: maierj/fastlane-action@v2.2.1
         with:
           lane: android test
           subdirectory: android
