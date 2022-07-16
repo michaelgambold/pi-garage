@@ -33,6 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var scaffoldMessenger = ScaffoldMessenger.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -51,7 +53,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Stack(children: [
             RefreshIndicator(
                 onRefresh: () async {
-                  await refreshDoors();
+                  try {
+                    await refreshDoors();
+                  } catch (e) {
+                    scaffoldMessenger.clearSnackBars();
+                    scaffoldMessenger.showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(e.toString())));
+                  }
                 },
                 child: ListView(children: [DoorList(doors: _doors)]))
           ])),

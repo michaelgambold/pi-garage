@@ -53,6 +53,8 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var scaffoldMessenger = ScaffoldMessenger.of(context);
+
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -111,8 +113,8 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
                             label: _labelController.text,
                             isEnabled: _isEnabled));
 
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    scaffoldMessenger.clearSnackBars();
+                    scaffoldMessenger.showSnackBar(
                       const SnackBar(
                         content: Text('Settings Saved'),
                       ),

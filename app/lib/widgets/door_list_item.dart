@@ -13,12 +13,20 @@ class DoorListItem extends StatefulWidget {
 class _DoorListItemState extends State<DoorListItem> {
   final _doorRepository = DoorRepository();
 
-  _handleDoorIconPressed() {
-    _doorRepository.changeDoorState(widget.door.id, 'toggle');
-  }
-
   @override
   Widget build(BuildContext context) {
+    var scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    _handleDoorIconPressed() async {
+      try {
+        await _doorRepository.changeDoorState(widget.door.id, 'toggle');
+      } catch (e) {
+        scaffoldMessenger.clearSnackBars();
+        scaffoldMessenger.showSnackBar(
+            SnackBar(backgroundColor: Colors.red, content: Text(e.toString())));
+      }
+    }
+
     handleMenuClick(String value) {
       switch (value) {
         case 'Settings':
