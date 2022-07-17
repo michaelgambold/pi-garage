@@ -12,14 +12,22 @@ class DoorListItem extends StatefulWidget {
 
 class _DoorListItemState extends State<DoorListItem> {
   final _doorRepository = DoorRepository();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
-  _handleDoorIconPressed() {
-    _doorRepository.changeDoorState(widget.door.id, 'toggle');
+  _handleDoorIconPressed() async {
+    try {
+      await _doorRepository.changeDoorState(widget.door.id, 'toggle');
+    } catch (e) {
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+          SnackBar(backgroundColor: Colors.red, content: Text(e.toString())));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    handleMenuClick(String value) {
+    _handleMenuClick(String value) {
       switch (value) {
         case 'Settings':
           Navigator.pushNamed(
@@ -32,33 +40,32 @@ class _DoorListItemState extends State<DoorListItem> {
       }
     }
 
-    return Container(
-      child: Card(
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        IconButton(
-          onPressed:
-              !widget.door.isEnabled ? null : () => _handleDoorIconPressed(),
-          icon: const Icon(Icons.garage),
-          iconSize: 50,
-        ),
-        Text('${widget.door.label} (${widget.door.state})'),
-        PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert),
-          onSelected: handleMenuClick,
-          itemBuilder: (BuildContext context) {
-            return {
-              'Settings',
-              'Sequence',
-            }.map((String choice) {
-              return PopupMenuItem<String>(
-                value: choice,
-                child: Text(choice),
-              );
-            }).toList();
-          },
-        ),
-      ])),
-    );
+    return Card(
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      IconButton(
+        highlightColor: Colors.blue,
+        onPressed:
+            !widget.door.isEnabled ? null : () => _handleDoorIconPressed(),
+        icon: const Icon(Icons.garage),
+        iconSize: 50,
+      ),
+      Text('${widget.door.label} (${widget.door.state})'),
+      PopupMenuButton<String>(
+        icon: const Icon(Icons.more_vert),
+        onSelected: _handleMenuClick,
+        itemBuilder: (BuildContext context) {
+          return {
+            'Settings',
+            'Sequence',
+          }.map((String choice) {
+            return PopupMenuItem<String>(
+              value: choice,
+              child: Text(choice),
+            );
+          }).toList();
+        },
+      ),
+    ]));
   }
 }

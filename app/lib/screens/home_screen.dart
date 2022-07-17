@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _doorRepository = DoorRepository();
   List<Door> _doors = [];
 
-  Future<void> refreshDoors() async {
+  Future<void> _refreshDoors() async {
     await _doorRepository
         .findAllDoors()
         .then((value) => setState(() => _doors = value));
@@ -28,11 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    refreshDoors();
+    _refreshDoors();
   }
 
   @override
   Widget build(BuildContext context) {
+    var scaffoldMessenger = ScaffoldMessenger.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -51,7 +53,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Stack(children: [
             RefreshIndicator(
                 onRefresh: () async {
-                  await refreshDoors();
+                  try {
+                    await _refreshDoors();
+                  } catch (e) {
+                    scaffoldMessenger.clearSnackBars();
+                    scaffoldMessenger.showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(e.toString())));
+                  }
                 },
                 child: ListView(children: [DoorList(doors: _doors)]))
           ])),
