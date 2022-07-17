@@ -18,9 +18,8 @@ class DoorSequenceScreen extends StatefulWidget {
 
 class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   final _doorRepository = DoorRepository();
-  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
-
   List<SequenceObject> _sequence = [];
 
   @override
@@ -37,8 +36,8 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                 _sequence = value;
               }));
     } catch (e) {
-      scaffoldMessengerKey.currentState?.clearSnackBars();
-      scaffoldMessengerKey.currentState?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text(e.toString()),
           backgroundColor: Colors.red,
@@ -66,15 +65,15 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   void _save() async {
     try {
       await _doorRepository.updateDoorSequence(widget.doorId, _sequence);
-      scaffoldMessengerKey.currentState?.clearSnackBars();
-      scaffoldMessengerKey.currentState?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
           content: Text('Sequence Saved'),
         ),
       );
     } catch (e) {
-      scaffoldMessengerKey.currentState?.clearSnackBars();
-      scaffoldMessengerKey.currentState?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text(e.toString()),
           backgroundColor: Colors.red,
@@ -86,7 +85,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
-        key: scaffoldMessengerKey,
+        key: _scaffoldMessengerKey,
         child: Scaffold(
             appBar: AppBar(
               title: Text(widget.title),
