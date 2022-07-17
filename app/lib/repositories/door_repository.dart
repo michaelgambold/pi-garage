@@ -21,7 +21,7 @@ class DoorRepository {
         {'state': state},
         headers);
 
-    if (res.statusCode == 200) {
+    if (res.statusCode == 201) {
       return;
     }
 
