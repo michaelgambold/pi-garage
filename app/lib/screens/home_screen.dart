@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _doorRepository = DoorRepository();
   List<Door> _doors = [];
 
-  Future<void> refreshDoors() async {
+  Future<void> _refreshDoors() async {
     await _doorRepository
         .findAllDoors()
         .then((value) => setState(() => _doors = value));
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    refreshDoors();
+    _refreshDoors();
   }
 
   @override
@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
             RefreshIndicator(
                 onRefresh: () async {
                   try {
-                    await refreshDoors();
+                    await _refreshDoors();
                   } catch (e) {
                     scaffoldMessenger.clearSnackBars();
                     scaffoldMessenger.showSnackBar(SnackBar(
