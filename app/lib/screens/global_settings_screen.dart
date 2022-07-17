@@ -36,7 +36,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
 
   Future<bool> _testConnection() async {
     return HttpService()
-        .get(Uri.parse(_fqdn + '/health'), null)
+        .get(Uri.parse('$_fqdn/health'), null)
         .then((value) => value.statusCode == 200)
         .catchError((error) {
       return false;
@@ -45,7 +45,8 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    var scaffoldMesseger = ScaffoldMessenger.of(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -54,7 +55,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
         body: Container(
             padding: const EdgeInsets.all(8.0),
             child: Form(
-              key: _formKey,
+              key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -92,18 +93,18 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           primary: Colors.grey,
-                          minimumSize: Size.fromHeight(40)),
+                          minimumSize: const Size.fromHeight(40)),
                       onPressed: () async {
-                        ScaffoldMessenger.of(context).clearSnackBars();
+                        scaffoldMesseger.clearSnackBars();
 
                         if (await _testConnection()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMesseger.showSnackBar(
                             const SnackBar(
                               content: Text('Test Successful'),
                             ),
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMesseger.showSnackBar(
                             const SnackBar(
                               content: Text('Test Failed'),
                               backgroundColor: Colors.red,
@@ -118,8 +119,8 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                     onPressed: () async {
                       // Validate will return true if the form is valid, or false if
                       // the form is invalid.
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
                         ScaffoldMessenger.of(context).clearSnackBars();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

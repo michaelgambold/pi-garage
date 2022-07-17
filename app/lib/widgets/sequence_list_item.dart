@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/sequence_object.dart';
 
 class SequenceListItem extends StatefulWidget {
-  SequenceListItem(
+  const SequenceListItem(
       {Key? key,
       required this.sequenceObject,
       required this.onRemoveHandler,
@@ -55,8 +55,8 @@ class _SequenceListItemState extends State<SequenceListItem> {
                               value: widget.sequenceObject.action,
                               items: ['on', 'off', 'high', 'low'].map((value) {
                                 return DropdownMenuItem(
-                                  child: Text(value),
                                   value: value,
+                                  child: Text(value),
                                 );
                               }).toList(),
                               onChanged: (value) => widget.onUpdateHandler(
@@ -77,20 +77,20 @@ class _SequenceListItemState extends State<SequenceListItem> {
                               value: widget.sequenceObject.target,
                               items: const [
                                 DropdownMenuItem(
-                                    child: Text('Relay 1'), value: 'relay1'),
+                                    value: 'relay1', child: Text('Relay 1')),
                                 DropdownMenuItem(
-                                    child: Text('Relay 2'), value: 'relay2'),
+                                    value: 'relay2', child: Text('Relay 2')),
                                 DropdownMenuItem(
-                                    child: Text('Relay 3'), value: 'relay3'),
+                                    value: 'relay3', child: Text('Relay 3')),
                                 DropdownMenuItem(
-                                    child: Text('Digital Output 1'),
-                                    value: 'digitalOutput1'),
+                                    value: 'digitalOutput1',
+                                    child: Text('Digital Output 1')),
                                 DropdownMenuItem(
-                                    child: Text('Digital Output 2'),
-                                    value: 'digitalOutput2'),
+                                    value: 'digitalOutput2',
+                                    child: Text('Digital Output 2')),
                                 DropdownMenuItem(
-                                    child: Text('Digital Output 3'),
-                                    value: 'digitalOutput3')
+                                    value: 'digitalOutput3',
+                                    child: Text('Digital Output 3'))
                               ],
                               onChanged: (value) => widget.onUpdateHandler(
                                   widget.index,

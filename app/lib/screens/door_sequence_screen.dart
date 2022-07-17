@@ -18,7 +18,8 @@ class DoorSequenceScreen extends StatefulWidget {
 
 class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   final _doorRepository = DoorRepository();
-
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   List<SequenceObject> _sequence = [];
 
   @override
@@ -28,11 +29,21 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   }
 
   Future<void> _refresh() async {
-    await _doorRepository
-        .findDoorSequence(widget.doorId)
-        .then((value) => setState(() {
-              _sequence = value;
-            }));
+    try {
+      await _doorRepository
+          .findDoorSequence(widget.doorId)
+          .then((value) => setState(() {
+                _sequence = value;
+              }));
+    } catch (e) {
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _addSequenceObject() {
@@ -54,17 +65,17 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   void _save() async {
     try {
       await _doorRepository.updateDoorSequence(widget.doorId, _sequence);
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
           content: Text('Sequence Saved'),
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
-          content: Text('$e'),
+          content: Text(e.toString()),
           backgroundColor: Colors.red,
         ),
       );
@@ -73,50 +84,52 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.settings),
-              tooltip: 'Global Settings',
-              onPressed: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-          ],
-        ),
-        body: Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Stack(children: [
-              RefreshIndicator(
-                child: ListView(
-                  children: [
-                    SequenceList(
-                      sequence: _sequence,
-                      handleRemoveItem: _handleRemoveItem,
-                      handleUpdateItem: _handleUpdateItem,
-                    ),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(40)),
-                        onPressed: () => _save(),
-                        child: const Text('Save')),
-                  ],
+    return ScaffoldMessenger(
+        key: _scaffoldMessengerKey,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+              actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  tooltip: 'Global Settings',
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/settings');
+                  },
                 ),
-                onRefresh: () async {
-                  await _refresh();
-                },
-              ),
-              Positioned(
-                  bottom: 30,
-                  right: 20,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      _addSequenceObject();
+              ],
+            ),
+            body: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Stack(children: [
+                  RefreshIndicator(
+                    child: ListView(
+                      children: [
+                        SequenceList(
+                          sequence: _sequence,
+                          handleRemoveItem: _handleRemoveItem,
+                          handleUpdateItem: _handleUpdateItem,
+                        ),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(40)),
+                            onPressed: () => _save(),
+                            child: const Text('Save')),
+                      ],
+                    ),
+                    onRefresh: () async {
+                      await _refresh();
                     },
-                    child: const Icon(Icons.add),
-                  ))
-            ])));
+                  ),
+                  Positioned(
+                      bottom: 30,
+                      right: 20,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          _addSequenceObject();
+                        },
+                        child: const Icon(Icons.add),
+                      ))
+                ]))));
   }
 }
