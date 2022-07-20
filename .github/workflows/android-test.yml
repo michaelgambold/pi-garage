@@ -16,7 +16,7 @@ jobs:
       - uses: subosito/flutter-action@v2
 
       - name: Build App
-        run: flutter build appbundle
+        run: flutter build appbundle --release
 
       # - name: Set up ruby env
       #   uses: ruby/setup-ruby@v1
@@ -86,7 +86,7 @@ jobs:
       - uses: subosito/flutter-action@v2
 
       - name: Build App
-        run: flutter build ipa
+        run: flutter build ipa --release  --no-codesign
 
       # - name: Set up ruby env
       #   uses: ruby/setup-ruby@v1
