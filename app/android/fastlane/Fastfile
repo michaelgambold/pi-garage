@@ -46,6 +46,9 @@ platform :android do
     # gradle(
     #   task: "clean assembleRelease"
     # )
+    upload_to_play_store(
+      json_key_data: ENV['GPLAY_SERVICE_ACCOUNT_KEY_JSON']
+    )
     # upload_to_play_store(
     #   json_key: ENV["ANDROID_JSON_KEY_FILE"]
     # )
