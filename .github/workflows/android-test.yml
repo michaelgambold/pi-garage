@@ -24,6 +24,10 @@ jobs:
           ruby-version: 3.1.2
           bundler-cache: true
 
+      - name: Install gems
+        run: bundle install
+        working-directory: ./app/ios
+
       # - name: Decode Service Account Key JSON File
       #   uses: timheuer/base64-to-file@v1
       #   id: service_account_json_file
@@ -51,11 +55,6 @@ jobs:
       #   with:
       #     gradlePath: android/app/build.gradle
       #     versionCode: ${{ env.version_code }}
-
-      - name: List directory
-        # working-directory: src/webclient
-        run: |
-          ls -la
 
       - name: Deploy Android release
         run: bundle exec fastlane deploy
@@ -93,6 +92,10 @@ jobs:
         with:
           ruby-version: 3.1.2
           bundler-cache: true
+
+      - name: Install gems
+        run: bundle install
+        working-directory: ./app/ios
 
       # - name: Run tests
       #   uses: maierj/fastlane-action@v2.2.1
