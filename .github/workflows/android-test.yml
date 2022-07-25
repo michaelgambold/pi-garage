@@ -52,6 +52,11 @@ jobs:
       #     gradlePath: android/app/build.gradle
       #     versionCode: ${{ env.version_code }}
 
+      - name: List directory
+        # working-directory: src/webclient
+        run: |
+          ls -la
+
       - name: Deploy Android release
         run: bundle exec fastlane deploy
         # env:
@@ -122,6 +127,11 @@ jobs:
       #   with:
       #     gradlePath: android/app/build.gradle
       #     versionCode: ${{ env.version_code }}
+
+      - name: List directory
+        working-directory: app/ios
+        run: |
+          ls -la
 
       - name: Deploy iOS release
         run: bundle exec fastlane release
