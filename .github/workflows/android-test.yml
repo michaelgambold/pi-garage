@@ -53,14 +53,14 @@ jobs:
       #     versionCode: ${{ env.version_code }}
 
       - name: Deploy Android release
-        run: bundle exec fastlane android deploy
+        run: bundle exec fastlane deploy
         # env:
         # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
         # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
         # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         # ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
-        working-directory: ./android
+        working-directory: android
 
       # - name: Upload build artifacts
       #   uses: actions/upload-artifact@v2
@@ -123,14 +123,15 @@ jobs:
       #     gradlePath: android/app/build.gradle
       #     versionCode: ${{ env.version_code }}
 
-      # - name: Build & deploy Android release
-      #   run: bundle exec fastlane android deploy
-      #   env:
-      #     # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
-      #     # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      #     # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
-      #     # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      #     ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
+      - name: Deploy iOS release
+        run: bundle exec fastlane release
+        # env:
+        # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+        # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
+        # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        # ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
+        working-directory: ios
 
       # - name: Upload build artifacts
       #   uses: actions/upload-artifact@v2
