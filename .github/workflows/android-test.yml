@@ -12,6 +12,8 @@ jobs:
         working-directory: ./app
 
     steps:
+      - run: env
+
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
 
