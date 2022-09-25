@@ -12,9 +12,10 @@ jobs:
         working-directory: ./app
 
     steps:
+      - uses: actions/checkout@v3
+
       - run: echo "$GPLAY_SERVICE_ACCOUNT_KEY_JSON"
 
-      - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
 
       - name: Build App
