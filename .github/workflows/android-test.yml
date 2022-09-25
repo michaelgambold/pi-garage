@@ -63,7 +63,8 @@ jobs:
           # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
           # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          ANDROID_JSON_KEY_FILE: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
+          GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
+          # ANDROID_JSON_KEY_FILE: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
           # ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
         working-directory: ./app/android
 
