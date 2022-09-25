@@ -35,6 +35,14 @@ jobs:
           fileName: "serviceAccount.json"
           encodedString: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
 
+      - name: ec
+        run: echo "${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}"
+        working-directory: ./app/android
+
+      - name: asdfsdf
+        run: echo "${{ steps.service_account_json_file.outputs }}"
+        working-directory: ./app/android
+
       # - name: Decode Keystore File
       #   uses: timheuer/base64-to-file@v1
       #   id: android_keystore
