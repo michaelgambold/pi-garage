@@ -47,7 +47,7 @@ platform :android do
     #   task: "clean assembleRelease"
     # )
     upload_to_play_store(
-      aab: "../build/app/outputs/bundle/release/app-release.aab"
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
       json_key_data: ENV['GPLAY_SERVICE_ACCOUNT_KEY_JSON']
     )
     # upload_to_play_store(
