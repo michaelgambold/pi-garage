@@ -13,8 +13,24 @@ jobs:
         working-directory: ./app
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+
+      - name: Decode Keystore File
+        uses: timheuer/base64-to-file@v1
+        id: android_keystore
+        with:
+          filename: "android_keystore.keystore"
+          encodedString: ${{ secrets.KEYSTORE_FILE }}
+
+      - uses: subosito/flutter-action@v2
+
+      - name: Build App
+        run: flutter build appbundle
+        env:
+          KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
@@ -22,11 +38,9 @@ jobs:
           ruby-version: 3.1.2
           bundler-cache: true
 
-      - name: Run tests
-        uses: maierj/fastlane-action@v2
-        with:
-          lane: android test
-          subdirectory: android
+      - name: Install gems
+        run: bundle install
+        working-directory: ./app/android
 
       - name: Decode Service Account Key JSON File
         uses: timheuer/base64-to-file@v1
@@ -35,42 +49,11 @@ jobs:
           fileName: "serviceAccount.json"
           encodedString: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
 
-      # - name: Decode Keystore File
-      #   uses: timheuer/base64-to-file@v1
-      #   id: android_keystore
-      #   with:
-      #     fileName: "android_keystore.keystore"
-      #     encodedString: ${{ secrets.KEYSTORE_FILE }}
-
-      # - name: Define version code with offset
-      #   env:
-      #     RUN_NUMBER: ${{ github.run_number }}
-      #     INITIAL_VERSION_CODE: 73
-      #   run: |
-      #     VERSION_CODE=$((INITIAL_VERSION_CODE + RUN_NUMBER))
-      #     echo "version_code=$VERSION_CODE" >> $GITHUB_ENV
-
-      # - name: Update version code
-      #   uses: chkfung/android-version-actions@v1.1
-      #   with:
-      #     gradlePath: android/app/build.gradle
-      #     versionCode: ${{ env.version_code }}
-
-      - name: Build & deploy Android release
-        run: bundle exec fastlane android deploy
+      - name: Deploy Android release
+        run: bundle exec fastlane deploy
         env:
-          # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
-          # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
-          # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
-
-      # - name: Upload build artifacts
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: assets
-      #     path: |
-      #       ${{ github.workspace }}/app/build/outputs/bundle/release
+        working-directory: ./app/android
 
   docker:
     runs-on: ubuntu-latest
