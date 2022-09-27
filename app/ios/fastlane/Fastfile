@@ -17,8 +17,7 @@ default_platform(:ios)
 
 platform :ios do
   desc "Push a new release build to the App Store"
-  lane :release do
-    setup_ci if ENV["CI"]
+  lane :update_signing_settings do
     update_code_signing_settings(
       use_automatic_signing: false,
       path: "Runner.xcodeproj",
@@ -27,7 +26,10 @@ platform :ios do
       profile_name: ENV["IOS_PROFILE_NAME"],
       code_sign_identity: "iPhone Distribution"
     )
+  end
 
+  lane :release do
+    setup_ci if ENV["CI"]
     match(type: "appstore")
     build_app(skip_build_archive: true, archive_path: "../build/archive/Runner.xcarchive")
     upload_to_app_store(skip_metadata: true, skip_screenshots: true)
