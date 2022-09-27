@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 } else {
     keystoreProperties['keyAlias'] = System.getenv("KEY_ALIAS")
     keystoreProperties['keyPassword'] = System.getenv("KEY_PASSWORD")
-    keystoreProperties['storeFile'] = System.getenv("STORE_FILE")
+    keystoreProperties['storeFile'] = System.getenv("KEYSTORE_FILE")
     keystoreProperties['storePassword'] = System.getenv("STORE_PASSWORD")
 }
 
