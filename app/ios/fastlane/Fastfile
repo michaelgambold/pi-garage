@@ -21,7 +21,7 @@ platform :ios do
     setup_ci if ENV["CI"]
     update_code_signing_settings(
       use_automatic_signing: true,
-      path: "../Runner.xcodeproj"
+      path: "Runner.xcodeproj"
     )
 
     match(type: "appstore")
