@@ -14,10 +14,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Decode Keystore File
+        uses: timheuer/base64-to-file@v1
+        id: android_keystore
+        with:
+          filename: "android_keystore.keystore"
+          encodedString: ${{ secrets.KEYSTORE_FILE }}
+
       - uses: subosito/flutter-action@v2
 
       - name: Build App
         run: flutter build appbundle
+        env:
+          KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
@@ -35,13 +47,6 @@ jobs:
         with:
           fileName: "serviceAccount.json"
           encodedString: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
-
-      - name: Decode Keystore File
-        uses: timheuer/base64-to-file@v1
-        id: android_keystore
-        with:
-          filename: "android_keystore.keystore"
-          encodedString: ${{ secrets.KEYSTORE_FILE }}
 
       # - name: Define version code with offset
       #   env:
