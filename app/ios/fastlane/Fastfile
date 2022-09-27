@@ -20,8 +20,12 @@ platform :ios do
   lane :release do
     setup_ci if ENV["CI"]
     update_code_signing_settings(
-      use_automatic_signing: true,
+      use_automatic_signing: false,
       path: "Runner.xcodeproj"
+      team_id: ENV["IOS_TEAM_ID"],
+      bundle_identifier: ENV["IOS_APP_IDENTIFIER"],
+      profile_name: ENV["IOS_PROFILE_NAME"],
+      code_sign_identity: "iPhone Distribution"
     )
 
     match(type: "appstore")
