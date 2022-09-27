@@ -1,4 +1,4 @@
-app_identifier("com.michaelgambold.pigarage")
+app_identifier ENV["IOS_APP_IDENTIFIER"]
 apple_id ENV["IOS_APPLE_ID"]
 
 itc_team_id ENV["IOS_ITC_TEAM_ID"]
