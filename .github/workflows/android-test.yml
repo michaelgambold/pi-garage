@@ -36,12 +36,12 @@ jobs:
           fileName: "serviceAccount.json"
           encodedString: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
 
-      # - name: Decode Keystore File
-      #   uses: timheuer/base64-to-file@v1
-      #   id: android_keystore
-      #   with:
-      #     fileName: "android_keystore.keystore"
-      #     encodedString: ${{ secrets.KEYSTORE_FILE }}
+      - name: Decode Keystore File
+        uses: timheuer/base64-to-file@v1
+        id: android_keystore
+        with:
+          filename: "android_keystore.keystore"
+          encodedString: ${{ secrets.KEYSTORE_FILE }}
 
       # - name: Define version code with offset
       #   env:
@@ -60,10 +60,10 @@ jobs:
       - name: Deploy Android release
         run: bundle exec fastlane deploy
         env:
-          # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
-          # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
-          # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           # GPLAY_SERVICE_ACCOUNT_KEY_JSON_DATA: echo ${{secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON}} | base64 --decode
           # GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
           # ANDROID_JSON_KEY_FILE: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
