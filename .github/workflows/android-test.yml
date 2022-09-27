@@ -66,6 +66,7 @@ jobs:
         run: bundle exec fastlane release
         env:
           IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
         # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
