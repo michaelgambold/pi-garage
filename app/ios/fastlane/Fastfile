@@ -19,6 +19,11 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
     setup_ci if ENV["CI"]
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: "../Runner.xcodeproj"
+    )
+
     match(type: "appstore")
     build_app(skip_build_archive: true, archive_path: "../build/archive/Runner.xcarchive")
     upload_to_app_store(skip_metadata: true, skip_screenshots: true)
