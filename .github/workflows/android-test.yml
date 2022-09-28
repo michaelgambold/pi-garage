@@ -44,6 +44,7 @@ jobs:
 
       - name: Get iOS certs
         run: bundle exec fastlane get_ios_certs
+        working-directory: ./app/ios
 
       - name: Build App
         # run: flutter build ios --release --no-codesign
