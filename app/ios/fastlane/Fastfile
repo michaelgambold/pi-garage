@@ -16,7 +16,7 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Push a new release build to the App Store"
+  desc: "Update Signing Settings"
   lane :update_signing_settings do
     update_code_signing_settings(
       use_automatic_signing: false,
@@ -28,9 +28,16 @@ platform :ios do
     )
   end
 
-  lane :release do
+  lane :get_ios_certs do
     setup_ci if ENV["CI"]
     match(type: "appstore")
+  end
+
+
+  desc "Push a new release build to the App Store"
+  lane :release do
+    setup_ci if ENV["CI"]
+    # match(type: "appstore")
     build_app(skip_build_archive: true, archive_path: "../build/ios/archive/Runner.xcarchive")
     # upload_to_app_store(skip_metadata: true, skip_screenshots: true)
   end

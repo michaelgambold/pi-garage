@@ -42,6 +42,9 @@ jobs:
         # ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
         working-directory: ./app/ios
 
+      - name: Get iOS certs
+        run: bundle exec fastlane get_ios_certs
+
       - name: Build App
         # run: flutter build ios --release --no-codesign
         run: flutter build ipa --release
