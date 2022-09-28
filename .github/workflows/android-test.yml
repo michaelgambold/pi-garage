@@ -87,11 +87,12 @@ jobs:
       - name: Deploy iOS release
         run: bundle exec fastlane release
         env:
+          FASTLANE_PASSWORD: ${{ secrets.IOS_APPLE_PASSWORD }}
           IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
           # IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
           # IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
           # IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
-          # IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
         working-directory: ./app/ios
 
       # - name: Upload build artifacts
