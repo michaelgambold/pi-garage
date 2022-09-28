@@ -30,25 +30,17 @@ jobs:
         run: bundle exec fastlane update_signing_settings
         env:
           IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
-          IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
           IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
           IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
-        # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
-        # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        # ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
         working-directory: ./app/ios
 
       - name: Get iOS certs
         run: bundle exec fastlane get_ios_certs
         env:
-          IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+          # IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
           IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
-          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
-          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+          # IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          # IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
@@ -95,17 +87,11 @@ jobs:
       - name: Deploy iOS release
         run: bundle exec fastlane release
         env:
-          IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
-          IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
-          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
-          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        # KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
-        # STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        # KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
-        # KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        # ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
+          IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
+          # IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+          # IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
+          # IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          # IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
         working-directory: ./app/ios
 
       # - name: Upload build artifacts
