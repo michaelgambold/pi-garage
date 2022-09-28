@@ -39,9 +39,12 @@ platform :ios do
     setup_ci if ENV["CI"]
     build_app(skip_build_archive: true, archive_path: "../build/ios/archive/Runner.xcarchive")
     upload_to_app_store(
+      api_key_path: ENV["API_KEY_PATH"]
       skip_metadata: true, 
       skip_screenshots: true,
-      username: ENV["IOS_APPLE_ID"]
+      # team_id: ENV["IOS_TEAM_ID"],
+      # username: ENV["IOS_APPLE_ID"]
+
     )
   end
 end
