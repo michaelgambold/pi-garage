@@ -43,7 +43,8 @@ jobs:
         working-directory: ./app/ios
 
       - name: Build App
-        run: flutter build ios --release --no-codesign
+        # run: flutter build ios --release --no-codesign
+        run: flutter build ipa --release
 
       # - name: Run tests
       #   uses: maierj/fastlane-action@v2.2.1
