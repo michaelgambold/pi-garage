@@ -31,7 +31,7 @@ platform :ios do
   lane :release do
     setup_ci if ENV["CI"]
     match(type: "appstore")
-    build_app(skip_build_archive: true, archive_path: "../build/archive/Runner.xcarchive")
+    build_app(skip_build_archive: true, archive_path: "../build/ios/iphoneos/Runner.app")
     # upload_to_app_store(skip_metadata: true, skip_screenshots: true)
   end
 end
