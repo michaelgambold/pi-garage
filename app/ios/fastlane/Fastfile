@@ -16,7 +16,8 @@
 default_platform(:ios)
 
 platform :ios do
-  desc: "Update Signing Settings"
+  desc "Push a new release build to the App Store"
+
   lane :update_signing_settings do
     update_code_signing_settings(
       use_automatic_signing: false,
@@ -34,7 +35,6 @@ platform :ios do
   end
 
 
-  desc: "Push a new release build to the App Store"
   lane :release do
     setup_ci if ENV["CI"]
     # match(type: "appstore")
