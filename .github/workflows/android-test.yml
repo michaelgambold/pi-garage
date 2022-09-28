@@ -44,6 +44,14 @@ jobs:
 
       - name: Get iOS certs
         run: bundle exec fastlane get_ios_certs
+        env:
+          IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+          IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
         working-directory: ./app/ios
 
       - name: Build App
