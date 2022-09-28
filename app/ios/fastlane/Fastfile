@@ -34,7 +34,7 @@ platform :ios do
   end
 
 
-  desc "Push a new release build to the App Store"
+  desc: "Push a new release build to the App Store"
   lane :release do
     setup_ci if ENV["CI"]
     # match(type: "appstore")
