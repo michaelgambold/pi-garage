@@ -2,6 +2,8 @@ name: Android Test
 
 on:
   push:
+    branches:
+      - "main"
 
 jobs:
   apple:
