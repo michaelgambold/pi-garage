@@ -8,6 +8,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM, UseRequestContext } from '@mikro-orm/core';
 import { DatabaseSeeder } from './seeders/DatabaseSeeder';
 import { Door } from './entities/Door.entity';
+import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Door } from './entities/Door.entity';
     HealthModule,
     AutomationHatModule,
     AuthModule,
+    TestModule,
   ],
   controllers: [],
   providers: [],
