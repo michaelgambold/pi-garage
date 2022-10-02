@@ -1,0 +1,48 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new release build to the App Store"
+
+  lane :update_signing_settings do
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: ENV["IOS_TEAM_ID"],
+      bundle_identifier: ENV["IOS_APP_IDENTIFIER"],
+      profile_name: ENV["IOS_PROFILE_NAME"],
+      code_sign_identity: "iPhone Distribution"
+    )
+  end
+
+  lane :get_ios_certs do
+    setup_ci if ENV["CI"]
+    match(type: "appstore")
+  end
+
+
+  lane :release do
+    setup_ci if ENV["CI"]
+    build_app(skip_build_archive: true, archive_path: "../build/ios/archive/Runner.xcarchive")
+    upload_to_app_store(
+      api_key_path: ENV["API_KEY_PATH"],
+      precheck_include_in_app_purchases: false, #API key cannot check this as of 28/09/2022
+      # skip_metadata: true, 
+      # skip_screenshots: true,
+    )
+  end
+end
