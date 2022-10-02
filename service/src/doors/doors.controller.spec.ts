@@ -47,7 +47,7 @@ describe('DoorsController', () => {
         },
       ]),
       findOne: jest.fn().mockImplementation(async (id: number) => {
-        const partialSequence: Partial<Collection<SequenceObject, unknown>> = {
+        const partialSequence: Partial<Collection<SequenceObject>> = {
           init: jest.fn().mockResolvedValue(null),
           getItems: jest.fn().mockImplementation(() => {
             const partialSequence: Partial<SequenceObject>[] = [
@@ -68,7 +68,7 @@ describe('DoorsController', () => {
           isEnabled: true,
           label: `door${id}`,
           state: 'open',
-          sequence: partialSequence as Collection<SequenceObject, unknown>,
+          sequence: partialSequence as Collection<SequenceObject>,
         };
 
         return partialDoor;
