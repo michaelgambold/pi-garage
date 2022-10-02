@@ -9,8 +9,12 @@ updates:
     directory: "/service"
     schedule:
       interval: "weekly"
+    assignees:
+      - "michaelgambold"
       
   - package-ecosystem: "pub"
     directory: "/app"
     schedule:
       interval: "weekly"
+    assignees:
+      - "michaelgambold"
