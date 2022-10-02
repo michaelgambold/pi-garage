@@ -41,10 +41,8 @@ platform :ios do
     upload_to_app_store(
       api_key_path: ENV["API_KEY_PATH"],
       precheck_include_in_app_purchases: false, #API key cannot check this as of 28/09/2022
-      skip_metadata: true, 
-      skip_screenshots: true,
-      # team_id: ENV["IOS_TEAM_ID"],
-      # username: ENV["IOS_APPLE_ID"]
+      # skip_metadata: true, 
+      # skip_screenshots: true,
     )
   end
 end
