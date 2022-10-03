@@ -1,1 +1,1 @@
-
+Test Connection in Global Settings now checks api key is setup as well
