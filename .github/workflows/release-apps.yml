@@ -108,28 +108,28 @@ jobs:
       - name: Update reviewer email address
         uses: DamianReeves/write-file-action@v1
         with:
-          path: ${{ GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/email_address.txt
+          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/email_address.txt
           write-mode: overwrite
           content: ${{ secrets.REVIEWER_EMAIL_ADDRESS }}
 
       - name: Update reviewer first name
         uses: DamianReeves/write-file-action@v1
         with:
-          path: ${{ GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/first_name.txt
+          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/first_name.txt
           write-mode: overwrite
           content: ${{ secrets.REVIEWER_FIRST_NAME }}
 
       - name: Update reviewer last name
         uses: DamianReeves/write-file-action@v1
         with:
-          path: ${{ GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/last_name.txt
+          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/last_name.txt
           write-mode: overwrite
           content: ${{ secrets.REVIEWER_LAST_NAME }}
 
       - name: Update reviewer contact number
         uses: DamianReeves/write-file-action@v1
         with:
-          path: ${{ GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/phone_number.txt
+          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/phone_number.txt
           write-mode: overwrite
           content: ${{ secrets.REVIEWER_PHONE_NUMBER }}
 
