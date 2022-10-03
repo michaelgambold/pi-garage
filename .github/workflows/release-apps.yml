@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Release Apps
 
 on:
   release:
@@ -106,32 +106,32 @@ jobs:
           encodedString: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
 
       - name: Update reviewer email address
-        uses: DamianReeves/write-file-action@v1
+        uses: DamianReeves/write-file-action@v1.0
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/email_address.txt
+          path: ./ios/fastlane/metadata/review_information/email_address.txt
           write-mode: overwrite
-          content: ${{ secrets.REVIEWER_EMAIL_ADDRESS }}
+          contents: ${{ secrets.REVIEWER_EMAIL_ADDRESS }}
 
       - name: Update reviewer first name
-        uses: DamianReeves/write-file-action@v1
+        uses: DamianReeves/write-file-action@v1.0
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/first_name.txt
+          path: ./ios/fastlane/metadata/review_information/first_name.txt
           write-mode: overwrite
-          content: ${{ secrets.REVIEWER_FIRST_NAME }}
+          contents: ${{ secrets.REVIEWER_FIRST_NAME }}
 
       - name: Update reviewer last name
-        uses: DamianReeves/write-file-action@v1
+        uses: DamianReeves/write-file-action@v1.0
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/last_name.txt
+          path: ./ios/fastlane/metadata/review_information/last_name.txt
           write-mode: overwrite
-          content: ${{ secrets.REVIEWER_LAST_NAME }}
+          contents: ${{ secrets.REVIEWER_LAST_NAME }}
 
       - name: Update reviewer contact number
-        uses: DamianReeves/write-file-action@v1
+        uses: DamianReeves/write-file-action@v1.0
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/ios/fastlane/metadata/review_information/phone_number.txt
+          path: ./ios/fastlane/metadata/review_information/phone_number.txt
           write-mode: overwrite
-          content: ${{ secrets.REVIEWER_PHONE_NUMBER }}
+          contents: ${{ secrets.REVIEWER_PHONE_NUMBER }}
 
       - name: Deploy iOS release
         run: bundle exec fastlane release

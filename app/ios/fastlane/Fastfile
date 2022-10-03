@@ -40,6 +40,8 @@ platform :ios do
     build_app(skip_build_archive: true, archive_path: "../build/ios/archive/Runner.xcarchive")
     upload_to_app_store(
       api_key_path: ENV["API_KEY_PATH"],
+      force: true, # skip verification of html preview file
+      overwrite_screenshots: true, # creates duplicates if we don't remove them first
       precheck_include_in_app_purchases: false, #API key cannot check this as of 28/09/2022
       # skip_metadata: true, 
       # skip_screenshots: true,
