@@ -1,19 +1,27 @@
-# app
+# App
 
-A new Flutter project.
+Mobile app built with Flutter.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Install Flutter. On mac this can be installed with
 
-A few resources to get you started if this is your first Flutter project:
+```
+$ brew install --cask flutter
+```
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Updates of Flutter dependencies should be handled by dependabot. To update dependencies as per lock file
+run
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+$ flutter pub get
+```
+
+To run the app start a phone simulator (Android or iOS) and run
+
+```
+$ flutter run
+```
 
 ## Build app icons
 

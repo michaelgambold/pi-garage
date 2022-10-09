@@ -6,22 +6,20 @@ Pi Garage is a simple application that allows control of up to 3 garage doors (t
 
 It comprises of the following 2 main pieces of hardware:
 
-- A [Raspberry Pi (full size)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
-- A [Pimoroni Automation Hat](https://shop.pimoroni.com/products/automation-hat?variant=30712316554)
+- [Raspberry Pi (full size)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
+- [Pimoroni Automation Hat](https://shop.pimoroni.com/products/automation-hat?variant=30712316554)
 
-## Installation
+## Backend Service Installation
 
-Pi Garage is packaged in a Docker image [pi-garage](https://hub.docker.com/r/michaelgambold/pi-garage). All dependencies are included in the image.
+Pi Garage's backend service is packaged in a Docker image [pi-garage](https://hub.docker.com/r/michaelgambold/pi-garage). All dependencies are included in the image.
 
-_**Note**: You **MUST**_ run the container in privillaged mode and as root. This is required to access the Raspberry Pi's GPIO (General Purpose Input/Ouput).
-
-## Running the app
+> _**Note**: You **MUST**_ run the container in privillaged mode and as root. This is required to access the Raspberry Pi's GPIO (General Purpose Input/Ouput).
 
 The simplest way to run/configure the application is by means of a `docker-compose.yml` file. A sample one has been included below.
 
-_**Note**: In the below example a data volume has been configured. This **IS** required to persist configuration accross upgrades._
+> _**Note**: In the below example a data volume has been configured. This **IS** required to persist configuration accross upgrades._
 
-```
+```bash
 version: "3"
 
 services:
@@ -43,14 +41,14 @@ volumes:
 
 ```
 
-## Environment variables
+## Configuration environment variables
 
 The following environment variables can be injected into the Docker container:
 
 | Env Variable   | Example Values      | Notes                                                                                                                                           |
 | -------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | API_KEY        | `abc123`, `Sec3ret` | Alphanumeric security key that if set will be required for all API requests (except `/health` endpoint).<br />See Security for more information |
-| LED_BRIGHTNESS | `10`, `100`, `240`  | 0 will be off and 255 is maximum brightness.<br />By default maximum brightness is set, but a much lower value can be used.                     |
+| LED_BRIGHTNESS | `10`, `100`, `240`  | 0 will be off and 255 is maximum brightness.<br />By default maximum (255) brightness is set, but a much lower value can be used (< 50).        |
 
 ## LED Lights
 
@@ -68,7 +66,8 @@ The Automation Hat has several LED lights. Supported LED lights and their functi
 
 ## Security
 
-When the `API_KEY` environment variable has been set each API request needs to attach the API key (or it will be rejected).
+When the `API_KEY` environment variable has been set each API request (except `/health`) needs to attach the API key (or it
+will be rejected).
 
 Two modes of sending the API key are supported:
 
@@ -77,21 +76,23 @@ Two modes of sending the API key are supported:
 
 ## Sequences
 
-When a garage door's state is changed to `open` or `closed` it runs a sequence of steps. By default this just `toggle` a relay for a duration of 1,000ms. I.e. change the state of the relay (from `on` to `off`) then after the duration has elapsed set it back to the original value.
+> **Important**: In the below examples a duration of 1,000ms is used. It has been observed that having a duration after setting
+> relays prevents a lock up condition if the relays are switched at a fast rate. It is strongly recommended to have a minimum
+> duration of 1,000ms even for the last step in a sequence.
 
-A Sequence Object has the following main properties:
+| Property | Description                                                                            |
+| -------- | -------------------------------------------------------------------------------------- |
+| index    | The index of the step in the sequence. I.e. index 1 is the first step in the sequence. |
+| action   | The action the door must be performing. E.g. `open` or `close`.                        |
+| target   | The hardware item on the Automation Hat to manipulate. E.g. `relay1`                   |
+| duration | This is the wait time (in milliseconds) after a steps "action" has been done.          |
+| door     | What door this should apply to.                                                        |
 
-| Property | Description                                                                                       |
-| -------- | ------------------------------------------------------------------------------------------------- |
-| index    | The index of the step object. I.e. index 1 is the first step in the sequence.                     |
-| action   | The action the door must be performing. I.e. `open` or `close`.                                   |
-| target   | The hardware item on the Automation Hat to manipulate.                                            |
-| duration | If set this will wait for this time (in ms), then will set the target back to the previous state. |
-| door     | What door this should apply to.                                                                   |
+When a garage door's state is changed to `open` or `closed` it runs a sequence of steps (Currently the same sequence is
+ran for all actions). By default this performs a `toggle` a relay for a duration of 1,000ms, then another `toggle` with
+a duration of 1,000ms.
 
-See the API docs for sample values etc.
-
-By default door 1 will toggle (i.e. turn on then off) relay 1 with a duration of 1000ms. Door 2 will target relay 2 and door 3 will target relay 3.
+By default Door 1 targets Relay 1, Door 2 targets Relay 2 and Door 3 targets Relay 3.
 
 To change what happens in a sequence the API can be used to configure this and there is no limits to the creativity that can be done. A more advanced example is included below.
 
@@ -102,19 +103,43 @@ can be controlled via solid state relays (driven by digital input 1 and 2 respec
 
 - Set digital input 1 `high` (turn on inside garage light)
 - Set digital input 2 `high` (turn outside garage light)
-- Set relay 1 to `toggle` for a duration of 1,000ms (open garage door)
+- Set relay 1 to `toggle` for a duration of 1,000ms (press switch down)
+- Set relay 1 to `toggle` for a duration of 1,000ms (release switch)
 
 **Closing**
 
 - Set digital input 2 `low` (turn off outside garage light)
-- Set relay 1 to `toggle` for a duration of 1,000ms (close garage door)
-- Delay for 120,000ms (wait 2 minutes)
-- Set digital input 1 `low` (turn off inside light)
+- Set relay 1 to `toggle` for a duration of 1,000ms (press switch down)
+- Set relay 1 to `toggle` for a duration of 120,000ms (release switch then wait 2 minutes)
+- Set digital input 1 `low` with a delay of 1,000 ms (turn off inside light)
 
-## API
+## API Documentation
 
-The (Swagger) API docs can be found at `/docs` on the host. There you are able to interact with Pi Garage easily. The Swagger docs are considered the source of
-truth but more indepth information has been included below. A best effor to ensure the below documentation is up to date has been made.
+The (Swagger) API docs can be found at `/docs` on the host. There you are able to interact with the Pi Garage backend
+easily. The Swagger docs are considered the source of truth but more indepth information has been included below.
+A best effor to ensure the below documentation is up to date has been made.
+
+## Mobile Apps
+
+Pi Garage has complimentary [iOS](https://apps.apple.com/au/app/pi-garage/id1634928554) and
+[Android](https://play.google.com/store/apps/details?id=com.michaelgambold.pigarage) app.
+
+## Home Assistant
+
+Pi Garage can easily be incorporated into Home Assistant by the use of a [RESTfull Command]()
+
+```bash
+# Sample set Door 1 state to "toggle"
+
+rest_command:
+  toggle_garage_door:
+    url: "http://PI_GARAGE_URL/api/v1/doors/1/state"
+    method: post
+    content_type: "application/json"
+    payload: '{"state": "toggle"}'
+    headers:
+      x-api-key: "API-Key"
+```
 
 <!-- ## Support
 

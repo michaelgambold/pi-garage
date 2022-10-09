@@ -1,15 +1,16 @@
 # Pi Garage
 
-## Issues/Workarounds
-
-There is an issue with installing packages in the service project on MacOS 12.3. It causes a node-gyp error for sqlite3 due to python not being found.
-A work around (on MacOS 12.3) is run `npm i --build-from-source --python=/opt/homebrew/bin/python3` instead.
+An Open Source garage door opener. See documentation for more information. https://michaelgambold.github.io/pi-garage/#/
 
 ## Projects
 
 - app &rarr; mobile app
 - docs &rarr; main documentation project
 - service &rarr; backend service on raspberry pi
+
+More information about the app and service can be found in their individual README's.
+
+_Note: the README of the docs project is the entrypoint/main page of the document and not the README for the docs projects_
 
 ## Licence
 
