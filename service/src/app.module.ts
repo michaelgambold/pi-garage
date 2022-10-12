@@ -9,11 +9,13 @@ import { MikroORM, UseRequestContext } from '@mikro-orm/core';
 import { DatabaseSeeder } from './seeders/DatabaseSeeder';
 import { Door } from './entities/Door.entity';
 import { TestModule } from './test/test.module';
+import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MikroOrmModule.forRoot(),
+    AuditLogsModule,
     DoorsModule,
     HealthModule,
     AutomationHatModule,
