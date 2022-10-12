@@ -2,6 +2,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/sqlite';
 import { ConsoleLogger, Injectable, LoggerService } from '@nestjs/common';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { AuditLog } from '../entities/AuditLog.entity';
 import { Door } from '../entities/Door.entity';
 
 @Injectable()
@@ -11,6 +12,8 @@ export class DoorsService {
   constructor(
     @InjectRepository(Door)
     private readonly doorRepository: EntityRepository<Door>,
+    @InjectRepository(AuditLog)
+    private readonly auditLogRepository: EntityRepository<AuditLog>,
     private readonly automationHatService: AutomationHatService,
   ) {
     this.#logger = new ConsoleLogger(DoorsService.name);
@@ -34,6 +37,11 @@ export class DoorsService {
 
     door.state = 'closed';
     await this.update(door);
+
+    const auditLog = this.auditLogRepository.create({
+      detail: `Door ${door.id} ${door.state}`,
+    });
+    await this.auditLogRepository.persistAndFlush(auditLog);
   }
 
   findAll() {
@@ -62,6 +70,11 @@ export class DoorsService {
 
     door.state = 'open';
     await this.update(door);
+
+    const auditLog = this.auditLogRepository.create({
+      detail: `Door ${door.id} ${door.state}`,
+    });
+    await this.auditLogRepository.persistAndFlush(auditLog);
   }
 
   async toggle(id: number): Promise<void> {
