@@ -11,7 +11,7 @@ export class AuditLogsController {
   constructor(private readonly auditLogsService: AuditLogsService) {}
 
   @Get()
-  async findAll(): Promise<AuditLogDto[]> {
+  async getAll(): Promise<AuditLogDto[]> {
     const auditLogs = await this.auditLogsService.findAll();
 
     return auditLogs.map((x) => {

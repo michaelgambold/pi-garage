@@ -2,6 +2,7 @@ import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { AuditLog } from '../entities/AuditLog.entity';
 import { Door } from '../entities/Door.entity';
 import { DoorsService } from './doors.service';
 
@@ -33,6 +34,11 @@ describe('DoorsService', () => {
     persistAndFlush: jest.fn().mockResolvedValue(null),
   };
 
+  const mockAuditLogRepository = {
+    create: jest.fn().mockImplementation(() => undefined),
+    persistAndFlush: jest.fn().mockImplementation(() => undefined),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -42,6 +48,10 @@ describe('DoorsService', () => {
         {
           provide: getRepositoryToken(Door),
           useValue: mockDoorRepository,
+        },
+        {
+          provide: getRepositoryToken(AuditLog),
+          useValue: mockAuditLogRepository,
         },
       ],
     }).compile();
