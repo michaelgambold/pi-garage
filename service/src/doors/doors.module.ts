@@ -5,9 +5,14 @@ import { AutomationHatModule } from '../automation-hat/automation-hat.module';
 import { DoorsController } from './doors.controller';
 import { DoorsService } from './doors.service';
 import { Door } from '../entities/Door.entity';
+import { AuditLog } from '../entities/AuditLog.entity';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Door]), AutomationHatModule, AuthModule],
+  imports: [
+    MikroOrmModule.forFeature([Door, AuditLog]),
+    AutomationHatModule,
+    AuthModule,
+  ],
   controllers: [DoorsController],
   providers: [DoorsService],
 })

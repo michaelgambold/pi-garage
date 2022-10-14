@@ -1,6 +1,10 @@
 # Service
 
-Backend Service built with Nest.JS
+## Dependencies
+
+```bash
+$ npm i -g @nestjs/cli
+```
 
 ## Installation
 
@@ -32,4 +36,16 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+```
+
+## Database Migrations
+
+The backend service uses MikroORM to access the database.
+
+Create a new Entity in the `src/entitities` folder.
+
+Create a new migration with
+
+```bash
+$ npm run migration:create
 ```
