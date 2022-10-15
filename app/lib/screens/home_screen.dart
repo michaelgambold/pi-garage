@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/door.dart';
 import '../repositories/door_repository.dart';
 import '../widgets/door_list.dart';
+import '../widgets/menu_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.title}) : super(key: key);
@@ -38,16 +39,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Global Settings',
-            onPressed: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
-        ],
+        // actions: <Widget>[
+        //   IconButton(
+        //     icon: const Icon(Icons.settings),
+        //     tooltip: 'Global Settings',
+        //     onPressed: () {
+        //       Navigator.pushNamed(context, '/settings');
+        //     },
+        //   ),
+        // ],
       ),
+      drawer: const MenuDrawer(),
       body: Container(
           padding: const EdgeInsets.all(8.0),
           child: Stack(children: [
