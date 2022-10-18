@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../services/http_service.dart';
-import '../services/local_storage_service.dart';
+import '../models/audit_log.dart';
+import '../repositories/audit_log_repository.dart';
+import '../widgets/audit_log_card.dart';
 
 class AuditLogScreen extends StatefulWidget {
   const AuditLogScreen({Key? key, required this.title}) : super(key: key);
@@ -13,22 +15,19 @@ class AuditLogScreen extends StatefulWidget {
 }
 
 class _AuditLogScreenState extends State<AuditLogScreen> {
+  final _auditLogRepository = AuditLogRepository();
+  List<AuditLog> _auditLogs = [];
+
   @override
   void initState() {
     super.initState();
-    // LocalStorageService.instance
-    //     .getStringValue('global_fqdn')
-    //     .then((value) => setState(() {
-    //           _fqdn = value;
-    //         }));
+    _refresh();
+  }
 
-    // LocalStorageService.instance
-    //     .getStringValue('global_api_key')
-    //     .then((value) => setState(
-    //           () {
-    //             _apiKey = value;
-    //           },
-    //         ));
+  Future<void> _refresh() async {
+    _auditLogRepository
+        .findAuditLogs()
+        .then((value) => setState(() => _auditLogs = value));
   }
 
   @override
@@ -39,13 +38,12 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
         ),
         body: Container(
             padding: const EdgeInsets.all(8.0),
-            child: ListView(
-              children: const [
-                ListTile(
-                  title: Text("2022-10-14T00:00:00.000Z"),
-                  subtitle: Text("Door 1 Opened"),
-                )
-              ],
-            )));
+            child: RefreshIndicator(
+                onRefresh: () => _refresh(),
+                child: ListView(
+                  children: [
+                    for (var log in _auditLogs) AuditLogCard(auditLog: log)
+                  ],
+                ))));
   }
 }
