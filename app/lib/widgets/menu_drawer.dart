@@ -9,14 +9,17 @@ class MenuDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(child: Text("Menu")),
-          // ListTile(
-          //   title: const Text("Home"),
-          //   onTap: () {
-          //     Navigator.of(context).pop();
-          //     Navigator.pushNamed(context, '/');
-          //   },
-          // ),
+          const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                "Menu",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              )),
           ListTile(
             title: const Text("Global Settings"),
             onTap: () {
