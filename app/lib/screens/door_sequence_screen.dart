@@ -30,11 +30,10 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
 
   Future<void> _refresh() async {
     try {
-      await _doorRepository
-          .findDoorSequence(widget.doorId)
-          .then((value) => setState(() {
-                _sequence = value;
-              }));
+      final sequence = await _doorRepository.findDoorSequence(widget.doorId);
+      setState(() {
+        _sequence = sequence;
+      });
     } catch (e) {
       _scaffoldMessengerKey.currentState?.clearSnackBars();
       _scaffoldMessengerKey.currentState?.showSnackBar(
