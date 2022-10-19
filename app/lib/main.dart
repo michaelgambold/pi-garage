@@ -3,7 +3,6 @@ import 'screens/door_sequence_screen.dart';
 import 'screens/door_settings_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/global_settings_screen.dart';
-import 'screens/audit_log_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -61,11 +60,6 @@ class MyApp extends StatelessWidget {
                 }
 
                 return null;
-
-              case 'audit-log':
-                return MaterialPageRoute(
-                    builder: ((context) =>
-                        const AuditLogScreen(title: "Audit Log")));
 
               default:
                 return null;

@@ -89,6 +89,15 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
         child: Scaffold(
             appBar: AppBar(
               title: Text(widget.title),
+              actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  tooltip: 'Global Settings',
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/settings');
+                  },
+                ),
+              ],
             ),
             body: Container(
                 padding: const EdgeInsets.all(8.0),
