@@ -12,7 +12,7 @@ class AuditLogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
-      title: Text(DateFormat('d MMM y h:m a').format(auditLog.timestamp)),
+      title: Text(DateFormat('d MMM y h:m:s a').format(auditLog.timestamp)),
       subtitle: Text(auditLog.detail),
     ));
   }
