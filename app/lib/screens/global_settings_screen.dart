@@ -35,14 +35,14 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   }
 
   Future<bool> _testConnection() async {
-    var headers = <String, String>{'x-api-key': _apiKey};
+    final headers = <String, String>{'x-api-key': _apiKey};
 
-    return HttpService()
-        .get(Uri.parse('$_fqdn/test'), headers)
-        .then((value) => value.statusCode == 200)
-        .catchError((error) {
+    try {
+      final res = await HttpService().get(Uri.parse('$_fqdn/test'), headers);
+      return res.statusCode == 200;
+    } catch (e) {
       return false;
-    });
+    }
   }
 
   @override
