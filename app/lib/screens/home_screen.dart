@@ -21,9 +21,15 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Door> _doors = [];
 
   Future<void> _refreshDoors() async {
-    await _doorRepository
-        .findAllDoors()
-        .then((value) => setState(() => _doors = value));
+    try {
+      final doors = await _doorRepository.findAllDoors();
+      setState(() => _doors = doors);
+    } catch (e) {
+      setState(() {
+        _doors = [];
+      });
+      rethrow;
+    }
   }
 
   @override
@@ -39,15 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        // actions: <Widget>[
-        //   IconButton(
-        //     icon: const Icon(Icons.settings),
-        //     tooltip: 'Global Settings',
-        //     onPressed: () {
-        //       Navigator.pushNamed(context, '/settings');
-        //     },
-        //   ),
-        // ],
       ),
       drawer: const MenuDrawer(),
       body: Container(
