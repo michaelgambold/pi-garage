@@ -33,3 +33,14 @@ You can then run the following commands to generate icons for both android and i
 flutter pub get
 flutter pub run flutter_launcher_icons:main
 ```
+
+## Screenshots
+
+For apple the following devices can be used for correct resolution images
+
+- 5.5", iPhone 8 Plus
+- 6.5", iPhone 13 Pro Max
+- iPad 12.9 inch 2nd Gen
+- iPad 12.9 inch 3rd Gen
+
+For android the images need to be 16:9 resolution according to the docs so no pixel emulator works.
