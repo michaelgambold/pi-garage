@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { differenceInMilliseconds } from 'date-fns';
-import { ApiKeyAuthGuard } from '../auth/api-key-auth.guard';
+import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsService } from './doors.service';
@@ -23,7 +23,7 @@ import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
 
-@UseGuards(ApiKeyAuthGuard)
+@UseGuards(HttpApiKeyAuthGuard)
 @ApiSecurity('api-key')
 @Controller('api/v1/doors')
 export class DoorsController {

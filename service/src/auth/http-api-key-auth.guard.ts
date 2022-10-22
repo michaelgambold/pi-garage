@@ -9,10 +9,10 @@ import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
 /**
- * Auth guard that checks
+ * Auth guard that checks api key
  */
 @Injectable()
-export class ApiKeyAuthGuard implements CanActivate {
+export class HttpApiKeyAuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
 
   canActivate(
