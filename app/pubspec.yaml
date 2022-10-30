@@ -37,7 +37,7 @@ dependencies:
   shared_preferences: ^2.0.13
   mockito: ^5.1.0
   intl: ^0.17.0
-  web_socket_channel: ^2.2.0
+  socket_io_client: ^2.0.0
 
 dev_dependencies:
   flutter_test:
