@@ -5,8 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
-import { IncomingMessage } from 'http';
 import { Observable } from 'rxjs';
+import { Socket } from 'socket.io';
 import { AuthService } from './auth.service';
 
 /**
@@ -27,18 +27,12 @@ export class WsApiKeyAuthGuard implements CanActivate {
       return true;
     }
 
-    // if (req.headers['x-api-key']) {
-    //   return this.authService.validateApiKey(
-    //     req.headers['x-api-key'] as string,
-    //   );
-    // }
+    const client: Socket = req.getClient();
+    const apiKey = client.client.request.headers['x-api-key'] as string;
 
-    // get api key from query parameter and check if it matches key in config
-    // const matches = req.url.match(/[\?|&]api_key=([a-zA-Z0-9]*)*&?/);
-
-    // if (matches) {
-    //   return this.authService.validateApiKey(matches[1]);
-    // }
+    if (this.authService.validateApiKey(apiKey)) {
+      return true;
+    }
 
     // throw new UnauthorizedException();
     throw new WsException('Unauthorized');
