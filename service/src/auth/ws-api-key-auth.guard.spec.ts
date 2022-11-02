@@ -1,19 +1,19 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApiKeyAuthGuard } from './api-key-auth.guard';
+import { HttpApiKeyAuthGuard } from './http-api-key-auth.guard';
 import { AuthService } from './auth.service';
 
-describe('AuthGuard', () => {
-  let guard: ApiKeyAuthGuard;
+describe('WsApiKeyAuthGuard', () => {
+  let guard: HttpApiKeyAuthGuard;
   let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ApiKeyAuthGuard, AuthService, ConfigService],
+      providers: [HttpApiKeyAuthGuard, AuthService, ConfigService],
     }).compile();
 
-    guard = module.get<ApiKeyAuthGuard>(ApiKeyAuthGuard);
+    guard = module.get<HttpApiKeyAuthGuard>(HttpApiKeyAuthGuard);
     authService = module.get<AuthService>(AuthService);
   });
 

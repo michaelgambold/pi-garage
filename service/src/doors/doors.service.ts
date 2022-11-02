@@ -1,13 +1,20 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { ConsoleLogger, Injectable, LoggerService } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  forwardRef,
+  Inject,
+  Injectable,
+  LoggerService,
+} from '@nestjs/common';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { AuditLog } from '../entities/AuditLog.entity';
 import { Door } from '../entities/Door.entity';
+import { DoorsGateway } from './doors.gateway';
 
 @Injectable()
 export class DoorsService {
-  #logger: LoggerService;
+  private readonly logger: LoggerService;
 
   constructor(
     @InjectRepository(Door)
@@ -15,12 +22,14 @@ export class DoorsService {
     @InjectRepository(AuditLog)
     private readonly auditLogRepository: EntityRepository<AuditLog>,
     private readonly automationHatService: AutomationHatService,
+    @Inject(forwardRef(() => DoorsGateway))
+    private readonly doorsGateway: DoorsGateway,
   ) {
-    this.#logger = new ConsoleLogger(DoorsService.name);
+    this.logger = new ConsoleLogger(DoorsService.name);
   }
 
   async close(id: number): Promise<void> {
-    this.#logger.log(`Closing door ${id}`);
+    this.logger.log(`Closing door ${id}`);
 
     // get door with sequence
     const door = await this.doorRepository.findOne(
@@ -53,7 +62,7 @@ export class DoorsService {
   }
 
   async open(id: number): Promise<void> {
-    this.#logger.log(`Opening door ${id}`);
+    this.logger.log(`Opening door ${id}`);
 
     // get door with sequence
     const door = await this.doorRepository.findOne(
@@ -78,7 +87,7 @@ export class DoorsService {
   }
 
   async toggle(id: number): Promise<void> {
-    this.#logger.log(`Toggle door ${id}`);
+    this.logger.log(`Toggle door ${id}`);
     const door = await this.findOne(id);
 
     if (door.state === 'closed') {
@@ -91,5 +100,9 @@ export class DoorsService {
 
   async update(door: Door): Promise<void> {
     await this.doorRepository.persistAndFlush(door);
+
+    // emit all doors inc updated through doors gateway
+    const doors = await this.findAll();
+    this.doorsGateway.server.emit('doors:list', doors);
   }
 }

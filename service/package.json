@@ -37,13 +37,16 @@
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^9.1.2",
     "@nestjs/platform-express": "^9.1.2",
+    "@nestjs/platform-socket.io": "^9.1.4",
     "@nestjs/swagger": "^6.1.2",
+    "@nestjs/websockets": "^9.1.4",
     "automation-hat": "^1.0.2",
     "date-fns": "^2.29.3",
     "delay": "^5.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.5.7"
+    "rxjs": "^7.5.7",
+    "socket.io": "^4.5.3"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^5.0.1",

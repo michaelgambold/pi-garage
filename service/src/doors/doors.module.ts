@@ -6,6 +6,7 @@ import { DoorsController } from './doors.controller';
 import { DoorsService } from './doors.service';
 import { Door } from '../entities/Door.entity';
 import { AuditLog } from '../entities/AuditLog.entity';
+import { DoorsGateway } from './doors.gateway';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { AuditLog } from '../entities/AuditLog.entity';
     AuthModule,
   ],
   controllers: [DoorsController],
-  providers: [DoorsService],
+  providers: [DoorsService, DoorsGateway],
 })
 export class DoorsModule {}

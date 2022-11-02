@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../models/door.dart';
-import '../repositories/door_repository.dart';
+import '../services/local_storage_service.dart';
 import '../widgets/door_list.dart';
 import '../widgets/menu_drawer.dart';
 
@@ -17,52 +16,71 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _doorRepository = DoorRepository();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   List<Door> _doors = [];
 
-  Future<void> _refreshDoors() async {
-    try {
-      final doors = await _doorRepository.findAllDoors();
-      setState(() => _doors = doors);
-    } catch (e) {
+  late io.Socket socket;
+
+  _initSocket(String apiKey) async {
+    socket = io.io(
+        'http://localhost:3000/doors',
+        io.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
+            {'x-api-key': apiKey}).build());
+
+    socket.onConnectError((data) {
+      _scaffoldMessengerKey.currentState?.clearMaterialBanners();
+      _scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+        content: Text(data.toString()),
+        backgroundColor: Colors.red,
+      ));
+    });
+
+    socket.on('error', ((data) {
+      _scaffoldMessengerKey.currentState?.clearMaterialBanners();
+      _scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+        content: Text(data.toString()),
+        backgroundColor: Colors.red,
+      ));
+    }));
+
+    socket.on('doors:list', (data) {
+      final doors =
+          (data as List<dynamic>).map((e) => Door.fromJson(e)).toList();
       setState(() {
-        _doors = [];
+        _doors = doors;
       });
-      rethrow;
-    }
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _refreshDoors();
+    LocalStorageService.instance
+        .getStringValue('global_api_key')
+        .then(((apiKey) {
+      setState(() {
+        apiKey = apiKey;
+      });
+      _initSocket(apiKey);
+      socket.emit("doors:list");
+    }));
+    ;
   }
 
   @override
   Widget build(BuildContext context) {
-    var scaffoldMessenger = ScaffoldMessenger.of(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      drawer: const MenuDrawer(),
-      body: Container(
-          padding: const EdgeInsets.all(8.0),
-          child: Stack(children: [
-            RefreshIndicator(
-                onRefresh: () async {
-                  try {
-                    await _refreshDoors();
-                  } catch (e) {
-                    scaffoldMessenger.clearSnackBars();
-                    scaffoldMessenger.showSnackBar(SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(e.toString())));
-                  }
-                },
-                child: ListView(children: [DoorList(doors: _doors)]))
-          ])),
-    );
+    return ScaffoldMessenger(
+        key: _scaffoldMessengerKey,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            drawer: const MenuDrawer(),
+            body: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Stack(children: [
+                  ListView(children: [DoorList(doors: _doors)])
+                ]))));
   }
 }
