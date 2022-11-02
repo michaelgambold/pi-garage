@@ -27,6 +27,8 @@ export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server;
 
   constructor(
+    // don't delete this line it's required so that a clean instance of the orm for
+    // each request can be done with the @UseRequestContext
     private readonly orm: MikroORM,
     @Inject(forwardRef(() => DoorsService))
     private readonly doorsService: DoorsService,
