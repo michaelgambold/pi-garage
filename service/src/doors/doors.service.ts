@@ -100,10 +100,8 @@ export class DoorsService {
 
   async update(door: Door): Promise<void> {
     await this.doorRepository.persistAndFlush(door);
-    await this.emitDoors();
-  }
 
-  private async emitDoors(): Promise<void> {
+    // emit all doors inc updated through doors gateway
     const doors = await this.findAll();
     this.doorsGateway.server.emit('doors:list', doors);
   }
