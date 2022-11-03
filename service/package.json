@@ -26,7 +26,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@mikro-orm/core": "^5.4.2",
+    "@mikro-orm/core": "^5.5.0",
     "@mikro-orm/migrations": "^5.0.1",
     "@mikro-orm/nestjs": "^5.0.0",
     "@mikro-orm/reflection": "^5.0.1",
