@@ -20,13 +20,23 @@ class _HomeScreenState extends State<HomeScreen> {
       GlobalKey<ScaffoldMessengerState>();
   List<Door> _doors = [];
 
+  late String fqdn;
+  late String apiKey;
   late io.Socket socket;
 
-  _initSocket(String apiKey) async {
+  Future<void> _getConnectionSettings() async {
+    fqdn = await LocalStorageService.instance.getStringValue('global_fqdn');
+    apiKey =
+        await LocalStorageService.instance.getStringValue('global_api_key');
+  }
+
+  Future<void> _initSocket(String fqdn, String apiKey) async {
     socket = io.io(
-        'http://localhost:3000/doors',
+        '$fqdn/doors',
         io.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
             {'x-api-key': apiKey}).build());
+
+    socket.onConnect((_) => socket.emit('doors:list'));
 
     socket.onConnectError((data) {
       _scaffoldMessengerKey.currentState?.clearMaterialBanners();
@@ -34,6 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
         content: Text(data.toString()),
         backgroundColor: Colors.red,
       ));
+
+      setState(() {
+        _doors = [];
+      });
     });
 
     socket.on('error', ((data) {
@@ -53,19 +67,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _refresh() async {
+    socket.destroy();
+    await _getConnectionSettings();
+    await _initSocket(fqdn, apiKey);
+  }
+
   @override
   void initState() {
     super.initState();
-    LocalStorageService.instance
-        .getStringValue('global_api_key')
-        .then(((apiKey) {
-      setState(() {
-        apiKey = apiKey;
-      });
-      _initSocket(apiKey);
-      socket.emit("doors:list");
-    }));
-    ;
+    _getConnectionSettings().then((_) {
+      _initSocket(fqdn, apiKey);
+    });
   }
 
   @override
@@ -80,7 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
             body: Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Stack(children: [
-                  ListView(children: [DoorList(doors: _doors)])
+                  RefreshIndicator(
+                    child: ListView(children: [DoorList(doors: _doors)]),
+                    onRefresh: () => _refresh(),
+                  )
                 ]))));
   }
 }
