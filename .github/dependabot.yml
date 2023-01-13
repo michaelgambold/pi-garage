@@ -8,13 +8,13 @@ updates:
   - package-ecosystem: "npm"
     directory: "/service"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     assignees:
       - "michaelgambold"
-      
+
   - package-ecosystem: "pub"
     directory: "/app"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     assignees:
       - "michaelgambold"
