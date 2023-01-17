@@ -44,3 +44,20 @@ For apple the following devices can be used for correct resolution images
 - iPad 12.9 inch 3rd Gen
 
 For android the images need to be 16:9 resolution according to the docs so no pixel emulator works.
+
+## Developer Notes
+
+### Dependency Install Notes
+
+Install dependencies
+
+```bash
+brew install ruby
+
+```
+
+Configure .zshrc
+
+```bash
+# toodo
+```
