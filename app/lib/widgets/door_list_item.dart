@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/door.dart';
 import '../repositories/door_repository.dart';
 
@@ -17,6 +18,7 @@ class _DoorListItemState extends State<DoorListItem> {
 
   _handleDoorIconPressed() async {
     try {
+      await HapticFeedback.mediumImpact();
       await _doorRepository.changeDoorState(widget.door.id, 'toggle');
     } catch (e) {
       _scaffoldMessengerKey.currentState?.clearSnackBars();
