@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { valid, satisfies, gte, eq, major, minor } from 'semver';
+import { valid, satisfies, major } from 'semver';
 
 @Injectable()
 export class ClientVersionService {
