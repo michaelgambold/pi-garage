@@ -96,6 +96,8 @@ describe('WsClientVersionGuard', () => {
       },
     } as Partial<ExecutionContext>;
 
-    expect(guard.canActivate(mockContext as ExecutionContext)).toEqual(false);
+    expect(() => guard.canActivate(mockContext as ExecutionContext)).toThrow(
+      'Invalid client id',
+    );
   });
 });

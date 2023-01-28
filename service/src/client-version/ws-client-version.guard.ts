@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io';
 import { ClientVersionService } from './client-version.service';
@@ -22,6 +23,11 @@ export class WsClientVersionGuard implements CanActivate {
     }
 
     const serverVersion = this.clientVersionService.getServerVersion();
-    return this.clientVersionService.satisfies(clientVersion, serverVersion);
+
+    if (this.clientVersionService.satisfies(clientVersion, serverVersion)) {
+      return true;
+    }
+
+    throw new WsException('Invalid client id');
   }
 }
