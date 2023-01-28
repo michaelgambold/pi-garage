@@ -20,6 +20,20 @@ describe('ClientVersionGuard', () => {
     expect(guard).toBeDefined();
   });
 
+  it('should pass when no client version given', async () => {
+    jest.spyOn(service, 'getServerVersion').mockReturnValue('1.2.3');
+
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          headers: {},
+        }),
+      }),
+    };
+
+    expect(guard.canActivate(mockContext as ExecutionContext)).toEqual(true);
+  });
+
   it('should pass when a version is satisfied', async () => {
     jest.spyOn(service, 'getServerVersion').mockReturnValue('1.2.3');
 
