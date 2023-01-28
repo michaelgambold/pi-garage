@@ -7,12 +7,14 @@ import { Socket } from 'socket.io';
 import { Client } from 'socket.io/dist/client';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { AuthService } from '../auth/auth.service';
+import { ClientVersionService } from '../client-version/client-version.service';
 import { DoorsGateway } from './doors.gateway';
 import { DoorsService } from './doors.service';
 
 describe('DoorsGateway', () => {
   let gateway: DoorsGateway;
   let authService: AuthService;
+  let clientVersionService: ClientVersionService;
 
   const mockDoorsService = {
     findAll: jest.fn().mockResolvedValue([
@@ -42,6 +44,7 @@ describe('DoorsGateway', () => {
         },
         AuthService,
         ConfigService,
+        ClientVersionService,
       ],
     }).compile();
 
