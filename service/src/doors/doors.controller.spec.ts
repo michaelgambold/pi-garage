@@ -8,6 +8,8 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth/auth.service';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { ClientVersionModule } from '../client-version/client-version.module';
+import { ClientVersionService } from '../client-version/client-version.service';
 import { Door } from '../entities/Door.entity';
 import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsController } from './doors.controller';
@@ -79,6 +81,7 @@ describe('DoorsController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ClientVersionModule],
       controllers: [DoorsController],
       providers: [
         ConfigService,

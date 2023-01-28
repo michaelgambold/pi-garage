@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth/auth.service';
+import { ClientVersionModule } from '../client-version/client-version.module';
 import { AuditLogsController } from './audit-logs.controller';
 import { AuditLogsService } from './audit-logs.service';
 
@@ -26,6 +27,7 @@ describe('AuditLogsController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ClientVersionModule],
       controllers: [AuditLogsController],
       providers: [
         AuthService,

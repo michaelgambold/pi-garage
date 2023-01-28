@@ -16,9 +16,11 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../auth/auth.service';
 import { WsApiKeyAuthGuard } from '../auth/ws-api-key-auth.guard';
+import { ClientVersionService } from '../client-version/client-version.service';
+import { WsClientVersionGuard } from '../client-version/ws-client-version.guard';
 import { DoorsService } from './doors.service';
 
-@UseGuards(WsApiKeyAuthGuard)
+@UseGuards(WsClientVersionGuard, WsApiKeyAuthGuard)
 @WebSocketGateway({ namespace: 'doors', cors: '*' })
 export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger: LoggerService;
@@ -33,6 +35,7 @@ export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @Inject(forwardRef(() => DoorsService))
     private readonly doorsService: DoorsService,
     private readonly authService: AuthService,
+    private readonly clientVersionService: ClientVersionService,
   ) {
     this.logger = new ConsoleLogger(DoorsGateway.name);
   }
@@ -40,18 +43,36 @@ export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(client: Socket) {
     this.logger.log(`Client with id ${client.id} connected`);
 
-    if (!this.authService.hasApiKey()) {
-      return;
+    try {
+      const clientVersion = client.request.headers[
+        'x-client-version'
+      ] as string;
+
+      this.logger.debug(clientVersion);
+
+      if (clientVersion) {
+        const serverVersion = this.clientVersionService.getServerVersion();
+
+        if (
+          !this.clientVersionService.satisfies(clientVersion, serverVersion)
+        ) {
+          throw new Error('Invalid client version');
+        }
+      }
+
+      if (!this.authService.hasApiKey()) {
+        return;
+      }
+
+      const apiKey = client.client.request.headers['x-api-key'] as string;
+
+      if (!this.authService.validateApiKey(apiKey)) {
+        throw new Error('Unauthorized');
+      }
+    } catch (error) {
+      client.emit('error', error.message);
+      client.disconnect();
     }
-
-    const apiKey = client.client.request.headers['x-api-key'] as string;
-
-    if (this.authService.validateApiKey(apiKey)) {
-      return;
-    }
-
-    client.emit('error', 'Unauthorized');
-    client.disconnect();
   }
 
   handleDisconnect(client: Socket) {
