@@ -10,6 +10,7 @@ import { DatabaseSeeder } from './seeders/DatabaseSeeder';
 import { Door } from './entities/Door.entity';
 import { TestModule } from './test/test.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { ClientVersionModule } from './client-version/client-version.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
     AutomationHatModule,
     AuthModule,
     TestModule,
+    ClientVersionModule,
   ],
   controllers: [],
   providers: [],
