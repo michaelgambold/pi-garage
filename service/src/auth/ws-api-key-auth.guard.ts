@@ -20,7 +20,6 @@ export class WsApiKeyAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToWs();
-    // .getRequest<IncomingMessage>();
 
     // if the auth service does not have a key defined then allow request
     if (!this.authService.hasApiKey()) {
@@ -34,7 +33,6 @@ export class WsApiKeyAuthGuard implements CanActivate {
       return true;
     }
 
-    // throw new UnauthorizedException();
     throw new WsException('Unauthorized');
   }
 }

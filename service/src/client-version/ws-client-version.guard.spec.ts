@@ -1,30 +1,52 @@
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ExecutionContext } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
-import { WsApiKeyAuthGuard } from './ws-api-key-auth.guard';
+import { ClientVersionService } from './client-version.service';
+import { WsClientVersionGuard } from './ws-client-version.guard';
 
-describe('WsApiKeyAuthGuard', () => {
-  let guard: WsApiKeyAuthGuard;
-  let authService: AuthService;
+describe('WsClientVersionGuard', () => {
+  let guard: WsClientVersionGuard;
+  let service: ClientVersionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [WsApiKeyAuthGuard, AuthService, ConfigService],
+      providers: [WsClientVersionGuard, ClientVersionService],
     }).compile();
 
-    guard = module.get<WsApiKeyAuthGuard>(WsApiKeyAuthGuard);
-    authService = module.get<AuthService>(AuthService);
+    guard = module.get<WsClientVersionGuard>(WsClientVersionGuard);
+    service = module.get<ClientVersionService>(ClientVersionService);
   });
 
   it('should be defined', () => {
     expect(guard).toBeDefined();
   });
 
-  it('should return true when no api key in auth service', () => {
-    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
-      return false;
-    });
+  it('should allow if no version specified', () => {
+    jest.spyOn(service, 'getServerVersion').mockReturnValue('1.2.3');
+
+    const mockContext = {
+      switchToWs() {
+        return {
+          getData: () => {
+            return null;
+          },
+          getClient: () => {
+            return {
+              client: {
+                request: {
+                  headers: {},
+                },
+              },
+            };
+          },
+        };
+      },
+    } as Partial<ExecutionContext>;
+
+    expect(guard.canActivate(mockContext as ExecutionContext)).toEqual(true);
+  });
+
+  it('should allow a valid version', () => {
+    jest.spyOn(service, 'getServerVersion').mockReturnValue('1.2.3');
 
     const mockContext = {
       switchToWs() {
@@ -37,7 +59,7 @@ describe('WsApiKeyAuthGuard', () => {
               client: {
                 request: {
                   headers: {
-                    'x-api-key': 'abc123',
+                    'x-client-version': '1.2.3',
                   },
                 },
               },
@@ -50,14 +72,8 @@ describe('WsApiKeyAuthGuard', () => {
     expect(guard.canActivate(mockContext as ExecutionContext)).toEqual(true);
   });
 
-  it('should return true when api key header matches', () => {
-    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
-      return true;
-    });
-
-    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
-      return true;
-    });
+  it('should not allow an invalid version', () => {
+    jest.spyOn(service, 'getServerVersion').mockReturnValue('0.0.0');
 
     const mockContext = {
       switchToWs() {
@@ -70,40 +86,7 @@ describe('WsApiKeyAuthGuard', () => {
               client: {
                 request: {
                   headers: {
-                    'x-api-key': 'abc123',
-                  },
-                },
-              },
-            };
-          },
-        };
-      },
-    } as Partial<ExecutionContext>;
-
-    expect(guard.canActivate(mockContext as ExecutionContext)).toEqual(true);
-  });
-
-  it('should throw when api key header mismatches', () => {
-    jest.spyOn(authService, 'hasApiKey').mockImplementation(() => {
-      return true;
-    });
-
-    jest.spyOn(authService, 'validateApiKey').mockImplementation(() => {
-      return false;
-    });
-
-    const mockContext = {
-      switchToWs() {
-        return {
-          getData: () => {
-            return null;
-          },
-          getClient: () => {
-            return {
-              client: {
-                request: {
-                  headers: {
-                    'x-api-key': 'abc123',
+                    'x-client-version': '1.2.3',
                   },
                 },
               },
@@ -114,7 +97,7 @@ describe('WsApiKeyAuthGuard', () => {
     } as Partial<ExecutionContext>;
 
     expect(() => guard.canActivate(mockContext as ExecutionContext)).toThrow(
-      'Unauthorized',
+      'Invalid client id',
     );
   });
 });
