@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../models/door.dart';
+import '../services/app_version_service.dart';
 import '../services/local_storage_service.dart';
 import '../widgets/door_list.dart';
 import '../widgets/menu_drawer.dart';
@@ -16,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _appVersionService = AppVersionService();
+
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   List<Door> _doors = [];
@@ -31,10 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _initSocket(String fqdn, String apiKey) async {
+    var appVersion = await _appVersionService.getAppVersion();
+
     socket = io.io(
         '$fqdn/doors',
         io.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
-            {'x-api-key': apiKey}).build());
+            {'x-api-key': apiKey, 'x-client-version': appVersion}).build());
 
     socket.onConnect((_) => socket.emit('doors:list'));
 
@@ -68,6 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _refresh() async {
+    setState(() {
+      _doors = [];
+    });
+
     socket.destroy();
     await _getConnectionSettings();
     await _initSocket(fqdn, apiKey);
