@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 
-class MenuDrawer extends StatelessWidget {
+import '../services/app_version_service.dart';
+
+class MenuDrawer extends StatefulWidget {
   const MenuDrawer({Key? key}) : super(key: key);
+
+  @override
+  State<MenuDrawer> createState() => _MenuDrawerState();
+}
+
+class _MenuDrawerState extends State<MenuDrawer> {
+  final _appVersionService = AppVersionService();
+  String _appVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _appVersionService.getAppVersion().then((value) => setState(() {
+          _appVersion = value;
+        }));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,17 +28,26 @@ class MenuDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-              decoration: BoxDecoration(
+          DrawerHeader(
+              decoration: const BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(
-                "Menu",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+              child: Column(children: [
+                const Text(
+                  "Menu",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
                 ),
-              )),
+                Text(
+                  _appVersion,
+                  style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 10,
+                  ),
+                )
+              ])),
           ListTile(
             title: const Text("Global Settings"),
             onTap: () {
