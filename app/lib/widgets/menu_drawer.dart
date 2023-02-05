@@ -11,6 +11,8 @@ class MenuDrawer extends StatefulWidget {
 
 class _MenuDrawerState extends State<MenuDrawer> {
   final _appVersionService = AppVersionService();
+  final _appVersionTextSize = 12.0;
+
   String _appVersion = '';
 
   @override
@@ -32,22 +34,27 @@ class _MenuDrawerState extends State<MenuDrawer> {
               decoration: const BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Column(children: [
-                const Text(
-                  "Menu",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-                Text(
-                  _appVersion,
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 10,
-                  ),
-                )
-              ])),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Expanded(
+                        child: Text(
+                      "Menu",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    )),
+                    SizedBox(
+                        height: _appVersionTextSize,
+                        child: Text(
+                          _appVersion,
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: _appVersionTextSize,
+                          ),
+                        ))
+                  ])),
           ListTile(
             title: const Text("Global Settings"),
             onTap: () {
