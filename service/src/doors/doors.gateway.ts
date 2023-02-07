@@ -48,8 +48,6 @@ export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         'x-client-version'
       ] as string;
 
-      this.logger.debug(clientVersion);
-
       if (clientVersion) {
         const serverVersion = this.clientVersionService.getServerVersion();
 
