@@ -60,7 +60,7 @@ The Automation Hat has several LED lights. Supported LED lights and their functi
 | LED Light      | Function                                            |
 | -------------- | --------------------------------------------------- |
 | POWER          | Illuminated when Pi Garage is running.              |
-| COMMS          | Illuminated when API request is running.            |
+| COMMS          | Illuminated while an API request is running.        |
 | WARN           | Not currently used.                                 |
 | ADC 1, 2, 3    | Not currently used.                                 |
 | OUTPUT 1, 2, 3 | Illuminated when Digital Ouput set `high`.          |
@@ -76,6 +76,22 @@ Two modes of sending the API key are supported:
 
 - Using the `x-api-key` HTTP header
 - Adding the API key as a URL query parameter `?api_key=API_KEY`
+
+## Client version
+
+> _**NOTE:** For advanced use, not normally requried._
+
+To ensure a best possible experience the iOS and Android mobile apps send their client version (app version) to the backend. This is done automatically (since 1.7.0)
+
+This had 2 major functions:
+
+1. Block incompatible software. Only the same major versions are allowed to communicate.
+1. Allow backwards functionality if new functionality is implemented
+   that breaks backward compatibilty.
+
+If no client version is specified by the client then it is assumed to be the latest version.
+
+If some specific handling of a request the client version can be specified with the `x-client-version` header for both websockets and HTTP API.
 
 ## Sequences
 
