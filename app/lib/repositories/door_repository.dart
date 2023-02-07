@@ -3,23 +3,14 @@ import 'dart:convert';
 import '../models/door.dart';
 import '../models/sequence_object.dart';
 import '../models/update_door.dart';
-import '../services/local_storage_service.dart';
-import '../services/http_service.dart';
+import '../services/api_service.dart';
 
 class DoorRepository {
-  final _httpService = HttpService();
-  final _localStorageService = LocalStorageService.instance;
+  final _apiService = ApiService();
 
   Future<void> changeDoorState(int doorId, String state) async {
-    var apiKey = await _localStorageService.getStringValue('global_api_key');
-    var fqdn = await _localStorageService.getStringValue('global_fqdn');
-
-    var headers = <String, String>{'x-api-key': apiKey};
-
-    var res = await _httpService.post(
-        Uri.parse('$fqdn/api/v1/doors/$doorId/state'),
-        {'state': state},
-        headers);
+    var res =
+        await _apiService.post('/api/v1/doors/$doorId/state', {'state': state});
 
     if (res.statusCode == 201) {
       return;
@@ -29,12 +20,7 @@ class DoorRepository {
   }
 
   Future<List<Door>> findAllDoors() async {
-    var apiKey = await _localStorageService.getStringValue('global_api_key');
-    var fqdn = await _localStorageService.getStringValue('global_fqdn');
-
-    var headers = <String, String>{'x-api-key': apiKey};
-
-    var res = await _httpService.get(Uri.parse('$fqdn/api/v1/doors'), headers);
+    var res = await _apiService.get('/api/v1/doors');
 
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
@@ -49,13 +35,7 @@ class DoorRepository {
   }
 
   Future<Door> findDoor(int doorId) async {
-    var apiKey = await _localStorageService.getStringValue('global_api_key');
-    var fqdn = await _localStorageService.getStringValue('global_fqdn');
-
-    var headers = <String, String>{'x-api-key': apiKey};
-
-    var res = await _httpService.get(
-        Uri.parse('$fqdn/api/v1/doors/$doorId'), headers);
+    var res = await _apiService.get('/api/v1/doors/$doorId');
 
     if (res.statusCode == 200) {
       return Door.fromJson(jsonDecode(res.body));
@@ -65,13 +45,7 @@ class DoorRepository {
   }
 
   Future<List<SequenceObject>> findDoorSequence(int doorId) async {
-    var apiKey = await _localStorageService.getStringValue('global_api_key');
-    var fqdn = await _localStorageService.getStringValue('global_fqdn');
-
-    var headers = <String, String>{'x-api-key': apiKey};
-
-    var res = await _httpService.get(
-        Uri.parse('$fqdn/api/v1/doors/$doorId/sequence'), headers);
+    var res = await _apiService.get('/api/v1/doors/$doorId/sequence');
 
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
@@ -86,13 +60,7 @@ class DoorRepository {
   }
 
   Future<void> updateDoor(int doorId, UpdateDoor updateDoor) async {
-    var apiKey = await _localStorageService.getStringValue('global_api_key');
-    var fqdn = await _localStorageService.getStringValue('global_fqdn');
-
-    var headers = <String, String>{'x-api-key': apiKey};
-
-    var res = await _httpService.put(
-        Uri.parse('$fqdn/api/v1/doors/$doorId'), updateDoor, headers);
+    var res = await _apiService.put('/api/v1/doors/$doorId', updateDoor);
 
     if (res.statusCode == 200) {
       return;
@@ -103,13 +71,7 @@ class DoorRepository {
 
   Future<void> updateDoorSequence(
       int doorId, List<SequenceObject> sequence) async {
-    var apiKey = await _localStorageService.getStringValue('global_api_key');
-    var fqdn = await _localStorageService.getStringValue('global_fqdn');
-
-    var headers = <String, String>{'x-api-key': apiKey};
-
-    var res = await _httpService.put(
-        Uri.parse('$fqdn/api/v1/doors/$doorId/sequence'), sequence, headers);
+    var res = await _apiService.put('/api/v1/doors/$doorId/sequence', sequence);
 
     if (res.statusCode == 200) {
       return;

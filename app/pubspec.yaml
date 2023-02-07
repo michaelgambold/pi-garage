@@ -38,6 +38,7 @@ dependencies:
   mockito: ^5.1.0
   intl: ^0.17.0
   socket_io_client: ^2.0.0
+  package_info_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:
