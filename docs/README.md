@@ -9,17 +9,21 @@ It comprises of the following 2 main pieces of hardware:
 - [Raspberry Pi (full size)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
 - [Pimoroni Automation Hat](https://shop.pimoroni.com/products/automation-hat?variant=30712316554)
 
+## Mobile apps
+
+Although Pi Garage has a fully functional API that can be accessed via 3rd party software (such as Home Assistant) an [iOS](https://apps.apple.com/gh/app/pi-garage/id1634928554) and [Android](https://play.google.com/store/apps/details?id=com.michaelgambold.pigarage) app has been created to allow standalone functionality.
+
 ## Backend Service Installation
 
-Pi Garage's backend service is packaged in a Docker image [pi-garage](https://hub.docker.com/r/michaelgambold/pi-garage). All dependencies are included in the image.
+Pi Garage's backend service is packaged as a Docker image [pi-garage](https://hub.docker.com/r/michaelgambold/pi-garage). All dependencies have been included in the image.
 
-> _**Note**: You **MUST**_ run the container in privillaged mode and as root. This is required to access the Raspberry Pi's GPIO (General Purpose Input/Ouput).
+> _**Note**: You **MUST** run the container in privillaged mode and as root. This is required to access the Raspberry Pi's GPIO (General Purpose Input/Ouput)._
 
 The simplest way to run/configure the application is by means of a `docker-compose.yml` file. A sample one has been included below.
 
-> _**Note**: In the below example a data volume has been configured. This **IS** required to persist configuration accross upgrades._
+> _**Note**: In the below example a data volume has been configured. This **IS** required to persist configuration._
 
-```bash
+```yml
 version: "3"
 
 services:
@@ -38,7 +42,6 @@ services:
 
 volumes:
   data:
-
 ```
 
 ## Configuration environment variables
