@@ -102,7 +102,7 @@ If some specific handling of a request the client version can be specified with 
 | Property | Description                                                                            |
 | -------- | -------------------------------------------------------------------------------------- |
 | index    | The index of the step in the sequence. I.e. index 1 is the first step in the sequence. |
-| action   | The action the door must be performing. E.g. `open` or `close`.                        |
+| action   | The action the door must be performing. E.g. `open`, `close` or `toggle`.              |
 | target   | The hardware item on the Automation Hat to manipulate. E.g. `relay1`                   |
 | duration | This is the wait time (in milliseconds) after a steps "action" has been done.          |
 | door     | What door this should apply to.                                                        |
@@ -136,16 +136,13 @@ can be controlled via solid state relays (driven by digital input 1 and 2 respec
 
 The (Swagger) API docs can be found at `/docs` on the host. There you are able to interact with the Pi Garage backend
 easily. The Swagger docs are considered the source of truth but more indepth information has been included below.
-A best effor to ensure the below documentation is up to date has been made.
+A best effort to ensure the below documentation is up to date has been made.
 
-## Mobile Apps
+## Integrations
 
-Pi Garage has complimentary [iOS](https://apps.apple.com/au/app/pi-garage/id1634928554) and
-[Android](https://play.google.com/store/apps/details?id=com.michaelgambold.pigarage) app.
+### Home Assistant
 
-## Home Assistant
-
-Pi Garage can easily be incorporated into Home Assistant by the use of a [RESTfull Command]()
+Pi Garage can easily be incorporated into Home Assistant by the use of a [RESTfull Command](https://www.home-assistant.io/integrations/rest_command/)
 
 ```bash
 # Sample set Door 1 state to "toggle"
@@ -159,16 +156,6 @@ rest_command:
     headers:
       x-api-key: "API-Key"
 ```
-
-<!-- ## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support). -->
-
-<!-- ## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework) -->
 
 ## License
 
