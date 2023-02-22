@@ -1,1 +1,1 @@
-Add app version to menu drawer. Pass app version to backend.
+Upgrade dependencies.
