@@ -2,7 +2,7 @@ name: Release Apps
 
 on:
   release:
-    types: [published]
+    push:
 
 jobs:
   docker:
