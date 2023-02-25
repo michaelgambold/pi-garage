@@ -1,8 +1,7 @@
 name: Release Apps
 
 on:
-  release:
-    push:
+  push:
 
 jobs:
   docker:
