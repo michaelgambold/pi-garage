@@ -10,25 +10,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # app:
-  #   runs-on: ubuntu-latest
+  android:
+    runs-on: ubuntu-latest
 
-  #   defaults:
-  #     run:
-  #       working-directory: ./app
+    defaults:
+      run:
+        working-directory: ./app
 
-  #   steps:
-  #     - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: "stable"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
 
-  #     - name: Install packages
-  #       run: flutter pub get
+      - name: Install packages
+        run: flutter pub get
 
-  #     - name: Run Tests
-  #       run: flutter test
+      - name: Run Tests
+        run: flutter build appbundle
 
   service:
     runs-on: ubuntu-latest
