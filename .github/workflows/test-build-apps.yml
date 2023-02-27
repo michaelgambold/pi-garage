@@ -6,7 +6,7 @@ on:
       - "main"
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.ref }}_test_build_apps
   cancel-in-progress: true
 
 jobs:
