@@ -28,7 +28,7 @@ jobs:
         run: flutter pub get
 
       - name: Run Tests
-        run: flutter build appbundle
+        run: flutter build apk
 
   service:
     runs-on: ubuntu-latest
