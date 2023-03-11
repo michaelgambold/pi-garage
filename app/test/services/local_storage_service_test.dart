@@ -12,6 +12,8 @@ void main() {
     service = LocalStorageService.instance;
   });
 
+  // NOTE: IT MIGHT NOT BE POSSIBLE TO TEST NATIVE API'S LIKE THIS
+
   // test("Contains Key",
   //     () async => {expect(await service.containsKey('key'), equals(false))});
 
