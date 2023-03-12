@@ -21,6 +21,11 @@ class LocalStorageService {
     return myPrefs.getInt(key) ?? 0;
   }
 
+  Future<List<String>> getStringListValue(String key) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getStringList(key) ?? [];
+  }
+
   Future<String> getStringValue(String key) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     return myPrefs.getString(key) ?? "";
@@ -44,6 +49,11 @@ class LocalStorageService {
   setIntegerValue(String key, int value) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     myPrefs.setInt(key, value);
+  }
+
+  setStringListValue(String key, List<String> value) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setStringList(key, value);
   }
 
   setStringValue(String key, String value) async {
