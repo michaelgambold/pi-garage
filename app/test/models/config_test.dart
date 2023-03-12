@@ -11,9 +11,9 @@ void main() {
 
     final config = Config.fromJson(json);
 
-    expect(config.apiKey, equals('abc123'));
+    expect(config.name, equals('Config 1'));
     expect(config.fqdn, equals('http://localhost'));
-    expect(config.name, equals('abc123'));
+    expect(config.apiKey, equals('abc123'));
   });
 
   test('To JSON', () {
