@@ -7,7 +7,7 @@ void main() {
 
     final auditLog = AuditLog.fromJson(json);
 
-    expect(auditLog.timestamp, DateTime.utc(2023, 1, 2, 0, 1, 2));
-    expect(auditLog.detail, 'Some Detail');
+    expect(auditLog.timestamp, equals(DateTime.utc(2023, 1, 2, 0, 1, 2)));
+    expect(auditLog.detail, equals('Some Detail'));
   });
 }
