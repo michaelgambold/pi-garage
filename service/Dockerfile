@@ -1,4 +1,4 @@
-FROM node:16 as build
+FROM node:18 as build
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY . .
 RUN npm run build
 
 
-FROM node:16 as prod-deps
+FROM node:18 as prod-deps
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY package*.json ./
 RUN npm ci --production
 
 
-FROM node:16-slim
+FROM node:18-slim
 
 ENV NODE_ENV=production
 
