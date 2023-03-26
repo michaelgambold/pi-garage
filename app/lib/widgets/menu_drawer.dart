@@ -60,17 +60,22 @@ class _MenuDrawerState extends State<MenuDrawer> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                        child: Column(children: [
-                      const Text("Menu",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                          )),
-                      ConfigDropdown(
-                          configs: _configs,
-                          currentConfigId: _currentConfig?.id,
-                          onChange: (value) => _selectConfig(value))
-                    ])),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                          const Text("Menu",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                              )),
+                          const SizedBox(
+                            height: 6,
+                          ),
+                          ConfigDropdown(
+                              configs: _configs,
+                              currentConfigId: _currentConfig?.id,
+                              onChange: (value) => _selectConfig(value))
+                        ])),
                     SizedBox(
                         height: _appVersionTextSize,
                         child: Text(
