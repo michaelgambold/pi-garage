@@ -12,9 +12,9 @@ void main() {
 
     final door = Door.fromJson(json);
 
-    expect(door.id, 1);
-    expect(door.isEnabled, true);
-    expect(door.label, 'Door Label');
-    expect(door.state, 'open');
+    expect(door.id, equals(1));
+    expect(door.isEnabled, equals(true));
+    expect(door.label, equals('Door Label'));
+    expect(door.state, equals('open'));
   });
 }

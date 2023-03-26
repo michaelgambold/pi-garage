@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
+import 'services/migration_service.dart';
 import 'screens/door_sequence_screen.dart';
 import 'screens/door_settings_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/global_settings_screen.dart';
 import 'screens/audit_log_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    final migrationService = MigrationService();
+    await migrationService.runAll();
+
+    runApp(const MyApp());
+  } catch (error) {
+    // If an error occurs, show the error message on the screen
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text(
+            error.toString(),
+            style: const TextStyle(fontSize: 24.0),
+          ),
+        ),
+      ),
+    ));
+  }
 }
 
 class MyApp extends StatelessWidget {

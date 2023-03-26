@@ -7,6 +7,6 @@ void main() {
 
     final json = updateDoor.toJson();
 
-    expect(json, {'label': 'Door Label', 'isEnabled': true});
+    expect(json, equals({'label': 'Door Label', 'isEnabled': true}));
   });
 }

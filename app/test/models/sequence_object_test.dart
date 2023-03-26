@@ -7,9 +7,9 @@ void main() {
 
     final sequenceObject = SequenceObject.fromJson(json);
 
-    expect(sequenceObject.action, 'toggle');
-    expect(sequenceObject.duration, 1000);
-    expect(sequenceObject.target, 'relay1');
+    expect(sequenceObject.action, equals('toggle'));
+    expect(sequenceObject.duration, equals(1000));
+    expect(sequenceObject.target, equals('relay1'));
   });
 
   test('To JSON', () {
@@ -17,6 +17,7 @@ void main() {
 
     final json = sequenceObject.toJson();
 
-    expect(json, {'action': 'toggle', 'duration': 1000, 'target': 'relay1'});
+    expect(json,
+        equals({'action': 'toggle', 'duration': 1000, 'target': 'relay1'}));
   });
 }
