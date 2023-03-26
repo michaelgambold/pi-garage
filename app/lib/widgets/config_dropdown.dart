@@ -10,7 +10,7 @@ class ConfigDropdown extends StatelessWidget {
       : super(key: key);
 
   final List<Config> configs;
-  final String currentConfigId;
+  final String? currentConfigId;
   final ValueSetter<String> onChange;
 
   @override
