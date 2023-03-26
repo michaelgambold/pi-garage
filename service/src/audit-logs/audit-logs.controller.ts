@@ -1,4 +1,10 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  Controller,
+  Get,
+  LoggerService,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiSecurity } from '@nestjs/swagger';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
@@ -9,10 +15,16 @@ import { AuditLogDto } from './dto/audit-log.dto';
 @ApiSecurity('api-key')
 @Controller('api/v1/audit-logs')
 export class AuditLogsController {
-  constructor(private readonly auditLogsService: AuditLogsService) {}
+  #logger: LoggerService;
+
+  constructor(private readonly auditLogsService: AuditLogsService) {
+    this.#logger = new ConsoleLogger(AuditLogsController.name);
+  }
 
   @Get()
   async getAll(): Promise<AuditLogDto[]> {
+    this.#logger.log('GET /api/v1/audit-logs invoked');
+
     const auditLogs = await this.auditLogsService.findAll();
 
     return auditLogs.map((x) => {
