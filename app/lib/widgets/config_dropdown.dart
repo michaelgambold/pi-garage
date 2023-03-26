@@ -17,6 +17,7 @@ class ConfigDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButton(
       value: currentConfigId,
+      isExpanded: true,
       onChanged: (value) => onChange(value.toString()),
       items: configs
           .map((e) => DropdownMenuItem(value: e.id, child: Text(e.name)))
