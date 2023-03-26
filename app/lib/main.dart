@@ -7,12 +7,26 @@ import 'screens/global_settings_screen.dart';
 import 'screens/audit_log_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  final migrationService = MigrationService();
-  await migrationService.runAll();
+    final migrationService = MigrationService();
+    await migrationService.runAll();
 
-  runApp(const MyApp());
+    runApp(const MyApp());
+  } catch (error) {
+    // If an error occurs, show the error message on the screen
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text(
+            error.toString(),
+            style: const TextStyle(fontSize: 24.0),
+          ),
+        ),
+      ),
+    ));
+  }
 }
 
 class MyApp extends StatelessWidget {
