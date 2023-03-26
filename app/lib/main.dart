@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'services/migration_service.dart';
 import 'screens/door_sequence_screen.dart';
 import 'screens/door_settings_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/global_settings_screen.dart';
 import 'screens/audit_log_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final migrationService = MigrationService();
+  await migrationService.runAll();
+
   runApp(const MyApp());
 }
 
