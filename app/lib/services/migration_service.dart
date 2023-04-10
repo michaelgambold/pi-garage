@@ -30,7 +30,7 @@ class MigrationService {
     final config = Config(uuid.v4(), "default", fqdn, apiKey);
 
     await configRepo.updateAllConfigs([config]);
-    await configRepo.selectConfig(config.id);
+    await configRepo.setCurrentConfig(config.id);
 
     // remove old config items
     await localStorage.removeValue('global_fqdn');
