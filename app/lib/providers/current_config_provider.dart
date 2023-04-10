@@ -16,7 +16,7 @@ class CurrentConfigProvider extends ChangeNotifier {
     });
   }
 
-  setCurrentConfig(String id) async {
+  Future<void> setCurrentConfig(String id) async {
     final configRepo = ConfigRepository();
     await configRepo.setCurrentConfig(id);
     _currentConfig = await configRepo.findCurrentConfig();
