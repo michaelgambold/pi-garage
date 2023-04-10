@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pi_garage/models/config.dart';
+import 'package:pi_garage/models/door.dart';
+import 'package:pi_garage/providers/current_config_provider.dart';
+import 'package:pi_garage/services/app_version_service.dart';
+import 'package:pi_garage/widgets/door_list.dart';
+import 'package:pi_garage/widgets/menu_drawer.dart';
+import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-
-import '../models/door.dart';
-import '../services/app_version_service.dart';
-import '../services/local_storage_service.dart';
-import '../widgets/door_list.dart';
-import '../widgets/menu_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.title}) : super(key: key);
@@ -18,25 +19,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _appVersionService = AppVersionService();
-
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+
   List<Door> _doors = [];
 
-  late String fqdn;
-  late String apiKey;
-  late io.Socket socket;
-
-  Future<void> _getConnectionSettings() async {
-    fqdn = await LocalStorageService.instance.getStringValue('global_fqdn');
-    apiKey =
-        await LocalStorageService.instance.getStringValue('global_api_key');
-  }
+  Config? _config;
+  io.Socket? _socket;
 
   Future<void> _initSocket(String fqdn, String apiKey) async {
     var appVersion = await _appVersionService.getAppVersion();
 
-    socket = io.io(
+    final socket = io.io(
         '$fqdn/doors',
         io.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
             {'x-api-key': apiKey, 'x-client-version': appVersion}).build());
@@ -70,6 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _doors = doors;
       });
     });
+
+    _socket = socket;
   }
 
   Future<void> _refresh() async {
@@ -77,21 +73,23 @@ class _HomeScreenState extends State<HomeScreen> {
       _doors = [];
     });
 
-    socket.destroy();
-    await _getConnectionSettings();
-    await _initSocket(fqdn, apiKey);
-  }
+    if (_socket != null) _socket!.destroy();
 
-  @override
-  void initState() {
-    super.initState();
-    _getConnectionSettings().then((_) {
-      _initSocket(fqdn, apiKey);
-    });
+    if (_config == null) return;
+    await _initSocket(_config!.fqdn, _config!.apiKey ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
+    // get current config from provider
+    final currentConfigProvider = context.watch<CurrentConfigProvider>();
+    final currentConfig = currentConfigProvider.currentConfig;
+
+    if (currentConfig?.id != _config?.id) {
+      _config = currentConfig;
+      _refresh();
+    }
+
     return ScaffoldMessenger(
         key: _scaffoldMessengerKey,
         child: Scaffold(
