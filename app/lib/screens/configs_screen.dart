@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pi_garage/services/http_service.dart';
+import 'package:pi_garage/services/local_storage_service.dart';
 
-import '../services/http_service.dart';
-import '../services/local_storage_service.dart';
-
-class GlobalSettingsScreen extends StatefulWidget {
-  const GlobalSettingsScreen({Key? key, required this.title}) : super(key: key);
+class ConfigsScreen extends StatefulWidget {
+  const ConfigsScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<GlobalSettingsScreen> createState() => _GlobalSettingsScreenState();
+  State<ConfigsScreen> createState() => _ConfigsScreenState();
 }
 
-class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
+class _ConfigsScreenState extends State<ConfigsScreen> {
   var _fqdn = '';
   var _apiKey = '';
 
