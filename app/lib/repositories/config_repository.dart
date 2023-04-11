@@ -37,7 +37,7 @@ class ConfigRepository {
     await updateAllConfigs(configs);
   }
 
-  Future<void> selectConfig(String id) async {
+  Future<void> setCurrentConfig(String id) async {
     final localStorageService = LocalStorageService.instance;
     await localStorageService.setStringValue('currentConfigId', id);
   }

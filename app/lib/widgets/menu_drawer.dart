@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pi_garage/models/config.dart';
+import 'package:pi_garage/providers/current_config_provider.dart';
 import 'package:pi_garage/repositories/config_repository.dart';
+import 'package:pi_garage/services/app_version_service.dart';
 import 'package:pi_garage/widgets/config_dropdown.dart';
-
-import '../services/app_version_service.dart';
+import 'package:provider/provider.dart';
 
 class MenuDrawer extends StatefulWidget {
   const MenuDrawer({Key? key}) : super(key: key);
@@ -19,7 +20,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   String _appVersion = '';
   List<Config> _configs = [];
-  Config? _currentConfig;
 
   @override
   void initState() {
@@ -31,23 +31,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
     _configRepository.findAllConfigs().then((value) => setState(() {
           _configs = value;
         }));
-    _refreshCurrentConfig();
-  }
-
-  Future<void> _refreshCurrentConfig() async {
-    final currentConfig = await _configRepository.findCurrentConfig();
-    setState(() {
-      _currentConfig = currentConfig;
-    });
-  }
-
-  Future<void> _selectConfig(String value) async {
-    await _configRepository.selectConfig(value);
-    await _refreshCurrentConfig();
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentConfigProvider = context.watch<CurrentConfigProvider>();
+    final currentConfig = currentConfigProvider.currentConfig;
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -73,8 +63,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
                           ),
                           ConfigDropdown(
                               configs: _configs,
-                              currentConfigId: _currentConfig?.id,
-                              onChange: (value) => _selectConfig(value))
+                              currentConfigId: currentConfig?.id,
+                              onChange: (value) =>
+                                  currentConfigProvider.setCurrentConfig(value))
                         ])),
                     SizedBox(
                         height: _appVersionTextSize,

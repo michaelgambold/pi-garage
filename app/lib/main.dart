@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'services/migration_service.dart';
-import 'screens/door_sequence_screen.dart';
-import 'screens/door_settings_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/global_settings_screen.dart';
-import 'screens/audit_log_screen.dart';
+import 'package:pi_garage/providers/current_config_provider.dart';
+import 'package:pi_garage/screens/door_sequence_screen.dart';
+import 'package:pi_garage/screens/door_settings_screen.dart';
+import 'package:pi_garage/screens/home_screen.dart';
+import 'package:pi_garage/screens/global_settings_screen.dart';
+import 'package:pi_garage/screens/audit_log_screen.dart';
+import 'package:pi_garage/services/migration_service.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   try {
@@ -13,7 +15,10 @@ Future<void> main() async {
     final migrationService = MigrationService();
     await migrationService.runAll();
 
-    runApp(const MyApp());
+    runApp(ChangeNotifierProvider(
+      create: (context) => CurrentConfigProvider(),
+      child: const MyApp(),
+    ));
   } catch (error) {
     // If an error occurs, show the error message on the screen
     runApp(MaterialApp(
