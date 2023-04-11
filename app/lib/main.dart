@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pi_garage/providers/current_config_provider.dart';
+import 'package:pi_garage/screens/audit_log_screen.dart';
+import 'package:pi_garage/screens/configs_screen.dart';
 import 'package:pi_garage/screens/door_sequence_screen.dart';
 import 'package:pi_garage/screens/door_settings_screen.dart';
+import 'package:pi_garage/screens/edit_config_screen.dart';
 import 'package:pi_garage/screens/home_screen.dart';
-import 'package:pi_garage/screens/global_settings_screen.dart';
-import 'package:pi_garage/screens/audit_log_screen.dart';
 import 'package:pi_garage/services/migration_service.dart';
 import 'package:provider/provider.dart';
 
@@ -60,14 +61,25 @@ class MyApp extends StatelessWidget {
 
           try {
             switch (uri.pathSegments.first) {
-              case 'settings':
+              case 'configs':
+                final configId = uri.pathSegments.elementAt(1);
+                final childPath = uri.pathSegments.elementAt(2);
+
+                if (childPath == 'edit') {
+                  return MaterialPageRoute(
+                      builder: (context) => EditConfigScreen(
+                            title: 'Edit Config',
+                            configId: configId,
+                          ));
+                }
+
                 return MaterialPageRoute(
                     builder: (context) =>
-                        const GlobalSettingsScreen(title: 'Global Settings'));
+                        const ConfigsScreen(title: 'Configs'));
 
               case 'doors':
-                var doorId = int.parse(uri.pathSegments.elementAt(1));
-                var childPath = uri.pathSegments.elementAt(2);
+                final doorId = int.parse(uri.pathSegments.elementAt(1));
+                final childPath = uri.pathSegments.elementAt(2);
 
                 if (childPath == 'settings') {
                   return MaterialPageRoute(
