@@ -62,10 +62,14 @@ class MyApp extends StatelessWidget {
           try {
             switch (uri.pathSegments.first) {
               case 'configs':
-                final configId = uri.pathSegments.elementAt(1);
-                final childPath = uri.pathSegments.elementAt(2);
+                final configId = uri.pathSegments.length >= 2
+                    ? uri.pathSegments.elementAt(1)
+                    : null;
+                final childPath = uri.pathSegments.length >= 3
+                    ? uri.pathSegments.elementAt(2)
+                    : null;
 
-                if (childPath == 'edit') {
+                if (configId != null && childPath == 'edit') {
                   return MaterialPageRoute(
                       builder: (context) => EditConfigScreen(
                             title: 'Edit Config',
