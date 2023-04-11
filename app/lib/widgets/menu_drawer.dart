@@ -78,10 +78,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
                         ))
                   ])),
           ListTile(
-            title: const Text("Global Settings"),
+            title: const Text("Configs"),
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.pushNamed(context, '/settings');
+              Navigator.pushNamed(context, '/configs');
             },
           ),
           ListTile(
