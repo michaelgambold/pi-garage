@@ -19,6 +19,7 @@ class ConfigsScreen extends StatefulWidget {
 class _ConfigsScreenState extends State<ConfigsScreen> {
   final _configRepo = ConfigRepository();
   List<Config> _configs = [];
+  ScaffoldMessengerState? _scaffoldMesseger;
 
   @override
   void initState() {
@@ -34,15 +35,35 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
   }
 
   Future<void> _handleAddPressed() async {
-    await _configRepo
-        .addConfig(Config(const Uuid().v4(), 'New Config', '', null));
-    await _refresh();
+    try {
+      await _configRepo
+          .addConfig(Config(const Uuid().v4(), 'New Config', '', null));
+      await _refresh();
+    } catch (e) {
+      _scaffoldMesseger?.clearSnackBars();
+      _scaffoldMesseger?.showSnackBar(
+          SnackBar(backgroundColor: Colors.red, content: Text(e.toString())));
+    }
+  }
+
+  Future<void> _handleRemoveConfig(Config config) async {
+    try {
+      await _configRepo.removeConfig(config.id);
+      await _refresh();
+    } catch (e) {
+      _scaffoldMesseger?.clearSnackBars();
+      _scaffoldMesseger?.showSnackBar(
+          SnackBar(backgroundColor: Colors.red, content: Text(e.toString())));
+    }
+  }
+
+  Future<void> _handleEditConfig(BuildContext context, Config config) async {
+    Navigator.pushNamed(context, 'configs/${config.id}/edit');
   }
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    var scaffoldMesseger = ScaffoldMessenger.of(context);
+    _scaffoldMesseger = ScaffoldMessenger.of(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -57,6 +78,9 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
                   children: [
                     ConfigList(
                       configs: _configs,
+                      editConfig: (config) =>
+                          _handleEditConfig(context, config),
+                      removeConfig: _handleRemoveConfig,
                     ),
                   ],
                 ),
