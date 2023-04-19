@@ -1,10 +1,10 @@
 class Config {
-  final String id;
-  final String name;
-  final String fqdn;
-  final String? apiKey;
+  String id;
+  String name;
+  String fqdn;
+  String? apiKey;
 
-  const Config(this.id, this.name, this.fqdn, this.apiKey);
+  Config(this.id, this.name, this.fqdn, this.apiKey);
 
   Config.fromJson(Map<String, dynamic> json)
       : id = json['id'],
