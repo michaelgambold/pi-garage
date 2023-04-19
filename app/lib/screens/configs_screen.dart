@@ -58,7 +58,8 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
   }
 
   Future<void> _handleEditConfig(BuildContext context, Config config) async {
-    Navigator.pushNamed(context, 'configs/${config.id}/edit');
+    await Navigator.pushNamed(context, 'configs/${config.id}/edit');
+    await _refresh();
   }
 
   @override
