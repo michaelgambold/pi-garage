@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pi_garage/models/config.dart';
+import 'package:pi_garage/repositories/config_repository.dart';
 import 'package:pi_garage/services/http_service.dart';
-import 'package:pi_garage/services/local_storage_service.dart';
 
 class EditConfigScreen extends StatefulWidget {
   const EditConfigScreen(
@@ -15,42 +16,118 @@ class EditConfigScreen extends StatefulWidget {
 }
 
 class _EditConfigScreenState extends State<EditConfigScreen> {
-  var _fqdn = '';
-  var _apiKey = '';
+  ScaffoldMessengerState? _scaffoldMesseger;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final _configRepo = ConfigRepository();
+
+  late Config _config;
+  final _nameController = TextEditingController(text: '');
+  final _fqdnController = TextEditingController(text: '');
+  final _apiKeyController = TextEditingController(text: '');
 
   @override
   void initState() {
     super.initState();
-    LocalStorageService.instance
-        .getStringValue('global_fqdn')
-        .then((value) => setState(() {
-              _fqdn = value;
-            }));
-
-    LocalStorageService.instance
-        .getStringValue('global_api_key')
-        .then((value) => setState(
-              () {
-                _apiKey = value;
-              },
-            ));
+    _configRepo.findConfig(widget.configId).then((value) => setState(() {
+          _config = value;
+          _nameController.text = value.name;
+          _fqdnController.text = value.fqdn;
+          _apiKeyController.text = value.apiKey ?? '';
+        }));
   }
 
-  Future<bool> _testConnection() async {
-    final headers = <String, String>{'x-api-key': _apiKey};
+  @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+    _fqdnController.dispose();
+    _apiKeyController.dispose();
+  }
+
+  Future<void> _testConnection() async {
+    _scaffoldMesseger?.clearSnackBars();
+
+    if (_fqdnController.text.isEmpty) {
+      _scaffoldMesseger?.showSnackBar(
+        const SnackBar(
+          content: Text('FQDN required'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final headers = <String, String>{'x-api-key': _apiKeyController.text};
 
     try {
-      final res = await HttpService().get(Uri.parse('$_fqdn/test'), headers);
-      return res.statusCode == 200;
+      final res = await HttpService()
+          .get(Uri.parse('${_fqdnController.text}/test'), headers);
+
+      if (res.statusCode == 200) {
+        _scaffoldMesseger?.showSnackBar(
+          const SnackBar(
+            content: Text('Test Successful'),
+          ),
+        );
+        return;
+      }
+
+      if (res.statusCode == 401) {
+        _scaffoldMesseger?.showSnackBar(
+          const SnackBar(
+            content: Text('API key required'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      _scaffoldMesseger?.showSnackBar(
+        const SnackBar(
+          content: Text('Test Failed'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
     } catch (e) {
-      return false;
+      _scaffoldMesseger?.showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleSave() async {
+    _scaffoldMesseger?.clearSnackBars();
+
+    try {
+      _config.apiKey =
+          _apiKeyController.text.isEmpty ? null : _apiKeyController.text;
+      _config.fqdn = _fqdnController.text;
+      _config.name = _nameController.text;
+
+      await _configRepo.updateConfig(_config!);
+
+      _scaffoldMesseger?.showSnackBar(
+        const SnackBar(
+          content: Text('Settings Saved'),
+        ),
+      );
+    } catch (e) {
+      _scaffoldMesseger?.showSnackBar(
+        const SnackBar(
+          content: Text('Settings Saved'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    var scaffoldMesseger = ScaffoldMessenger.of(context);
+    _scaffoldMesseger = ScaffoldMessenger.of(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -65,6 +142,18 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
                 children: <Widget>[
                   TextFormField(
                     decoration: const InputDecoration(
+                      hintText: 'Name',
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'A name is required';
+                      }
+                      return null;
+                    },
+                    controller: _nameController,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
                       hintText: 'FQDN',
                     ),
                     validator: (String? value) {
@@ -73,49 +162,18 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
                       }
                       return null;
                     },
-                    onSaved: (value) {
-                      LocalStorageService.instance
-                          .setStringValue('global_fqdn', value ?? '');
-                    },
-                    onChanged: (value) {
-                      _fqdn = value;
-                    },
-                    initialValue: _fqdn,
+                    controller: _fqdnController,
                   ),
                   TextFormField(
                     decoration: const InputDecoration(hintText: 'API Key'),
-                    initialValue: _apiKey,
-                    onSaved: (value) {
-                      LocalStorageService.instance
-                          .setStringValue('global_api_key', value ?? '');
-                    },
-                    onChanged: (value) {
-                      _apiKey = value;
-                    },
+                    controller: _apiKeyController,
                   ),
                   const Spacer(),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.grey,
+                          backgroundColor: Colors.grey,
                           minimumSize: const Size.fromHeight(40)),
-                      onPressed: () async {
-                        scaffoldMesseger.clearSnackBars();
-
-                        if (await _testConnection()) {
-                          scaffoldMesseger.showSnackBar(
-                            const SnackBar(
-                              content: Text('Test Successful'),
-                            ),
-                          );
-                        } else {
-                          scaffoldMesseger.showSnackBar(
-                            const SnackBar(
-                              content: Text('Test Failed'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: () => _testConnection(),
                       child: const Text('Test')),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -123,15 +181,10 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
                     onPressed: () async {
                       // Validate will return true if the form is valid, or false if
                       // the form is invalid.
-                      if (formKey.currentState!.validate()) {
-                        formKey.currentState!.save();
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Settings Saved'),
-                          ),
-                        );
+                      if (!formKey.currentState!.validate()) {
+                        return;
                       }
+                      await _handleSave();
                     },
                     child: const Text('Save'),
                   ),
