@@ -43,7 +43,9 @@ For apple the following devices can be used for correct resolution images
 - iPad 12.9 inch 2nd Gen
 - iPad 12.9 inch 6th Gen (3rd gen screenshot)
 
-For android the images need to be 16:9 resolution according to the docs so no pixel emulator works.
+For android the following devices can be used for correct resolution images
+
+- "Phone Screenshots", Pixel 3a
 
 ## Developer Notes
 
