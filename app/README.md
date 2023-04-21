@@ -39,9 +39,9 @@ flutter pub run flutter_launcher_icons:main
 For apple the following devices can be used for correct resolution images
 
 - 5.5", iPhone 8 Plus
-- 6.5", iPhone 13 Pro Max
+- 6.5", iPhone 14
 - iPad 12.9 inch 2nd Gen
-- iPad 12.9 inch 3rd Gen
+- iPad 12.9 inch 6th Gen (3rd gen screenshot)
 
 For android the images need to be 16:9 resolution according to the docs so no pixel emulator works.
 
