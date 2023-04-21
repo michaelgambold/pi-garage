@@ -2,9 +2,9 @@
 
 ## Upgrading to version 1.8.0+
 
-- Mobile apps now support multiple configs. A migration tool has been created that should
-  perform the migration automatically. However if this does not occur the configuration
-  will have to be setup again.
+- Mobile apps now support multiple configs. A migration tool has been created that should perform the migration automatically.
+  However if this does not occur the configuration will have to be setup again.
+- It has been observed with a low number of users that the mobile app may have to be force closed after migration to this version.
 
 ## Upgrading to version 1.7.0+
 
