@@ -79,13 +79,35 @@ class _HomeScreenState extends State<HomeScreen> {
     await _initSocket(_config!.fqdn, _config!.apiKey ?? '');
   }
 
+  bool configChanged(Config? prevConfig, Config? toTest) {
+    if (toTest == null) {
+      return false;
+    }
+    if (prevConfig == null) {
+      return true;
+    }
+    if (toTest.id != prevConfig.id) {
+      return true;
+    }
+    if (toTest.name != prevConfig.name) {
+      return true;
+    }
+    if (toTest.fqdn != prevConfig.fqdn) {
+      return true;
+    }
+    if (toTest.apiKey != prevConfig.apiKey) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     // get current config from provider
     final currentConfigProvider = context.watch<CurrentConfigProvider>();
     final currentConfig = currentConfigProvider.currentConfig;
 
-    if (currentConfig?.id != _config?.id) {
+    if (configChanged(_config, currentConfig)) {
       _config = currentConfig;
       _refresh();
     }
