@@ -108,7 +108,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
       _config.fqdn = _fqdnController.text;
       _config.name = _nameController.text;
 
-      await _configRepo.updateConfig(_config!);
+      await _configRepo.updateConfig(_config);
 
       _scaffoldMesseger?.showSnackBar(
         const SnackBar(
