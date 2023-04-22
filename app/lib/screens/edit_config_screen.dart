@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pi_garage/models/config.dart';
+import 'package:pi_garage/providers/current_config_provider.dart';
 import 'package:pi_garage/repositories/config_repository.dart';
 import 'package:pi_garage/services/http_service.dart';
+import 'package:provider/provider.dart';
 
 class EditConfigScreen extends StatefulWidget {
   const EditConfigScreen(
@@ -127,6 +129,8 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentConfigProvider = context.watch<CurrentConfigProvider>();
+    final currentConfig = currentConfigProvider.currentConfig;
     _scaffoldMesseger = ScaffoldMessenger.of(context);
 
     return Scaffold(
@@ -185,6 +189,9 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
                         return;
                       }
                       await _handleSave();
+                      if (currentConfig?.id == _config.id) {
+                        await currentConfigProvider.reloadCurrentConfig();
+                      }
                     },
                     child: const Text('Save'),
                   ),
