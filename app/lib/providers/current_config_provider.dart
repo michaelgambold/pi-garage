@@ -22,4 +22,10 @@ class CurrentConfigProvider extends ChangeNotifier {
     _currentConfig = await configRepo.findCurrentConfig();
     notifyListeners();
   }
+
+  Future<void> reloadCurrentConfig() async {
+    final configRepo = ConfigRepository();
+    _currentConfig = await configRepo.findCurrentConfig();
+    notifyListeners();
+  }
 }
