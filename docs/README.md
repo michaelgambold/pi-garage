@@ -13,6 +13,14 @@ It comprises of the following 2 main pieces of hardware:
 
 Although Pi Garage has a fully functional API that can be accessed via 3rd party software (such as Home Assistant) an [iOS](https://apps.apple.com/gh/app/pi-garage/id1634928554) and [Android](https://play.google.com/store/apps/details?id=com.michaelgambold.pigarage) app has been created to allow standalone functionality.
 
+### Multiple configurations
+
+As of 1.8.0 the ability to have multiple configurations has been added so that you can quickly and easily control multiple Pi Garage instances.
+
+Click on the image below to see a video demonstration.
+
+[![Pi Garage mulitple config video](https://img.youtube.com/vi/v2JHKtbDgx8/0.jpg)](https://www.youtube.com/watch?v=v2JHKtbDgx8)
+
 ## Backend Service Installation
 
 Pi Garage's backend service is packaged as a Docker image [pi-garage](https://hub.docker.com/r/michaelgambold/pi-garage). All dependencies have been included in the image.
