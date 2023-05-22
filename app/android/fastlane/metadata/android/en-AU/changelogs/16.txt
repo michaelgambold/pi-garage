@@ -1,0 +1,1 @@
+Fix Gradle version for package_info_plus package.
