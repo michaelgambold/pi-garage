@@ -63,3 +63,13 @@ Configure .zshrc
 ```bash
 # toodo
 ```
+
+### Upgrade Gems/Fastlane
+
+In the `ios` and `android` folders run the following
+
+```bash
+# Update all gems
+$ bundle update
+
+```
