@@ -1,7 +1,7 @@
 import { ConsoleLogger, Injectable, LoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AutomationHat } from 'automation-hat';
-import delay from 'delay';
+import { setTimeout } from 'timers/promises';
 import { SequenceObject } from 'src/entities/SequenceObject.entity';
 
 @Injectable()
@@ -81,7 +81,7 @@ export class AutomationHatService {
         break;
     }
 
-    await delay(sequenceObject.duration);
+    await setTimeout(sequenceObject.duration);
   }
 
   turnOffCommsLight() {
