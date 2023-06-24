@@ -41,7 +41,7 @@
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/websockets": "^9.4.2",
     "automation-hat": "^1.0.2",
-    "date-fns": "^2.29.3",
+    "date-fns": "^2.30.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
     "rxjs": "^7.5.7",
