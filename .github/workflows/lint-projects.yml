@@ -1,0 +1,54 @@
+name: Lint Projcts
+
+on:
+  push:
+    branches-ignore:
+      - "main"
+
+concurrency:
+  group: ${{ github.ref }}_lint_projects
+  cancel-in-progress: true
+
+jobs:
+  # app:
+  #   runs-on: ubuntu-latest
+
+  #   defaults:
+  #     run:
+  #       working-directory: ./app
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: "stable"
+
+  #     - name: Install packages
+  #       run: flutter pub get
+
+  #     - name: Run Tests
+  #       run: flutter test
+
+  service:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./service
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: service/package-lock.json
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
