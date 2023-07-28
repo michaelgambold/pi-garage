@@ -5,7 +5,6 @@ import { SequenceObject } from '../entities/SequenceObject.entity';
 
 describe('AutomationHatService', () => {
   let service: AutomationHatService;
-  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -13,7 +12,6 @@ describe('AutomationHatService', () => {
     }).compile();
 
     service = module.get<AutomationHatService>(AutomationHatService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   it('should be defined', () => {

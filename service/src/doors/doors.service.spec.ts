@@ -1,4 +1,4 @@
-import { getRepositoryToken, MikroOrmModule } from '@mikro-orm/nestjs';
+import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
