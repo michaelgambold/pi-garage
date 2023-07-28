@@ -1,4 +1,4 @@
-name: Lint Projcts
+name: Lint
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "main"
 
 concurrency:
-  group: ${{ github.ref }}_lint_projects
+  group: ${{ github.ref }}_lint
   cancel-in-progress: true
 
 jobs:
