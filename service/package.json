@@ -40,7 +40,7 @@
     "@nestjs/platform-socket.io": "^10.1.2",
     "@nestjs/swagger": "^7.1.4",
     "@nestjs/websockets": "^10.1.2",
-    "automation-hat": "^1.0.2",
+    "automation-hat": "^2.0.0",
     "date-fns": "^2.30.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
