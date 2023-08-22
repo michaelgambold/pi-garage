@@ -39,7 +39,7 @@
     "@nestjs/platform-express": "^10.1.2",
     "@nestjs/platform-socket.io": "^10.1.2",
     "@nestjs/swagger": "^7.1.4",
-    "@nestjs/websockets": "^10.1.2",
+    "@nestjs/websockets": "^10.2.0",
     "automation-hat": "^1.0.2",
     "date-fns": "^2.30.0",
     "reflect-metadata": "^0.1.13",
