@@ -15,8 +15,6 @@ export class HealthController {
   @Get()
   @ApiResponse({ type: HealthDto })
   async getHealth(): Promise<HealthDto> {
-    this.#logger.log('GET /health invoked');
-
     // try to read value from automation hat. we don't care on the value
     // but this should crash if we cannot read it
     this.automationHatService.turnOnCommsLight();
