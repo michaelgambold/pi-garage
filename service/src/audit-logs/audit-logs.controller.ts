@@ -23,8 +23,6 @@ export class AuditLogsController {
 
   @Get()
   async getAll(): Promise<AuditLogDto[]> {
-    this.#logger.log('GET /api/v1/audit-logs invoked');
-
     const auditLogs = await this.auditLogsService.findAll();
 
     return auditLogs.map((x) => {
