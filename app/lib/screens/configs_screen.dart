@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pi_garage/models/config.dart';
 import 'package:pi_garage/repositories/config_repository.dart';
-import 'package:pi_garage/services/http_service.dart';
-import 'package:pi_garage/services/local_storage_service.dart';
 import 'package:pi_garage/widgets/config_list.dart';
 import 'package:pi_garage/widgets/floating_add_button.dart';
 import 'package:uuid/uuid.dart';

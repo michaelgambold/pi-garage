@@ -46,7 +46,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   }
 
   void _addSequenceObject() {
-    setState(() => {_sequence.add(const SequenceObject('on', 1000, 'relay1'))});
+    setState(() => _sequence.add(const SequenceObject('on', 1000, 'relay1')));
   }
 
   void _handleRemoveItem(int index) {

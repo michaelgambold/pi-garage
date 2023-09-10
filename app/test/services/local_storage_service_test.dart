@@ -1,15 +1,15 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pi_garage/services/local_storage_service.dart';
+// import 'package:pi_garage/services/local_storage_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  late LocalStorageService service;
+  // late LocalStorageService service;
 
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
-    service = LocalStorageService.instance;
+    // service = LocalStorageService.instance;
   });
 
   // NOTE: IT MIGHT NOT BE POSSIBLE TO TEST NATIVE API'S LIKE THIS
