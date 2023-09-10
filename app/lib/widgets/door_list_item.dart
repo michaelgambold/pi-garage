@@ -29,7 +29,7 @@ class _DoorListItemState extends State<DoorListItem> {
 
   @override
   Widget build(BuildContext context) {
-    _handleMenuClick(String value) {
+    handleMenuClick(String value) {
       switch (value) {
         case 'Settings':
           Navigator.pushNamed(
@@ -55,7 +55,7 @@ class _DoorListItemState extends State<DoorListItem> {
       Text('${widget.door.label} (${widget.door.state})'),
       PopupMenuButton<String>(
         icon: const Icon(Icons.more_vert),
-        onSelected: _handleMenuClick,
+        onSelected: handleMenuClick,
         itemBuilder: (BuildContext context) {
           return {
             'Settings',
