@@ -1,4 +1,9 @@
-import { Logger, Module } from '@nestjs/common';
+import {
+  Logger,
+  MiddlewareConsumer,
+  Module,
+  RequestMethod,
+} from '@nestjs/common';
 import { DoorsModule } from './doors/doors.module';
 import { HealthModule } from './health/health.module';
 import { AutomationHatModule } from './automation-hat/automation-hat.module';
@@ -11,6 +16,7 @@ import { Door } from './entities/Door.entity';
 import { TestModule } from './test/test.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { ClientVersionModule } from './client-version/client-version.module';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -31,6 +37,12 @@ export class AppModule {
   private readonly logger = new Logger(AppModule.name);
 
   constructor(private readonly orm: MikroORM) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
 
   @UseRequestContext()
   async onModuleInit(): Promise<void> {

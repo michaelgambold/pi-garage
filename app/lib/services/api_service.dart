@@ -28,7 +28,7 @@ class ApiService {
     final config = await _configRepo.findCurrentConfig();
     final uri = Uri.parse('${config.fqdn}$path');
     final headers = await _getHeaders(config);
-    return _httpService.post(uri, body, headers);
+    return _httpService.put(uri, body, headers);
   }
 
   _getHeaders(Config config) async {

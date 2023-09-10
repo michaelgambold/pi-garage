@@ -40,8 +40,6 @@ export class DoorsController {
   @ApiResponse({ type: GetDoorDto, isArray: true, status: 200 })
   @Get()
   async getAll(): Promise<GetDoorDto[]> {
-    this.#logger.log('GET /api/v1/doors invoked');
-
     this.automationHatService.turnOnCommsLight();
 
     const doors = await this.doorsService.findAll();
@@ -61,8 +59,6 @@ export class DoorsController {
   @ApiResponse({ type: GetDoorDto, status: 200 })
   @Get(':id')
   async get(@Param('id', ParseIntPipe) id: number): Promise<GetDoorDto> {
-    this.#logger.log(`GET /api/v1/doors/${id} invoked`);
-
     this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
@@ -88,8 +84,6 @@ export class DoorsController {
   async getSequence(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SequenceObjectDto[]> {
-    this.#logger.log(`GET /api/v1/doors/${id}/sequence invoked`);
-
     this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
@@ -115,8 +109,6 @@ export class DoorsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateDoorDto,
   ) {
-    this.#logger.log(`PUT /api/v1/doors/${id} invoked`);
-
     this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
@@ -140,8 +132,6 @@ export class DoorsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: SequenceObjectDto[],
   ): Promise<void> {
-    this.#logger.log(`PUT /api/v1/doors/${id}/sequence invoked`);
-
     this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
@@ -214,8 +204,6 @@ export class DoorsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateStateDto,
   ): Promise<void> {
-    this.#logger.log(`POST /api/v1/doors/${id}/state invoked`);
-
     this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
