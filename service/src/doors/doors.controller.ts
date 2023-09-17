@@ -13,6 +13,8 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { differenceInMilliseconds } from 'date-fns';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
@@ -23,6 +25,7 @@ import { GetDoorDto } from './dto/get-door.dto';
 import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
+import { DoorQueue, DoorsSequenceQueueMessage } from './types';
 
 @UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
 @ApiSecurity('api-key')
@@ -33,6 +36,8 @@ export class DoorsController {
   constructor(
     private readonly doorsService: DoorsService,
     private readonly automationHatService: AutomationHatService,
+    @InjectQueue(DoorQueue.DOORS_SEQUENCE_RUN)
+    private readonly doorsSequenceRunQueue: Queue,
   ) {
     this.#logger = new ConsoleLogger(DoorsController.name);
   }
@@ -256,6 +261,11 @@ export class DoorsController {
         this.#logger.warn(`Invalid state ${body.state}`);
         throw new BadRequestException('Invalid state');
     }
+
+    const msg: DoorsSequenceQueueMessage = {
+      doorId: id,
+    };
+    await this.doorsSequenceRunQueue.add(body.state, msg);
 
     this.automationHatService.turnOffCommsLight();
   }

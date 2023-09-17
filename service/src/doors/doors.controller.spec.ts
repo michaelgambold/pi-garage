@@ -90,6 +90,12 @@ describe('DoorsController', () => {
           provide: DoorsService,
           useValue: mockDoorsService,
         },
+        {
+          provide: 'BullQueue_doors-sequence-run',
+          useValue: {
+            add: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
