@@ -1,5 +1,5 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { DoorQueue } from './types';
+import { DoorQueue, DoorsSequenceQueueMessage } from './types';
 import { Job } from 'bullmq';
 import { ConsoleLogger, LoggerService } from '@nestjs/common';
 
@@ -12,7 +12,9 @@ export class DoorsSequenceProcessor extends WorkerHost {
     this.#logger = new ConsoleLogger(DoorsSequenceProcessor.name);
   }
 
-  async process(job: Job<any, any, string>): Promise<any> {
+  async process(
+    job: Job<DoorsSequenceQueueMessage, void, string>,
+  ): Promise<void> {
     // push message to change the doors state in x time
 
     switch (job.name) {
