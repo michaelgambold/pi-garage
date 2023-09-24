@@ -3,7 +3,7 @@ import { DoorQueue, DoorsSequenceQueueMessage } from './types';
 import { Job } from 'bullmq';
 import { ConsoleLogger, LoggerService } from '@nestjs/common';
 import { DoorsService } from './doors.service';
-import { EntityManager } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/sqlite';
 // import { Door } from '../entities/Door.entity';
 // import { InjectRepository } from '@mikro-orm/nestjs';
 import { setTimeout } from 'timers/promises';
