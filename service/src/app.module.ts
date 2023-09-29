@@ -4,12 +4,13 @@ import {
   Module,
   RequestMethod,
 } from '@nestjs/common';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { ConfigModule } from '@nestjs/config';
+import { BullModule } from '@nestjs/bullmq';
 import { DoorsModule } from './doors/doors.module';
 import { HealthModule } from './health/health.module';
 import { AutomationHatModule } from './automation-hat/automation-hat.module';
-import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { MikroORM, UseRequestContext } from '@mikro-orm/core';
 import { DatabaseSeeder } from './seeders/DatabaseSeeder';
 import { Door } from './entities/Door.entity';
@@ -22,6 +23,9 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MikroOrmModule.forRoot(),
+    BullModule.forRoot({
+      connection: { host: 'localhost', port: 6379 },
+    }),
     AuditLogsModule,
     DoorsModule,
     HealthModule,
