@@ -1,11 +1,5 @@
 import { MikroORM, UseRequestContext } from '@mikro-orm/core';
-import {
-  ConsoleLogger,
-  forwardRef,
-  Inject,
-  LoggerService,
-  UseGuards,
-} from '@nestjs/common';
+import { forwardRef, Inject, UseGuards } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -19,11 +13,12 @@ import { WsApiKeyAuthGuard } from '../auth/ws-api-key-auth.guard';
 import { ClientVersionService } from '../client-version/client-version.service';
 import { WsClientVersionGuard } from '../client-version/ws-client-version.guard';
 import { DoorsService } from './doors.service';
+import { Logger } from '../logger/logger';
 
 @UseGuards(WsClientVersionGuard, WsApiKeyAuthGuard)
 @WebSocketGateway({ namespace: 'doors', cors: '*' })
 export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private readonly logger: LoggerService;
+  private readonly logger: Logger;
 
   @WebSocketServer()
   server: Server;
@@ -37,7 +32,7 @@ export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly authService: AuthService,
     private readonly clientVersionService: ClientVersionService,
   ) {
-    this.logger = new ConsoleLogger(DoorsGateway.name);
+    this.logger = new Logger(DoorsGateway.name);
   }
 
   handleConnection(client: Socket) {
