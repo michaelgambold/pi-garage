@@ -1,16 +1,17 @@
-import { ConsoleLogger, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AutomationHat } from 'automation-hat';
 import { setTimeout } from 'timers/promises';
 import { SequenceObject } from 'src/entities/SequenceObject.entity';
+import { Logger } from '../logger/logger';
 
 @Injectable()
 export class AutomationHatService {
   readonly #automationHat: AutomationHat;
-  readonly #logger: LoggerService;
+  readonly #logger: Logger;
 
   constructor(private readonly configService: ConfigService) {
-    this.#logger = new ConsoleLogger(AutomationHatService.name);
+    this.#logger = new Logger(AutomationHatService.name);
     this.#logger.log('Initializing automation hat');
     this.#automationHat = new AutomationHat();
 

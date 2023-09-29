@@ -1,5 +1,6 @@
-import { ConsoleLogger, Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { Logger } from '../logger/logger';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -10,7 +11,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const t1 = performance.now();
       const msDuration = t1 - t0;
 
-      const logger = new ConsoleLogger();
+      const logger = new Logger();
 
       let message = `${res.statusCode} ${req.method} ${req.path}`;
 

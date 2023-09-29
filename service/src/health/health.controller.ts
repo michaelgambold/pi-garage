@@ -1,4 +1,4 @@
-import { ConsoleLogger, Controller, Get, LoggerService } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { HealthDto } from './dto/health.dto';
@@ -6,11 +6,7 @@ import { setTimeout } from 'timers/promises';
 
 @Controller('health')
 export class HealthController {
-  #logger: LoggerService;
-
-  constructor(private readonly automationHatService: AutomationHatService) {
-    this.#logger = new ConsoleLogger(HealthController.name);
-  }
+  constructor(private readonly automationHatService: AutomationHatService) {}
 
   @Get()
   @ApiResponse({ type: HealthDto })

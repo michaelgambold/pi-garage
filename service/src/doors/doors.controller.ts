@@ -8,8 +8,6 @@ import {
   Get,
   Body,
   Put,
-  LoggerService,
-  ConsoleLogger,
   ConflictException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
@@ -26,12 +24,13 @@ import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
 import { DoorQueue, DoorsSequenceQueueMessage } from './types';
+import { Logger } from '../logger/logger';
 
 @UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
 @ApiSecurity('api-key')
 @Controller('api/v1/doors')
 export class DoorsController {
-  #logger: LoggerService;
+  #logger: Logger;
 
   constructor(
     private readonly doorsService: DoorsService,
@@ -39,7 +38,7 @@ export class DoorsController {
     @InjectQueue(DoorQueue.DOORS_SEQUENCE_RUN)
     private readonly doorsSequenceRunQueue: Queue,
   ) {
-    this.#logger = new ConsoleLogger(DoorsController.name);
+    this.#logger = new Logger(DoorsController.name);
   }
 
   @ApiResponse({ type: GetDoorDto, isArray: true, status: 200 })

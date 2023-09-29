@@ -1,20 +1,15 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/sqlite';
-import {
-  ConsoleLogger,
-  forwardRef,
-  Inject,
-  Injectable,
-  LoggerService,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { AuditLog } from '../entities/AuditLog.entity';
 import { Door } from '../entities/Door.entity';
 import { DoorsGateway } from './doors.gateway';
+import { Logger } from '../logger/logger';
 
 @Injectable()
 export class DoorsService {
-  private readonly logger: LoggerService;
+  private readonly logger: Logger;
 
   constructor(
     @InjectRepository(Door)
@@ -25,7 +20,7 @@ export class DoorsService {
     @Inject(forwardRef(() => DoorsGateway))
     private readonly doorsGateway: DoorsGateway,
   ) {
-    this.logger = new ConsoleLogger(DoorsService.name);
+    this.logger = new Logger(DoorsService.name);
   }
 
   async close(id: number): Promise<void> {

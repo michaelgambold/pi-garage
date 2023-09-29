@@ -1,12 +1,8 @@
-import {
-  Logger,
-  MiddlewareConsumer,
-  Module,
-  RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
+
 import { DoorsModule } from './doors/doors.module';
 import { HealthModule } from './health/health.module';
 import { AutomationHatModule } from './automation-hat/automation-hat.module';
@@ -18,6 +14,7 @@ import { TestModule } from './test/test.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { ClientVersionModule } from './client-version/client-version.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { Logger } from './logger/logger';
 
 @Module({
   imports: [

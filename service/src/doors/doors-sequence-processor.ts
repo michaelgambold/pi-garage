@@ -1,23 +1,23 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { DoorQueue, DoorsSequenceQueueMessage } from './types';
-import { Job } from 'bullmq';
-import { ConsoleLogger, LoggerService } from '@nestjs/common';
-import { DoorsService } from './doors.service';
 import { EntityManager } from '@mikro-orm/sqlite';
+import { Job } from 'bullmq';
+import { setTimeout } from 'timers/promises';
+import { DoorQueue, DoorsSequenceQueueMessage } from './types';
+import { DoorsService } from './doors.service';
+import { Logger } from '../logger/logger';
 // import { Door } from '../entities/Door.entity';
 // import { InjectRepository } from '@mikro-orm/nestjs';
-import { setTimeout } from 'timers/promises';
 
 @Processor(DoorQueue.DOORS_SEQUENCE_RUN)
 export class DoorsSequenceProcessor extends WorkerHost {
-  #logger: LoggerService;
+  private readonly logger: Logger;
 
   constructor(
     private readonly em: EntityManager,
     private readonly doorsService: DoorsService,
   ) {
     super();
-    this.#logger = new ConsoleLogger(DoorsSequenceProcessor.name);
+    this.logger = new Logger(DoorsSequenceProcessor.name);
   }
 
   async process(
@@ -30,7 +30,7 @@ export class DoorsSequenceProcessor extends WorkerHost {
 
     await context.transactional(async () => {
       const door = await this.doorsService.findOne(job.data.doorId);
-      this.#logger.log(JSON.stringify(door));
+      this.logger.log(JSON.stringify(door));
 
       // in the future get the door duration from config but for now hard code it
       const duration = 2000;
@@ -39,19 +39,19 @@ export class DoorsSequenceProcessor extends WorkerHost {
 
       switch (job.name) {
         case 'close':
-          this.#logger.log('received close door message');
+          this.logger.log('received close door message');
           // await this.doorsService.close(id);
           break;
         case 'open':
-          this.#logger.log('received close open message');
+          this.logger.log('received close open message');
           // await this.doorsService.open(id);
           break;
         case 'toggle':
-          this.#logger.log('received close toggle message');
+          this.logger.log('received close toggle message');
           // await this.doorsService.toggle(id);
           break;
         default:
-          this.#logger.warn(`Invalid job name: ${job.name}`);
+          this.logger.warn(`Invalid job name: ${job.name}`);
       }
 
       await setTimeout(duration);
