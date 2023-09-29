@@ -5,8 +5,8 @@ import { EntityManager } from '@mikro-orm/sqlite';
 
 describe('DoorsSequenceProcessor', () => {
   let provider: DoorsSequenceProcessor;
-  let doorsService: DoorsService;
-  let entityManager: EntityManager;
+  // let doorsService: DoorsService;
+  // let entityManager: EntityManager;
 
   beforeEach(async () => {
     const mockDoorsService = {
@@ -32,8 +32,8 @@ describe('DoorsSequenceProcessor', () => {
     }).compile();
 
     provider = module.get<DoorsSequenceProcessor>(DoorsSequenceProcessor);
-    doorsService = module.get<DoorsService>(DoorsService);
-    entityManager = module.get<EntityManager>(EntityManager);
+    // doorsService = module.get<DoorsService>(DoorsService);
+    // entityManager = module.get<EntityManager>(EntityManager);
   });
 
   it('should be defined', () => {
