@@ -23,6 +23,8 @@ export class DoorsSequenceProcessor extends WorkerHost {
   async process(
     job: Job<DoorsSequenceQueueMessage, void, string>,
   ): Promise<void> {
+    this.logger.log("I'M IN THE DOOR sequence PROCESSRO");
+
     // const door = await this.doorsService.findOne(job.data.doorId);
     // console.log(door);
 
