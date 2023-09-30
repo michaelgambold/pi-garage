@@ -3,6 +3,22 @@ export enum DoorQueue {
   DOORS_STATE_UPDATE = 'doors-state-update',
 }
 
-export type DoorsSequenceQueueMessage = {
+export enum DoorSequenceJobName {
+  CLOSE = 'close',
+  OPEN = 'open',
+}
+
+export enum DoorStateJobName {
+  CLOSED = 'closed',
+  CLOSING = 'closing',
+  OPEN = 'open',
+  OPENING = 'opening',
+}
+
+export type DoorsSequenceJobData = {
+  doorId: number;
+};
+
+export type DoorsStateJobData = {
   doorId: number;
 };

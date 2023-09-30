@@ -23,7 +23,13 @@ import { GetDoorDto } from './dto/get-door.dto';
 import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
-import { DoorQueue, DoorsSequenceQueueMessage } from './types';
+import {
+  DoorQueue,
+  DoorSequenceJobName,
+  DoorStateJobName,
+  DoorsSequenceJobData,
+  DoorsStateJobData,
+} from './types';
 import { Logger } from '../logger/logger';
 
 @UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
@@ -218,11 +224,48 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
+    // check if door locked out in redis
+
     const door = await this.doorsService.findOne(id);
 
-    // emit door change state message. should I include a time in the future so that
-    // we can ignore old messages or replays?
-    await this.doorsStateUpdateQueue.add(body.state, {});
+    // check if action should be a no-op I.e. if set to closing but door is closing
+    // then this should no-op the request
+    if (
+      body.state == 'close' &&
+      (door.state == 'closed' || door.state == 'closing')
+    ) {
+      return;
+    }
+
+    if (
+      body.state == 'open' &&
+      (door.state == 'open' || door.state == 'opening')
+    ) {
+      return;
+    }
+
+    // work out if door should be closing/opening
+    if (body.state === 'open') {
+      await this.emitOpenMesages(id);
+      return;
+    }
+
+    if (body.state === 'close') {
+      await this.emitCloseMessages(id);
+      return;
+    }
+
+    if (body.state === 'toggle') {
+      if (door.state === 'closed' || door.state === 'closing') {
+        this.emitOpenMesages(id);
+        return;
+      }
+
+      if (door.state === 'open' || door.state === 'opening') {
+        this.emitCloseMessages(id);
+        return;
+      }
+    }
 
     // // don't process any requests if the last update time was less than 1 second ago
     // if (differenceInMilliseconds(new Date(), door.updatedAt) < 1000) {
@@ -267,11 +310,41 @@ export class DoorsController {
     //     throw new BadRequestException('Invalid state');
     // }
 
-    const msg: DoorsSequenceQueueMessage = {
-      doorId: id,
-    };
-    await this.doorsSequenceRunQueue.add(body.state, msg);
+    // const msg: DoorsSequenceJobData = {
+    //   doorId: id,
+    // };
+    // await this.doorsSequenceRunQueue.add(body.state, msg);
 
     this.automationHatService.turnOffCommsLight();
+  }
+
+  private async emitCloseMessages(doorId: number) {
+    await this.doorsStateUpdateQueue.add(DoorStateJobName.CLOSING, {
+      doorId,
+    } as DoorsStateJobData);
+    await this.doorsStateUpdateQueue.add(
+      DoorStateJobName.CLOSED,
+      { doorId } as DoorsStateJobData,
+      { delay: 20_000 },
+    );
+
+    await this.doorsSequenceRunQueue.add(DoorSequenceJobName.CLOSE, {
+      doorId,
+    } as DoorsSequenceJobData);
+  }
+
+  private async emitOpenMesages(doorId: number) {
+    await this.doorsStateUpdateQueue.add(DoorStateJobName.OPENING, {
+      doorId,
+    } as DoorsStateJobData);
+    await this.doorsStateUpdateQueue.add(
+      DoorStateJobName.OPEN,
+      { doorId } as DoorsStateJobData,
+      { delay: 20_000 },
+    );
+
+    await this.doorsSequenceRunQueue.add(DoorSequenceJobName.OPEN, {
+      doorId,
+    } as DoorsSequenceJobData);
   }
 }
