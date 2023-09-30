@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
 
 import { DoorsModule } from './doors/doors.module';
@@ -20,8 +20,14 @@ import { Logger } from './logger/logger';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MikroOrmModule.forRoot(),
-    BullModule.forRoot({
-      connection: { host: 'localhost', port: 6379 },
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+        },
+      }),
     }),
     AuditLogsModule,
     DoorsModule,
