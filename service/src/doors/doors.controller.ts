@@ -37,6 +37,8 @@ export class DoorsController {
     private readonly automationHatService: AutomationHatService,
     @InjectQueue(DoorQueue.DOORS_SEQUENCE_RUN)
     private readonly doorsSequenceRunQueue: Queue,
+    @InjectQueue(DoorQueue.DOORS_STATE_UPDATE)
+    private readonly doorsStateUpdateQueue: Queue,
   ) {
     this.#logger = new Logger(DoorsController.name);
   }
@@ -218,48 +220,52 @@ export class DoorsController {
 
     const door = await this.doorsService.findOne(id);
 
-    // don't process any requests if the last update time was less than 1 second ago
-    if (differenceInMilliseconds(new Date(), door.updatedAt) < 1000) {
-      this.automationHatService.turnOffCommsLight();
-      throw new ConflictException(
-        'Cannot change door state faster than 1 second',
-      );
-    }
+    // emit door change state message. should I include a time in the future so that
+    // we can ignore old messages or replays?
+    await this.doorsStateUpdateQueue.add(body.state, {});
 
-    // don't process any requests when we are opening/closing the doors
-    if (door.state === 'closing' || door.state === 'opening') {
-      this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Door state currently changing');
-      throw new ConflictException('Door state currently changing');
-    }
+    // // don't process any requests if the last update time was less than 1 second ago
+    // if (differenceInMilliseconds(new Date(), door.updatedAt) < 1000) {
+    //   this.automationHatService.turnOffCommsLight();
+    //   throw new ConflictException(
+    //     'Cannot change door state faster than 1 second',
+    //   );
+    // }
 
-    // don't open the door if it's already open
-    if (door.state === 'open' && body.state === 'open') {
-      this.automationHatService.turnOffCommsLight();
-      return;
-    }
+    // // don't process any requests when we are opening/closing the doors
+    // if (door.state === 'closing' || door.state === 'opening') {
+    //   this.automationHatService.turnOffCommsLight();
+    //   this.#logger.warn('Door state currently changing');
+    //   throw new ConflictException('Door state currently changing');
+    // }
 
-    // don't close the door if it's already closed
-    if (door.state === 'closed' && body.state === 'close') {
-      this.automationHatService.turnOffCommsLight();
-      return;
-    }
+    // // don't open the door if it's already open
+    // if (door.state === 'open' && body.state === 'open') {
+    //   this.automationHatService.turnOffCommsLight();
+    //   return;
+    // }
 
-    switch (body.state) {
-      case 'close':
-        await this.doorsService.close(id);
-        break;
-      case 'open':
-        await this.doorsService.open(id);
-        break;
-      case 'toggle':
-        await this.doorsService.toggle(id);
-        break;
-      default:
-        this.automationHatService.turnOffCommsLight();
-        this.#logger.warn(`Invalid state ${body.state}`);
-        throw new BadRequestException('Invalid state');
-    }
+    // // don't close the door if it's already closed
+    // if (door.state === 'closed' && body.state === 'close') {
+    //   this.automationHatService.turnOffCommsLight();
+    //   return;
+    // }
+
+    // switch (body.state) {
+    //   case 'close':
+    //     await this.doorsService.close(id);
+    //     break;
+    //   case 'open':
+    //     await this.doorsService.open(id);
+    //     break;
+    //   case 'toggle':
+    //     await this.doorsService.toggle(id);
+    //     break;
+    //   default:
+    //     this.automationHatService.turnOffCommsLight();
+    //     this.#logger.warn(`Invalid state ${body.state}`);
+    //     throw new BadRequestException('Invalid state');
+    // }
 
     const msg: DoorsSequenceQueueMessage = {
       doorId: id,
