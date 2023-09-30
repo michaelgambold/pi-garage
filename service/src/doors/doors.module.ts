@@ -11,16 +11,13 @@ import { DoorsGateway } from './doors.gateway';
 import { ClientVersionModule } from '../client-version/client-version.module';
 import { DoorsSequenceProcessor } from './doors-sequence-processor';
 import { DoorQueue } from './types';
+import { DoorsStateProcessor } from './doors-state-processor';
 
 @Module({
   imports: [
     MikroOrmModule.forFeature([Door, AuditLog]),
     BullModule.registerQueue({
       name: DoorQueue.DOORS_SEQUENCE_RUN,
-      connection: {
-        host: 'localhost',
-        port: 6379,
-      },
     }),
     BullModule.registerQueue({
       name: DoorQueue.DOORS_STATE_UPDATE,
@@ -30,6 +27,11 @@ import { DoorQueue } from './types';
     ClientVersionModule,
   ],
   controllers: [DoorsController],
-  providers: [DoorsService, DoorsGateway, DoorsSequenceProcessor],
+  providers: [
+    DoorsService,
+    DoorsGateway,
+    DoorsSequenceProcessor,
+    DoorsStateProcessor,
+  ],
 })
 export class DoorsModule {}
