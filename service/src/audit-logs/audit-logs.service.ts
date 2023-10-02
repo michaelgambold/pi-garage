@@ -10,6 +10,17 @@ export class AuditLogsService {
     private readonly auditLogRepository: EntityRepository<AuditLog>,
   ) {}
 
+  async create(timestamp: Date, detail: string) {
+    const auditLog = this.auditLogRepository.create({
+      timestamp,
+      detail,
+    });
+
+    await this.auditLogRepository.getEntityManager().persistAndFlush(auditLog);
+
+    return auditLog;
+  }
+
   findAll() {
     return this.auditLogRepository.findAll({
       orderBy: { timestamp: 'DESC' },
