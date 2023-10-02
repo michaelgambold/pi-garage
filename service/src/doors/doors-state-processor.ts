@@ -4,6 +4,7 @@ import { DoorQueue, DoorStateJobName, DoorsStateJobData } from './types';
 import { DoorsService } from './doors.service';
 import { Logger } from '../logger/logger';
 import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
 @Processor(DoorQueue.DOORS_STATE_UPDATE)
 export class DoorsStateProcessor extends WorkerHost {
@@ -14,6 +15,7 @@ export class DoorsStateProcessor extends WorkerHost {
     // each request can be done with the @UseRequestContext
     private readonly orm: MikroORM,
     private readonly doorsService: DoorsService,
+    private readonly auditLogService: AuditLogsService,
   ) {
     super();
     this.logger = new Logger(DoorsStateProcessor.name);

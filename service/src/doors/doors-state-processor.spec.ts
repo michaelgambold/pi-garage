@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DoorsStateProcessor } from './doors-state-processor';
 import { DoorsService } from './doors.service';
 import { EntityManager } from '@mikro-orm/sqlite';
+import { MikroORM } from '@mikro-orm/core';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
 describe('DoorsSequenceProcessor', () => {
   let provider: DoorsStateProcessor;
@@ -17,9 +19,17 @@ describe('DoorsSequenceProcessor', () => {
       get: jest.fn(),
     };
 
+    const mockAuditLogService = {
+      create: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DoorsStateProcessor,
+        {
+          provide: MikroORM,
+          useValue: {},
+        },
         {
           provide: EntityManager,
           useValue: mockEntityManager,
@@ -27,6 +37,10 @@ describe('DoorsSequenceProcessor', () => {
         {
           provide: DoorsService,
           useValue: mockDoorsService,
+        },
+        {
+          provide: AuditLogsService,
+          useValue: mockAuditLogService,
         },
       ],
     }).compile();

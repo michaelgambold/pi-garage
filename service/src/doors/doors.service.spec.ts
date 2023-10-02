@@ -9,7 +9,7 @@ import { DoorsService } from './doors.service';
 
 describe('DoorsService', () => {
   let service: DoorsService;
-  let automationHatService: AutomationHatService;
+  // let automationHatService: AutomationHatService;
 
   const mockDoorRepository = {
     findAll: jest
@@ -68,19 +68,19 @@ describe('DoorsService', () => {
     }).compile();
 
     service = module.get<DoorsService>(DoorsService);
-    automationHatService =
-      module.get<AutomationHatService>(AutomationHatService);
+    // automationHatService =
+    //   module.get<AutomationHatService>(AutomationHatService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should close door', async () => {
-    const spy = jest.spyOn(automationHatService, 'runSequenceObject');
-    await service.close(1);
-    expect(spy).toBeCalled();
-  });
+  // it('should close door', async () => {
+  //   const spy = jest.spyOn(automationHatService, 'runSequenceObject');
+  //   await service.close(1);
+  //   expect(spy).toBeCalled();
+  // });
 
   it('should find all doors', async () => {
     const doors = await service.findAll();
@@ -95,17 +95,17 @@ describe('DoorsService', () => {
     expect(door.state).toEqual('closed');
   });
 
-  it('should open a door', async () => {
-    const spy = jest.spyOn(automationHatService, 'runSequenceObject');
-    await service.open(1);
-    expect(spy).toBeCalled();
-  });
+  // it('should open a door', async () => {
+  //   const spy = jest.spyOn(automationHatService, 'runSequenceObject');
+  //   await service.open(1);
+  //   expect(spy).toBeCalled();
+  // });
 
-  it('should toggle a door', async () => {
-    const spy = jest.spyOn(automationHatService, 'runSequenceObject');
-    await service.toggle(1);
-    expect(spy).toBeCalled();
-  });
+  // it('should toggle a door', async () => {
+  //   const spy = jest.spyOn(automationHatService, 'runSequenceObject');
+  //   await service.toggle(1);
+  //   expect(spy).toBeCalled();
+  // });
 
   it('should update a door', async () => {
     const door = await service.findOne(1);

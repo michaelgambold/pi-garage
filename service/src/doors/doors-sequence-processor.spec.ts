@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DoorsSequenceProcessor } from './doors-sequence-processor';
 import { DoorsService } from './doors.service';
 import { EntityManager } from '@mikro-orm/sqlite';
+import { MikroORM } from '@mikro-orm/core';
+import { AutomationHatService } from '../automation-hat/automation-hat.service';
+import { ConfigService } from '@nestjs/config';
 
 describe('DoorsSequenceProcessor', () => {
   let provider: DoorsSequenceProcessor;
@@ -20,6 +23,12 @@ describe('DoorsSequenceProcessor', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DoorsSequenceProcessor,
+        AutomationHatService,
+        ConfigService,
+        {
+          provide: MikroORM,
+          useValue: {},
+        },
         {
           provide: EntityManager,
           useValue: mockEntityManager,
