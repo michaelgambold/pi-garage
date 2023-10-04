@@ -8,12 +8,12 @@ import {
   Get,
   Body,
   Put,
-  ConflictException,
+  // ConflictException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { differenceInMilliseconds } from 'date-fns';
+// import { differenceInMilliseconds } from 'date-fns';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
@@ -23,22 +23,30 @@ import { GetDoorDto } from './dto/get-door.dto';
 import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { UpdateDoorDto } from './dto/update-door.dto';
 import { UpdateStateDto } from './dto/update-state.dto';
-import { DoorQueue, DoorsSequenceQueueMessage } from './types';
+import {
+  DoorQueue,
+  DoorSequenceJobName,
+  DoorStateJobName,
+  DoorsSequenceJobData,
+  DoorsStateJobData,
+} from './types';
 import { Logger } from '../logger/logger';
 
 @UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
 @ApiSecurity('api-key')
 @Controller('api/v1/doors')
 export class DoorsController {
-  #logger: Logger;
+  private readonly logger: Logger;
 
   constructor(
     private readonly doorsService: DoorsService,
     private readonly automationHatService: AutomationHatService,
     @InjectQueue(DoorQueue.DOORS_SEQUENCE_RUN)
     private readonly doorsSequenceRunQueue: Queue,
+    @InjectQueue(DoorQueue.DOORS_STATE_UPDATE)
+    private readonly doorsStateUpdateQueue: Queue,
   ) {
-    this.#logger = new Logger(DoorsController.name);
+    this.logger = new Logger(DoorsController.name);
   }
 
   @ApiResponse({ type: GetDoorDto, isArray: true, status: 200 })
@@ -67,7 +75,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Invalid door id');
+      this.logger.warn('Invalid door id');
       throw new BadRequestException('Invalid door id');
     }
 
@@ -92,7 +100,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Invalid door id');
+      this.logger.warn('Invalid door id');
       throw new BadRequestException('Invalid door id');
     }
 
@@ -117,7 +125,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Invalid door id');
+      this.logger.warn('Invalid door id');
       throw new BadRequestException('Invalid Door id');
     }
 
@@ -140,7 +148,7 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Invalid door id');
+      this.logger.warn('Invalid door id');
       throw new BadRequestException('Invalid Door id');
     }
 
@@ -152,7 +160,7 @@ export class DoorsController {
       ) {
         this.automationHatService.turnOffCommsLight();
         const msg = `Invalid action ${dto.action} for target ${dto.target}`;
-        this.#logger.warn(msg);
+        this.logger.warn(msg);
         throw new BadRequestException(msg);
       }
 
@@ -162,14 +170,14 @@ export class DoorsController {
       ) {
         this.automationHatService.turnOffCommsLight();
         const msg = `Invalid action ${dto.action} for target ${dto.target}`;
-        this.#logger.warn(msg);
+        this.logger.warn(msg);
         throw new BadRequestException(msg);
       }
     });
 
     if (body.some((x) => x.duration < 0)) {
       this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Duration cannot be negative');
+      this.logger.warn('Duration cannot be negative');
       throw new BadRequestException('Duration cannot be negative');
     }
 
@@ -212,60 +220,127 @@ export class DoorsController {
 
     if (![1, 2, 3].includes(id)) {
       this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Invalid door id');
+      this.logger.warn('Invalid door id');
       throw new BadRequestException('Invalid Door id');
     }
 
+    // check if door locked out in redis
+
     const door = await this.doorsService.findOne(id);
 
-    // don't process any requests if the last update time was less than 1 second ago
-    if (differenceInMilliseconds(new Date(), door.updatedAt) < 1000) {
-      this.automationHatService.turnOffCommsLight();
-      throw new ConflictException(
-        'Cannot change door state faster than 1 second',
-      );
-    }
-
-    // don't process any requests when we are opening/closing the doors
-    if (door.state === 'closing' || door.state === 'opening') {
-      this.automationHatService.turnOffCommsLight();
-      this.#logger.warn('Door state currently changing');
-      throw new ConflictException('Door state currently changing');
-    }
-
-    // don't open the door if it's already open
-    if (door.state === 'open' && body.state === 'open') {
-      this.automationHatService.turnOffCommsLight();
-      return;
-    }
-
-    // don't close the door if it's already closed
-    if (door.state === 'closed' && body.state === 'close') {
-      this.automationHatService.turnOffCommsLight();
-      return;
-    }
-
-    switch (body.state) {
-      case 'close':
-        await this.doorsService.close(id);
-        break;
-      case 'open':
-        await this.doorsService.open(id);
-        break;
-      case 'toggle':
-        await this.doorsService.toggle(id);
-        break;
-      default:
+    if (body.state === 'open') {
+      if (door.state === 'open' || door.state === 'opening') {
         this.automationHatService.turnOffCommsLight();
-        this.#logger.warn(`Invalid state ${body.state}`);
-        throw new BadRequestException('Invalid state');
+        throw new BadRequestException('Cannot open an open/opening door');
+      }
+
+      await this.emitOpenMesages(id);
+      this.automationHatService.turnOffCommsLight();
+      return;
     }
 
-    const msg: DoorsSequenceQueueMessage = {
-      doorId: id,
-    };
-    await this.doorsSequenceRunQueue.add(body.state, msg);
+    if (body.state === 'close') {
+      if (door.state === 'closed' || door.state === 'closing') {
+        this.automationHatService.turnOffCommsLight();
+        throw new BadRequestException('Cannot close a closed/closing door');
+      }
+
+      await this.emitCloseMessages(id);
+      this.automationHatService.turnOffCommsLight();
+      return;
+    }
+
+    if (body.state === 'toggle') {
+      if (door.state === 'closed' || door.state === 'closing') {
+        await this.emitOpenMesages(id);
+      } else if (door.state === 'open' || door.state === 'opening') {
+        await this.emitCloseMessages(id);
+      }
+      this.automationHatService.turnOffCommsLight();
+      return;
+    }
 
     this.automationHatService.turnOffCommsLight();
+    throw new BadRequestException('Invalid state');
+
+    // // don't process any requests if the last update time was less than 1 second ago
+    // if (differenceInMilliseconds(new Date(), door.updatedAt) < 1000) {
+    //   this.automationHatService.turnOffCommsLight();
+    //   throw new ConflictException(
+    //     'Cannot change door state faster than 1 second',
+    //   );
+    // }
+
+    // // don't process any requests when we are opening/closing the doors
+    // if (door.state === 'closing' || door.state === 'opening') {
+    //   this.automationHatService.turnOffCommsLight();
+    //   this.#logger.warn('Door state currently changing');
+    //   throw new ConflictException('Door state currently changing');
+    // }
+
+    // // don't open the door if it's already open
+    // if (door.state === 'open' && body.state === 'open') {
+    //   this.automationHatService.turnOffCommsLight();
+    //   return;
+    // }
+
+    // // don't close the door if it's already closed
+    // if (door.state === 'closed' && body.state === 'close') {
+    //   this.automationHatService.turnOffCommsLight();
+    //   return;
+    // }
+
+    // switch (body.state) {
+    //   case 'close':
+    //     await this.doorsService.close(id);
+    //     break;
+    //   case 'open':
+    //     await this.doorsService.open(id);
+    //     break;
+    //   case 'toggle':
+    //     await this.doorsService.toggle(id);
+    //     break;
+    //   default:
+    //     this.automationHatService.turnOffCommsLight();
+    //     this.#logger.warn(`Invalid state ${body.state}`);
+    //     throw new BadRequestException('Invalid state');
+    // }
+
+    // const msg: DoorsSequenceJobData = {
+    //   doorId: id,
+    // };
+    // await this.doorsSequenceRunQueue.add(body.state, msg);
+  }
+
+  private async emitCloseMessages(doorId: number) {
+    await this.doorsStateUpdateQueue.add(DoorStateJobName.CLOSING, {
+      doorId,
+    } as DoorsStateJobData);
+
+    await this.doorsStateUpdateQueue.add(
+      DoorStateJobName.CLOSED,
+      { doorId } as DoorsStateJobData,
+      { delay: 20_000 },
+    );
+
+    await this.doorsSequenceRunQueue.add(DoorSequenceJobName.CLOSE, {
+      doorId,
+    } as DoorsSequenceJobData);
+  }
+
+  private async emitOpenMesages(doorId: number) {
+    await this.doorsStateUpdateQueue.add(DoorStateJobName.OPENING, {
+      doorId,
+    } as DoorsStateJobData);
+
+    await this.doorsStateUpdateQueue.add(
+      DoorStateJobName.OPEN,
+      { doorId } as DoorsStateJobData,
+      { delay: 20_000 },
+    );
+
+    await this.doorsSequenceRunQueue.add(DoorSequenceJobName.OPEN, {
+      doorId,
+    } as DoorsSequenceJobData);
   }
 }

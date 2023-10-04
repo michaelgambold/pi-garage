@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DoorsSequenceProcessor } from './doors-sequence-processor';
+import { DoorsStateProcessor } from './doors-state-processor';
 import { DoorsService } from './doors.service';
 import { EntityManager } from '@mikro-orm/sqlite';
 import { MikroORM } from '@mikro-orm/core';
-import { AutomationHatService } from '../automation-hat/automation-hat.service';
-import { ConfigService } from '@nestjs/config';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
 describe('DoorsSequenceProcessor', () => {
-  let provider: DoorsSequenceProcessor;
+  let provider: DoorsStateProcessor;
   // let doorsService: DoorsService;
   // let entityManager: EntityManager;
 
@@ -20,11 +19,13 @@ describe('DoorsSequenceProcessor', () => {
       get: jest.fn(),
     };
 
+    const mockAuditLogService = {
+      create: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DoorsSequenceProcessor,
-        AutomationHatService,
-        ConfigService,
+        DoorsStateProcessor,
         {
           provide: MikroORM,
           useValue: {},
@@ -37,10 +38,14 @@ describe('DoorsSequenceProcessor', () => {
           provide: DoorsService,
           useValue: mockDoorsService,
         },
+        {
+          provide: AuditLogsService,
+          useValue: mockAuditLogService,
+        },
       ],
     }).compile();
 
-    provider = module.get<DoorsSequenceProcessor>(DoorsSequenceProcessor);
+    provider = module.get<DoorsStateProcessor>(DoorsStateProcessor);
     // doorsService = module.get<DoorsService>(DoorsService);
     // entityManager = module.get<EntityManager>(EntityManager);
   });

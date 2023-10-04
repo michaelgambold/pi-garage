@@ -1,62 +1,56 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { EntityManager } from '@mikro-orm/sqlite';
 import { Job } from 'bullmq';
-import { setTimeout } from 'timers/promises';
-import { DoorQueue, DoorsSequenceQueueMessage } from './types';
+import { DoorQueue, DoorSequenceJobName, DoorsSequenceJobData } from './types';
 import { DoorsService } from './doors.service';
 import { Logger } from '../logger/logger';
-// import { Door } from '../entities/Door.entity';
-// import { InjectRepository } from '@mikro-orm/nestjs';
+import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { AutomationHatService } from '../automation-hat/automation-hat.service';
 
 @Processor(DoorQueue.DOORS_SEQUENCE_RUN)
 export class DoorsSequenceProcessor extends WorkerHost {
   private readonly logger: Logger;
 
   constructor(
-    private readonly em: EntityManager,
+    // don't delete this line it's required so that a clean instance of the orm for
+    // each request can be done with the @UseRequestContext
+    private readonly orm: MikroORM,
     private readonly doorsService: DoorsService,
+    private readonly automationhatService: AutomationHatService,
   ) {
     super();
     this.logger = new Logger(DoorsSequenceProcessor.name);
   }
 
-  async process(
-    job: Job<DoorsSequenceQueueMessage, void, string>,
-  ): Promise<void> {
-    // const door = await this.doorsService.findOne(job.data.doorId);
-    // console.log(door);
+  @UseRequestContext()
+  async process(job: Job<DoorsSequenceJobData, void, string>): Promise<void> {
+    switch (job.name) {
+      case DoorSequenceJobName.OPEN:
+        this.open(job.data);
+        break;
 
-    const context = this.em.fork();
+      case DoorSequenceJobName.CLOSE:
+        this.close(job.data);
+        break;
 
-    await context.transactional(async () => {
-      const door = await this.doorsService.findOne(job.data.doorId);
-      this.logger.log(JSON.stringify(door));
+      default:
+        this.logger.warn(`Job name ${job.name} not supported`);
+        break;
+    }
+  }
 
-      // in the future get the door duration from config but for now hard code it
-      const duration = 2000;
+  private async close(data: DoorsSequenceJobData): Promise<void> {
+    const door = await this.doorsService.findOne(data.doorId);
 
-      // send message to queue to change state of door async or should we do this in the one transaction space?
+    for (const sequenceObject of door.sequence) {
+      await this.automationhatService.runSequenceObject(sequenceObject);
+    }
+  }
 
-      switch (job.name) {
-        case 'close':
-          this.logger.log('received close door message');
-          // await this.doorsService.close(id);
-          break;
-        case 'open':
-          this.logger.log('received close open message');
-          // await this.doorsService.open(id);
-          break;
-        case 'toggle':
-          this.logger.log('received close toggle message');
-          // await this.doorsService.toggle(id);
-          break;
-        default:
-          this.logger.warn(`Invalid job name: ${job.name}`);
-      }
+  private async open(data: DoorsSequenceJobData): Promise<void> {
+    const door = await this.doorsService.findOne(data.doorId);
 
-      await setTimeout(duration);
-    });
-
-    console.log(job.name, job.data);
+    for (const sequenceObject of door.sequence) {
+      await this.automationhatService.runSequenceObject(sequenceObject);
+    }
   }
 }
