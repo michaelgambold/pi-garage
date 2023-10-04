@@ -9,6 +9,7 @@ import {
   Body,
   Put,
   ConflictException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -228,32 +229,23 @@ export class DoorsController {
 
     const door = await this.doorsService.findOne(id);
 
-    // check if action should be a no-op I.e. if set to closing but door is closing
-    // then this should no-op the request
-    if (
-      body.state == 'close' &&
-      (door.state == 'closed' || door.state == 'closing')
-    ) {
-      this.automationHatService.turnOffCommsLight();
-      return;
-    }
-
-    if (
-      body.state == 'open' &&
-      (door.state == 'open' || door.state == 'opening')
-    ) {
-      this.automationHatService.turnOffCommsLight();
-      return;
-    }
-
-    // work out if door should be closing/opening
     if (body.state === 'open') {
+      if (door.state === 'open' || door.state === 'opening') {
+        this.automationHatService.turnOffCommsLight();
+        throw new BadRequestException('Cannot open an open/opening door');
+      }
+
       await this.emitOpenMesages(id);
       this.automationHatService.turnOffCommsLight();
       return;
     }
 
     if (body.state === 'close') {
+      if (door.state === 'closed' || door.state === 'closing') {
+        this.automationHatService.turnOffCommsLight();
+        throw new BadRequestException('Cannot close a closed/closing door');
+      }
+
       await this.emitCloseMessages(id);
       this.automationHatService.turnOffCommsLight();
       return;
@@ -261,17 +253,16 @@ export class DoorsController {
 
     if (body.state === 'toggle') {
       if (door.state === 'closed' || door.state === 'closing') {
-        this.emitOpenMesages(id);
-        this.automationHatService.turnOffCommsLight();
-        return;
+        await this.emitOpenMesages(id);
+      } else if (door.state === 'open' || door.state === 'opening') {
+        await this.emitCloseMessages(id);
       }
-
-      if (door.state === 'open' || door.state === 'opening') {
-        this.emitCloseMessages(id);
-        this.automationHatService.turnOffCommsLight();
-        return;
-      }
+      this.automationHatService.turnOffCommsLight();
+      return;
     }
+
+    this.automationHatService.turnOffCommsLight();
+    throw new BadRequestException('Invalid state');
 
     // // don't process any requests if the last update time was less than 1 second ago
     // if (differenceInMilliseconds(new Date(), door.updatedAt) < 1000) {
@@ -320,14 +311,13 @@ export class DoorsController {
     //   doorId: id,
     // };
     // await this.doorsSequenceRunQueue.add(body.state, msg);
-
-    this.automationHatService.turnOffCommsLight();
   }
 
   private async emitCloseMessages(doorId: number) {
     await this.doorsStateUpdateQueue.add(DoorStateJobName.CLOSING, {
       doorId,
     } as DoorsStateJobData);
+
     await this.doorsStateUpdateQueue.add(
       DoorStateJobName.CLOSED,
       { doorId } as DoorsStateJobData,
@@ -343,6 +333,7 @@ export class DoorsController {
     await this.doorsStateUpdateQueue.add(DoorStateJobName.OPENING, {
       doorId,
     } as DoorsStateJobData);
+
     await this.doorsStateUpdateQueue.add(
       DoorStateJobName.OPEN,
       { doorId } as DoorsStateJobData,
