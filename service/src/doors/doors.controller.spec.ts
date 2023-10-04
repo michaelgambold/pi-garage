@@ -327,7 +327,7 @@ describe('DoorsController', () => {
 
       // expect(mockDoorsService.open).toBeCalled();
       expect(commsOnSpy).toBeCalled();
-      // expect(commsOffSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
 
     it('should toggle doors state', async () => {
@@ -335,7 +335,7 @@ describe('DoorsController', () => {
 
       // expect(mockDoorsService.toggle).toBeCalled();
       expect(commsOnSpy).toBeCalled();
-      // expect(commsOffSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
 
     it('should update state to closed', async () => {
@@ -350,7 +350,7 @@ describe('DoorsController', () => {
 
       // expect(mockDoorsService.close).toBeCalled();
       expect(commsOnSpy).toBeCalled();
-      // expect(commsOffSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
     });
 
     it('should return 400 for invalid door id', async () => {
@@ -427,7 +427,7 @@ describe('DoorsController', () => {
 
       expect(mockDoorsService.open).not.toBeCalled();
       expect(commsOnSpy).toBeCalled();
-      // expect(commsOffSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
 
       mockDoorsService.findOne.mockReset();
     });
@@ -444,7 +444,7 @@ describe('DoorsController', () => {
 
       expect(mockDoorsService.close).not.toBeCalled();
       expect(commsOnSpy).toBeCalled();
-      // expect(commsOffSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
 
       mockDoorsService.findOne.mockReset();
     });

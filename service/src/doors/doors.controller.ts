@@ -234,6 +234,7 @@ export class DoorsController {
       body.state == 'close' &&
       (door.state == 'closed' || door.state == 'closing')
     ) {
+      this.automationHatService.turnOffCommsLight();
       return;
     }
 
@@ -241,28 +242,33 @@ export class DoorsController {
       body.state == 'open' &&
       (door.state == 'open' || door.state == 'opening')
     ) {
+      this.automationHatService.turnOffCommsLight();
       return;
     }
 
     // work out if door should be closing/opening
     if (body.state === 'open') {
       await this.emitOpenMesages(id);
+      this.automationHatService.turnOffCommsLight();
       return;
     }
 
     if (body.state === 'close') {
       await this.emitCloseMessages(id);
+      this.automationHatService.turnOffCommsLight();
       return;
     }
 
     if (body.state === 'toggle') {
       if (door.state === 'closed' || door.state === 'closing') {
         this.emitOpenMesages(id);
+        this.automationHatService.turnOffCommsLight();
         return;
       }
 
       if (door.state === 'open' || door.state === 'opening') {
         this.emitCloseMessages(id);
+        this.automationHatService.turnOffCommsLight();
         return;
       }
     }
