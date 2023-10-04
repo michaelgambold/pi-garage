@@ -1,7 +1,7 @@
 import { Collection } from '@mikro-orm/core';
 import {
   BadRequestException,
-  ConflictException,
+  // ConflictException,
   HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -14,7 +14,6 @@ import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsController } from './doors.controller';
 import { DoorsService } from './doors.service';
 import { SequenceObjectDto } from './dto/sequence-object.dto';
-import { Queue } from 'bullmq';
 import { GetDoorDto } from './dto/get-door.dto';
 
 interface MockQueue {
@@ -30,12 +29,12 @@ describe('DoorsController', () => {
 
   let mockDoorsService: any;
 
-  let mockSequenceRunQueue: MockQueue = {
+  const mockSequenceRunQueue: MockQueue = {
     async add() {
       return;
     },
   };
-  let mockStateUpdateQueue: MockQueue = {
+  const mockStateUpdateQueue: MockQueue = {
     async add() {
       return;
     },

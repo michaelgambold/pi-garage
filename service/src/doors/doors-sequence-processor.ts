@@ -5,7 +5,6 @@ import { DoorsService } from './doors.service';
 import { Logger } from '../logger/logger';
 import { MikroORM, UseRequestContext } from '@mikro-orm/core';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
-import { AuditLogsService } from '../audit-logs/audit-logs.service';
 
 @Processor(DoorQueue.DOORS_SEQUENCE_RUN)
 export class DoorsSequenceProcessor extends WorkerHost {

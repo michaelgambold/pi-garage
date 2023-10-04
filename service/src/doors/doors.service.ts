@@ -1,8 +1,6 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/sqlite';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AutomationHatService } from '../automation-hat/automation-hat.service';
-import { AuditLog } from '../entities/AuditLog.entity';
 import { Door } from '../entities/Door.entity';
 import { DoorsGateway } from './doors.gateway';
 import { Logger } from '../logger/logger';

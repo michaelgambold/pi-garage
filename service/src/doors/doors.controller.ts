@@ -8,13 +8,12 @@ import {
   Get,
   Body,
   Put,
-  ConflictException,
-  InternalServerErrorException,
+  // ConflictException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { differenceInMilliseconds } from 'date-fns';
+// import { differenceInMilliseconds } from 'date-fns';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
