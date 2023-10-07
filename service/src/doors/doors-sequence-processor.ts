@@ -15,7 +15,7 @@ export class DoorsSequenceProcessor extends WorkerHost {
     // each request can be done with the @UseRequestContext
     private readonly orm: MikroORM,
     private readonly doorsService: DoorsService,
-    private readonly automationhatService: AutomationHatService,
+    private readonly automationHatService: AutomationHatService,
   ) {
     super();
     this.logger = new Logger(DoorsSequenceProcessor.name);
@@ -25,11 +25,11 @@ export class DoorsSequenceProcessor extends WorkerHost {
   async process(job: Job<DoorsSequenceJobData, void, string>): Promise<void> {
     switch (job.name) {
       case DoorSequenceJobName.OPEN:
-        this.open(job.data);
+        await this.open(job.data);
         break;
 
       case DoorSequenceJobName.CLOSE:
-        this.close(job.data);
+        await this.close(job.data);
         break;
 
       default:
@@ -42,7 +42,7 @@ export class DoorsSequenceProcessor extends WorkerHost {
     const door = await this.doorsService.findOne(data.doorId);
 
     for (const sequenceObject of door.sequence) {
-      await this.automationhatService.runSequenceObject(sequenceObject);
+      await this.automationHatService.runSequenceObject(sequenceObject);
     }
   }
 
@@ -50,7 +50,7 @@ export class DoorsSequenceProcessor extends WorkerHost {
     const door = await this.doorsService.findOne(data.doorId);
 
     for (const sequenceObject of door.sequence) {
-      await this.automationhatService.runSequenceObject(sequenceObject);
+      await this.automationHatService.runSequenceObject(sequenceObject);
     }
   }
 }
