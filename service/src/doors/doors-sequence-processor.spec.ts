@@ -94,10 +94,49 @@ describe('DoorsSequenceProcessor', () => {
   });
 
   it('should process door close job', async () => {
-    // todo
+    const doorsServiceSpy = jest.spyOn(doorsService, 'findOne');
+    const automationHatServiceSpy = jest.spyOn(
+      automationHatService,
+      'runSequenceObject',
+    );
+    const expectedSequenceObj = {
+      action: 'on',
+      duration: 1000,
+      id: 1,
+      index: 1,
+      target: 'relay1',
+    };
+
+    const job = {
+      name: DoorSequenceJobName.CLOSE,
+      data: {
+        doorId: 1,
+      } as DoorsSequenceJobData,
+    };
+
+    await provider.process(job as Job);
+
+    expect(doorsServiceSpy).toBeCalledWith(1);
+    expect(automationHatServiceSpy).toBeCalledWith(expectedSequenceObj);
   });
 
   it('should ignore jobs it does not know about', async () => {
-    // todo
+    const doorsServiceSpy = jest.spyOn(doorsService, 'findOne');
+    const automationHatServiceSpy = jest.spyOn(
+      automationHatService,
+      'runSequenceObject',
+    );
+
+    const job = {
+      name: 'some-unknown-job',
+      data: {
+        doorId: 1,
+      } as DoorsSequenceJobData,
+    };
+
+    await provider.process(job as Job);
+
+    expect(doorsServiceSpy).not.toBeCalled();
+    expect(automationHatServiceSpy).not.toBeCalled();
   });
 });
