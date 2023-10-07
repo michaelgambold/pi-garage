@@ -1,29 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DoorsSequenceProcessor } from './doors-sequence-processor';
 import { DoorsService } from './doors.service';
-import { EntityManager } from '@mikro-orm/sqlite';
 import { MikroORM } from '@mikro-orm/core';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { ConfigService } from '@nestjs/config';
-import { Job, Queue } from 'bullmq';
+import { Job } from 'bullmq';
 import { DoorSequenceJobName, DoorsSequenceJobData } from './types';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { SequenceObject } from '../entities/SequenceObject.entity';
 
 describe('DoorsSequenceProcessor', () => {
   let provider: DoorsSequenceProcessor;
   let doorsService: DoorsService;
   let automationHatService: AutomationHatService;
-  let testQueue: Queue;
   let orm: MikroORM;
-
-  beforeAll(() => {
-    // testQueue = new Queue('test-queue', {});
-  });
-
-  afterAll(async () => {
-    // await testQueue.close();
-  });
 
   beforeEach(async () => {
     const mockDoorsService = {
@@ -40,16 +28,11 @@ describe('DoorsSequenceProcessor', () => {
       }),
     };
 
-    const mockEntityManager = {
-      get: jest.fn(),
-    };
-
     const mockAutomationHatService = {
       runSequenceObject: jest.fn().mockResolvedValue(undefined),
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      // imports: [MikroOrmModule.forRoot()],
       providers: [
         DoorsSequenceProcessor,
         ConfigService,
@@ -57,10 +40,6 @@ describe('DoorsSequenceProcessor', () => {
           provide: MikroORM,
           useValue: MikroORM.init(),
         },
-        // {
-        //   provide: EntityManager,
-        //   useValue: mockEntityManager,
-        // },
         {
           provide: DoorsService,
           useValue: mockDoorsService,
@@ -77,7 +56,6 @@ describe('DoorsSequenceProcessor', () => {
     automationHatService =
       module.get<AutomationHatService>(AutomationHatService);
     orm = module.get<MikroORM>(MikroORM);
-    // entityManager = module.get<EntityManager>(EntityManager);
   });
 
   afterEach(async () => {
@@ -106,7 +84,7 @@ describe('DoorsSequenceProcessor', () => {
       name: DoorSequenceJobName.OPEN,
       data: {
         doorId: 1,
-      },
+      } as DoorsSequenceJobData,
     };
 
     await provider.process(job as Job);
