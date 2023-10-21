@@ -44,9 +44,12 @@ export class DoorsStateProcessor extends WorkerHost {
 
       default:
         this.logger.warn(`Job name ${job.name} not supported`);
-        break;
+        return;
     }
 
-    this.orm.em.flush();
+    await this.auditLogService.create(
+      new Date(),
+      `Door ${door.id} ${door.state}`,
+    );
   }
 }
