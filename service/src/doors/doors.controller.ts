@@ -224,10 +224,18 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
-    // check if door locked out in redis
+    // TODO: check if door is currently locked out in redis. i.e. is it
+    // currently running a sequence and if so then return bad request.
+    // The implication is that you will not be able to push the button
+    // whilst this is happening unless we do something where you can "cancel"
+    // a current sequence but sequences now should only be 2 seconds or so,
+    // so it maybe not an issue and the lockout is okay being a short duration.
 
     const door = await this.doorsService.findOne(id);
 
+    // const client = await this.doorsSequenceRunQueue.client;
+
+    // Handle open door
     if (body.state === 'open') {
       if (door.state === 'open' || door.state === 'opening') {
         this.automationHatService.turnOffCommsLight();
@@ -239,6 +247,7 @@ export class DoorsController {
       return;
     }
 
+    // Handle close door
     if (body.state === 'close') {
       if (door.state === 'closed' || door.state === 'closing') {
         this.automationHatService.turnOffCommsLight();
@@ -250,6 +259,7 @@ export class DoorsController {
       return;
     }
 
+    // Handle toggle door
     if (body.state === 'toggle') {
       if (door.state === 'closed' || door.state === 'closing') {
         await this.emitOpenMesages(id);
@@ -260,56 +270,9 @@ export class DoorsController {
       return;
     }
 
+    this.logger.warn(`Invalid state ${body.state}`);
     this.automationHatService.turnOffCommsLight();
     throw new BadRequestException('Invalid state');
-
-    // // don't process any requests if the last update time was less than 1 second ago
-    // if (differenceInMilliseconds(new Date(), door.updatedAt) < 1000) {
-    //   this.automationHatService.turnOffCommsLight();
-    //   throw new ConflictException(
-    //     'Cannot change door state faster than 1 second',
-    //   );
-    // }
-
-    // // don't process any requests when we are opening/closing the doors
-    // if (door.state === 'closing' || door.state === 'opening') {
-    //   this.automationHatService.turnOffCommsLight();
-    //   this.#logger.warn('Door state currently changing');
-    //   throw new ConflictException('Door state currently changing');
-    // }
-
-    // // don't open the door if it's already open
-    // if (door.state === 'open' && body.state === 'open') {
-    //   this.automationHatService.turnOffCommsLight();
-    //   return;
-    // }
-
-    // // don't close the door if it's already closed
-    // if (door.state === 'closed' && body.state === 'close') {
-    //   this.automationHatService.turnOffCommsLight();
-    //   return;
-    // }
-
-    // switch (body.state) {
-    //   case 'close':
-    //     await this.doorsService.close(id);
-    //     break;
-    //   case 'open':
-    //     await this.doorsService.open(id);
-    //     break;
-    //   case 'toggle':
-    //     await this.doorsService.toggle(id);
-    //     break;
-    //   default:
-    //     this.automationHatService.turnOffCommsLight();
-    //     this.#logger.warn(`Invalid state ${body.state}`);
-    //     throw new BadRequestException('Invalid state');
-    // }
-
-    // const msg: DoorsSequenceJobData = {
-    //   doorId: id,
-    // };
-    // await this.doorsSequenceRunQueue.add(body.state, msg);
   }
 
   private async emitCloseMessages(doorId: number) {
