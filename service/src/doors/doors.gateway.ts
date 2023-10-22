@@ -57,7 +57,7 @@ export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
 
-      const apiKey = client.client.request.headers['x-api-key'] as string;
+      const apiKey = client.request.headers['x-api-key'] as string;
 
       if (!this.authService.validateApiKey(apiKey)) {
         throw new Error('Unauthorized');
