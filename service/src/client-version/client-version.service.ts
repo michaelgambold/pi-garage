@@ -12,7 +12,7 @@ export class ClientVersionService {
       throw new Error('Failed to read server version');
     }
 
-    return serverVersion;
+    return String(serverVersion);
   }
 
   satisfies(clientVersion: string, serverVersion: string) {
