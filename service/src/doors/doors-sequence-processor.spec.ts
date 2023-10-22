@@ -1,51 +1,142 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DoorsSequenceProcessor } from './doors-sequence-processor';
 import { DoorsService } from './doors.service';
-import { EntityManager } from '@mikro-orm/sqlite';
 import { MikroORM } from '@mikro-orm/core';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { ConfigService } from '@nestjs/config';
+import { Job } from 'bullmq';
+import { DoorSequenceJobName, DoorsSequenceJobData } from './types';
 
 describe('DoorsSequenceProcessor', () => {
   let provider: DoorsSequenceProcessor;
-  // let doorsService: DoorsService;
-  // let entityManager: EntityManager;
+  let doorsService: DoorsService;
+  let automationHatService: AutomationHatService;
+  let orm: MikroORM;
 
   beforeEach(async () => {
     const mockDoorsService = {
-      get: jest.fn().mockResolvedValue({}),
+      findOne: jest.fn().mockResolvedValue({
+        sequence: [
+          {
+            action: 'on',
+            duration: 1000,
+            id: 1,
+            index: 1,
+            target: 'relay1',
+          },
+        ],
+      }),
     };
 
-    const mockEntityManager = {
-      get: jest.fn(),
+    const mockAutomationHatService = {
+      runSequenceObject: jest.fn().mockResolvedValue(undefined),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DoorsSequenceProcessor,
-        AutomationHatService,
         ConfigService,
         {
           provide: MikroORM,
-          useValue: {},
-        },
-        {
-          provide: EntityManager,
-          useValue: mockEntityManager,
+          useValue: MikroORM.init(),
         },
         {
           provide: DoorsService,
           useValue: mockDoorsService,
         },
+        {
+          provide: AutomationHatService,
+          useValue: mockAutomationHatService,
+        },
       ],
     }).compile();
 
     provider = module.get<DoorsSequenceProcessor>(DoorsSequenceProcessor);
-    // doorsService = module.get<DoorsService>(DoorsService);
-    // entityManager = module.get<EntityManager>(EntityManager);
+    doorsService = module.get<DoorsService>(DoorsService);
+    automationHatService =
+      module.get<AutomationHatService>(AutomationHatService);
+    orm = module.get<MikroORM>(MikroORM);
+  });
+
+  afterEach(async () => {
+    await orm.close();
   });
 
   it('should be defined', () => {
     expect(provider).toBeDefined();
+  });
+
+  it('should process door open job', async () => {
+    const doorsServiceSpy = jest.spyOn(doorsService, 'findOne');
+    const automationHatServiceSpy = jest.spyOn(
+      automationHatService,
+      'runSequenceObject',
+    );
+    const expectedSequenceObj = {
+      action: 'on',
+      duration: 1000,
+      id: 1,
+      index: 1,
+      target: 'relay1',
+    };
+
+    const job = {
+      name: DoorSequenceJobName.OPEN,
+      data: {
+        doorId: 1,
+      } as DoorsSequenceJobData,
+    };
+
+    await provider.process(job as Job);
+
+    expect(doorsServiceSpy).toBeCalledWith(1);
+    expect(automationHatServiceSpy).toBeCalledWith(expectedSequenceObj);
+  });
+
+  it('should process door close job', async () => {
+    const doorsServiceSpy = jest.spyOn(doorsService, 'findOne');
+    const automationHatServiceSpy = jest.spyOn(
+      automationHatService,
+      'runSequenceObject',
+    );
+    const expectedSequenceObj = {
+      action: 'on',
+      duration: 1000,
+      id: 1,
+      index: 1,
+      target: 'relay1',
+    };
+
+    const job = {
+      name: DoorSequenceJobName.CLOSE,
+      data: {
+        doorId: 1,
+      } as DoorsSequenceJobData,
+    };
+
+    await provider.process(job as Job);
+
+    expect(doorsServiceSpy).toBeCalledWith(1);
+    expect(automationHatServiceSpy).toBeCalledWith(expectedSequenceObj);
+  });
+
+  it('should ignore jobs it does not know about', async () => {
+    const doorsServiceSpy = jest.spyOn(doorsService, 'findOne');
+    const automationHatServiceSpy = jest.spyOn(
+      automationHatService,
+      'runSequenceObject',
+    );
+
+    const job = {
+      name: 'some-unknown-job',
+      data: {
+        doorId: 1,
+      } as DoorsSequenceJobData,
+    };
+
+    await provider.process(job as Job);
+
+    expect(doorsServiceSpy).not.toBeCalled();
+    expect(automationHatServiceSpy).not.toBeCalled();
   });
 });
