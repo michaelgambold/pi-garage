@@ -5,9 +5,14 @@ import { AuthService } from '../auth/auth.service';
 import { ClientVersionService } from '../client-version/client-version.service';
 import { DoorsGateway } from './doors.gateway';
 import { DoorsService } from './doors.service';
+import { Socket } from 'socket.io';
 
 describe('DoorsGateway', () => {
   let gateway: DoorsGateway;
+  let doorsService: DoorsService;
+  let orm: MikroORM;
+  let clientVersionService: ClientVersionService;
+  let authService: AuthService;
 
   const mockDoorsService = {
     findAll: jest.fn().mockResolvedValue([
@@ -29,7 +34,7 @@ describe('DoorsGateway', () => {
         DoorsGateway,
         {
           provide: MikroORM,
-          useValue: {},
+          useValue: MikroORM.init(),
         },
         {
           provide: DoorsService,
@@ -42,92 +47,212 @@ describe('DoorsGateway', () => {
     }).compile();
 
     gateway = module.get<DoorsGateway>(DoorsGateway);
+    doorsService = module.get<DoorsService>(DoorsService);
+    orm = module.get<MikroORM>(MikroORM);
+    clientVersionService =
+      module.get<ClientVersionService>(ClientVersionService);
+    authService = module.get<AuthService>(AuthService);
+  });
+
+  afterEach(() => {
+    orm.close();
   });
 
   it('should be defined', () => {
     expect(gateway).toBeDefined();
   });
 
-  // it('should handle connection when no api key is required', () => {
-  //   const partialClient: Partial<Socket> = {
-  //     emit: () => undefined,
-  //     disconnect: () => undefined,
-  //   };
+  describe('handleConnection method', () => {
+    it('should connect with valid key and no client version', () => {
+      const client = {
+        request: {
+          headers: {
+            'x-api-key': 'abc123',
+          },
+        },
+      };
 
-  //   jest.spyOn(authService, 'hasApiKey').mockReturnValueOnce(false);
-  //   const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
-  //   const clientEmitSpy = jest.spyOn(partialClient, 'emit');
-  //   const clientDisconnectSpy = jest.spyOn(partialClient, 'disconnect');
+      const getServerVersionSpy = jest.spyOn(
+        clientVersionService,
+        'getServerVersion',
+      );
+      const satisfiesSpy = jest.spyOn(clientVersionService, 'satisfies');
 
-  //   gateway.handleConnection(partialClient as Socket);
+      const hasApiKeySpy = jest.spyOn(authService, 'hasApiKey');
+      hasApiKeySpy.mockReturnValue(true);
 
-  //   expect(validateApiKeySpy).not.toHaveBeenCalled();
-  //   expect(clientEmitSpy).not.toHaveBeenCalled();
-  //   expect(clientDisconnectSpy).not.toHaveBeenCalled();
-  // });
+      const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
+      validateApiKeySpy.mockReturnValue(true);
 
-  // it('should handle connection when api key is required', () => {
-  //   const partialClient: Partial<Socket> = {
-  //     client: {
-  //       request: {
-  //         headers: {
-  //           'x-api-key': 'abc123',
-  //         },
-  //       } as unknown as IncomingMessage,
-  //     } as Client<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
-  //     emit: () => undefined,
-  //     disconnect: () => undefined,
-  //   };
+      gateway.handleConnection(client as any);
 
-  //   jest.spyOn(authService, 'hasApiKey').mockReturnValueOnce(true);
-  //   const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
-  //   const clientEmitSpy = jest.spyOn(partialClient, 'emit');
-  //   const clientDisconnectSpy = jest.spyOn(partialClient, 'disconnect');
+      expect(getServerVersionSpy).not.toBeCalled();
+      expect(satisfiesSpy).not.toHaveBeenCalled();
+      expect(hasApiKeySpy).toBeCalled();
+      expect(validateApiKeySpy).toBeCalledWith('abc123');
+    });
 
-  //   validateApiKeySpy.mockReturnValueOnce(true);
+    it('should connect with valid key and valid client version', () => {
+      const client = {
+        request: {
+          headers: {
+            'x-api-key': 'abc123',
+            'x-client-version': '2.0.0',
+          },
+        },
+      };
 
-  //   gateway.handleConnection(partialClient as Socket);
+      const getServerVersionSpy = jest.spyOn(
+        clientVersionService,
+        'getServerVersion',
+      );
+      getServerVersionSpy.mockReturnValue('2.0.0');
 
-  //   expect(validateApiKeySpy).toHaveBeenCalled();
-  //   expect(clientEmitSpy).not.toHaveBeenCalled();
-  //   expect(clientDisconnectSpy).not.toHaveBeenCalled();
-  // });
+      const satisfiesSpy = jest.spyOn(clientVersionService, 'satisfies');
 
-  // it('should reject connection when api key is not valid', () => {
-  //   const partialClient: Partial<Socket> = {
-  //     client: {
-  //       request: {
-  //         headers: {
-  //           'x-api-key': 'abc123',
-  //         },
-  //       } as unknown as IncomingMessage,
-  //     } as Client<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
-  //     emit: () => undefined,
-  //     disconnect: () => undefined,
-  //   };
+      const hasApiKeySpy = jest.spyOn(authService, 'hasApiKey');
+      hasApiKeySpy.mockReturnValue(true);
 
-  //   jest.spyOn(authService, 'hasApiKey').mockReturnValueOnce(true);
-  //   const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
-  //   const clientEmitSpy = jest.spyOn(partialClient, 'emit');
-  //   const clientDisconnectSpy = jest.spyOn(partialClient, 'disconnect');
+      const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
+      validateApiKeySpy.mockReturnValue(true);
 
-  //   validateApiKeySpy.mockReturnValueOnce(false);
+      gateway.handleConnection(client as any);
 
-  //   gateway.handleConnection(partialClient as Socket);
+      expect(getServerVersionSpy).toBeCalled();
+      expect(satisfiesSpy).toHaveBeenCalledWith('2.0.0', '2.0.0');
+      expect(hasApiKeySpy).toBeCalled();
+      expect(validateApiKeySpy).toBeCalledWith('abc123');
+    });
 
-  //   expect(validateApiKeySpy).toHaveBeenCalled();
-  //   expect(clientEmitSpy).toHaveBeenCalled();
-  //   expect(clientDisconnectSpy).toHaveBeenCalled();
-  // });
+    it('should throw error if key is invalid', () => {
+      const client = {
+        request: {
+          headers: {
+            'x-api-key': 'abc123',
+          },
+        },
+        emit: jest.fn(),
+        disconnect: jest.fn(),
+      };
 
-  // it('should handle doors:list request', async () => {
-  //   const partialClient: Partial<Socket> = {
-  //     emit: () => undefined,
-  //   };
-  //   const clientEmitSpy = jest.spyOn(partialClient, 'emit');
+      const getServerVersionSpy = jest.spyOn(
+        clientVersionService,
+        'getServerVersion',
+      );
+      const satisfiesSpy = jest.spyOn(clientVersionService, 'satisfies');
+      const clientEmitSpy = jest.spyOn(client, 'emit');
+      const clientDisconnectSpy = jest.spyOn(client, 'disconnect');
 
-  //   // gateway.handleDoorsList(partialClient as Socket);
+      const hasApiKeySpy = jest.spyOn(authService, 'hasApiKey');
+      hasApiKeySpy.mockReturnValue(true);
 
-  //   expect(clientEmitSpy).toHaveBeenCalledWith('doors:list2');
-  // });
+      const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
+      validateApiKeySpy.mockReturnValue(false);
+
+      // have to spy on client.emit
+      gateway.handleConnection(client as any);
+
+      expect(getServerVersionSpy).not.toBeCalled();
+      expect(satisfiesSpy).not.toHaveBeenCalled();
+      expect(hasApiKeySpy).toBeCalled();
+      expect(validateApiKeySpy).toBeCalledWith('abc123');
+
+      expect(clientEmitSpy).toBeCalledWith('error', 'Unauthorized');
+      expect(clientDisconnectSpy).toBeCalled();
+    });
+
+    it('should connect if no key has been configured', () => {
+      const client = {
+        request: {
+          headers: {
+            'x-api-key': 'abc123',
+          },
+        },
+      };
+
+      const getServerVersionSpy = jest.spyOn(
+        clientVersionService,
+        'getServerVersion',
+      );
+      const satisfiesSpy = jest.spyOn(clientVersionService, 'satisfies');
+      const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
+
+      const hasApiKeySpy = jest.spyOn(authService, 'hasApiKey');
+      hasApiKeySpy.mockReturnValue(false);
+
+      gateway.handleConnection(client as any);
+
+      expect(getServerVersionSpy).not.toBeCalled();
+      expect(satisfiesSpy).not.toHaveBeenCalled();
+      expect(hasApiKeySpy).toBeCalled();
+      expect(validateApiKeySpy).not.toBeCalled();
+    });
+
+    it('should throw error if client version is invalid', () => {
+      const client = {
+        request: {
+          headers: {
+            'x-api-key': 'abc123',
+            'x-client-version': '1.0.0',
+          },
+        },
+        emit: jest.fn(),
+        disconnect: jest.fn(),
+      };
+
+      const satisfiesSpy = jest.spyOn(clientVersionService, 'satisfies');
+      const hasApiKeySpy = jest.spyOn(authService, 'hasApiKey');
+      const clientEmitSpy = jest.spyOn(client, 'emit');
+      const clientDisconnectSpy = jest.spyOn(client, 'disconnect');
+
+      const getServerVersionSpy = jest.spyOn(
+        clientVersionService,
+        'getServerVersion',
+      );
+      getServerVersionSpy.mockReturnValue('2.0.0');
+
+      const validateApiKeySpy = jest.spyOn(authService, 'validateApiKey');
+      validateApiKeySpy.mockReturnValue(true);
+
+      gateway.handleConnection(client as any);
+
+      expect(getServerVersionSpy).toBeCalled();
+      expect(satisfiesSpy).toHaveBeenCalledWith('1.0.0', '2.0.0');
+      expect(hasApiKeySpy).not.toBeCalled();
+      expect(validateApiKeySpy).not.toBeCalled();
+
+      expect(clientEmitSpy).toBeCalledWith('error', 'Invalid client version');
+      expect(clientDisconnectSpy).toBeCalled();
+    });
+  });
+
+  describe('handleDisconnect method', () => {
+    it('should handle disconnect', () => {
+      const client = { id: 'abc123' };
+      gateway.handleDisconnect(client as Socket);
+    });
+  });
+
+  describe('handleDoorsList method', () => {
+    let client: any;
+
+    beforeEach(() => {
+      client = {
+        emit: jest.fn(),
+      };
+    });
+
+    it('should handle doors list message', async () => {
+      const findAllDoorsSpy = jest.spyOn(doorsService, 'findAll');
+
+      await gateway.handleDoorsList(client);
+
+      expect(findAllDoorsSpy).toBeCalled();
+      expect(client.emit).toHaveBeenCalledWith('doors:list', [
+        { id: 1 },
+        { id: 2 },
+        { id: 3 },
+      ]);
+    });
+  });
 });
