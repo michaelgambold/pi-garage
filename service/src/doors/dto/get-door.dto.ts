@@ -10,6 +10,12 @@ export class GetDoorDto {
   @ApiProperty()
   isEnabled: boolean;
 
+  @ApiProperty()
+  openDuration: number;
+
+  @ApiProperty()
+  closeDuration: number;
+
   @ApiProperty({ enum: ['open', 'opening', 'closed', 'closing'] })
   state: 'open' | 'opening' | 'closed' | 'closing';
 }

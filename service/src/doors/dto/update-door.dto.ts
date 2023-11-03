@@ -6,4 +6,10 @@ export class UpdateDoorDto {
 
   @ApiProperty()
   isEnabled: boolean;
+
+  @ApiProperty()
+  openDuration: number;
+
+  @ApiProperty()
+  closeDuration: number;
 }

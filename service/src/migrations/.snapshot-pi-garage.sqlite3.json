@@ -95,6 +95,26 @@
           "primary": false,
           "nullable": false,
           "mappedType": "text"
+        },
+        "open_duration": {
+          "name": "open_duration",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "20000",
+          "mappedType": "integer"
+        },
+        "close_duration": {
+          "name": "close_duration",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "20000",
+          "mappedType": "integer"
         }
       },
       "name": "door",

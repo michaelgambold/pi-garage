@@ -64,6 +64,8 @@ export class DoorsController {
         label: d.label,
         isEnabled: d.isEnabled,
         state: d.state,
+        openDuration: d.openDuration,
+        closeDuration: d.closeDuration,
       };
     });
   }
@@ -88,6 +90,8 @@ export class DoorsController {
       label: door.label,
       isEnabled: door.isEnabled,
       state: door.state,
+      openDuration: door.openDuration,
+      closeDuration: door.closeDuration,
     };
   }
 
@@ -132,6 +136,8 @@ export class DoorsController {
     const door = await this.doorsService.findOne(id);
     door.isEnabled = body.isEnabled;
     door.label = body.label;
+    door.closeDuration = body.closeDuration;
+    door.openDuration = body.openDuration;
 
     await this.doorsService.update(door);
 
