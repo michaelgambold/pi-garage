@@ -48,18 +48,24 @@ describe('DoorsController', () => {
           isEnabled: true,
           label: 'door1',
           state: 'open',
+          closeDuration: 20_000,
+          openDuration: 20_000,
         },
         {
           id: 2,
           isEnabled: true,
           label: 'door2',
           state: 'open',
+          closeDuration: 20_000,
+          openDuration: 20_000,
         },
         {
           id: 3,
           isEnabled: true,
           label: 'door3',
           state: 'open',
+          closeDuration: 20_000,
+          openDuration: 20_000,
         },
       ]),
       findOne: jest.fn().mockImplementation(async (id: number) => {
@@ -134,18 +140,24 @@ describe('DoorsController', () => {
           isEnabled: true,
           label: 'door1',
           state: 'open',
+          closeDuration: 20_000,
+          openDuration: 20_000,
         },
         {
           id: 2,
           isEnabled: true,
           label: 'door2',
           state: 'open',
+          closeDuration: 20_000,
+          openDuration: 20_000,
         },
         {
           id: 3,
           isEnabled: true,
           label: 'door3',
           state: 'open',
+          closeDuration: 20_000,
+          openDuration: 20_000,
         },
       ];
 
@@ -212,7 +224,12 @@ describe('DoorsController', () => {
 
   describe('Update Door', () => {
     it('should return 200 when given valid update request', async () => {
-      await controller.update(1, { isEnabled: true, label: 'new label' });
+      await controller.update(1, {
+        isEnabled: true,
+        label: 'new label',
+        closeDuration: 20_000,
+        openDuration: 20_000,
+      });
 
       expect(commsOffSpy).toBeCalled();
       expect(commsOnSpy).toBeCalled();
