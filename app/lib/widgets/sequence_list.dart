@@ -7,12 +7,12 @@ import '../widgets/sequence_list_item.dart';
 class SequenceList extends StatefulWidget {
   const SequenceList(
       {Key? key,
-      required this.sequence,
+      required this.sequenceObjects,
       required this.handleRemoveItem,
       required this.handleUpdateItem})
       : super(key: key);
 
-  final List<SequenceObject> sequence;
+  final List<SequenceObject> sequenceObjects;
   final Function(int) handleRemoveItem;
   final Function(int, SequenceObject) handleUpdateItem;
 
@@ -24,7 +24,7 @@ class _SequenceListState extends State<SequenceList> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: widget.sequence
+      children: widget.sequenceObjects
           .mapIndexed((index, sequenceObject) => SequenceListItem(
               sequenceObject: sequenceObject,
               index: index,

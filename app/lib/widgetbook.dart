@@ -125,7 +125,7 @@ Widget sequenceList(BuildContext context) {
     SequenceObject("off", 1000, "relay1")
   ];
   return SequenceList(
-      sequence: sequenceObjects,
+      sequenceObjects: sequenceObjects,
       handleRemoveItem: (p0) => {},
       handleUpdateItem: (p0, p1) => {});
 }
