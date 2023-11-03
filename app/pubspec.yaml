@@ -42,6 +42,8 @@ dependencies:
   uuid: ^3.0.7
   provider: ^6.0.5
   collection: ^1.17.1
+  widgetbook_annotation: ^3.0.0
+  widgetbook: ^3.3.0
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +56,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.3
   flutter_launcher_icons: ^0.13.1
+  widgetbook_generator: ^3.2.0
+  build_runner: ^2.4.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
