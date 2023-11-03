@@ -25,6 +25,12 @@ export class Door {
   @Property()
   state: 'open' | 'opening' | 'closed' | 'closing';
 
+  @Property({ default: 20_000 })
+  openDuration: number;
+
+  @Property({ default: 20_000 })
+  closeDuration: number;
+
   @OneToMany(() => SequenceObject, (sequenceObject) => sequenceObject.door, {
     orderBy: { index: QueryOrder.ASC },
     orphanRemoval: true,

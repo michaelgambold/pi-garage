@@ -12,6 +12,8 @@ export class DatabaseSeeder extends Seeder {
         label: `Door 1`,
         isEnabled: true,
         state: 'closed',
+        openDuration: 20_000,
+        closeDuration: 20_000,
         sequence: [
           {
             action: 'on',
@@ -39,6 +41,8 @@ export class DatabaseSeeder extends Seeder {
         label: `Door 2`,
         isEnabled: true,
         state: 'closed',
+        openDuration: 20_000,
+        closeDuration: 20_000,
         sequence: [
           {
             action: 'on',
@@ -66,6 +70,8 @@ export class DatabaseSeeder extends Seeder {
         label: `Door 3`,
         isEnabled: true,
         state: 'closed',
+        openDuration: 20_000,
+        closeDuration: 20_000,
         sequence: [
           {
             action: 'on',
