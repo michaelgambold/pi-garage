@@ -23,7 +23,11 @@ Click on the image below to see a video demonstration.
 
 ## Backend Service Installation
 
-Pi Garage's backend service is packaged as a Docker image [pi-garage](https://hub.docker.com/r/michaelgambold/pi-garage). All dependencies have been included in the image.
+Pi Garage's backend service is packaged as a Docker image [pi-garage](https://hub.docker.com/r/michaelgambold/pi-garage). Most dependencies have
+been included in the Docker Image. However some external dependencies are required and they are listed below.
+
+Since v2.0.0 Redis is a requirement to allow internal asynchronous actions. This is simple to setup and has been included in the below Docker
+compose file.
 
 > _**Note**: You **MUST** run the container in privillaged mode and as root. This is required to access the Raspberry Pi's GPIO (General Purpose Input/Ouput)._
 
@@ -45,21 +49,35 @@ services:
     environment:
       API_KEY: abc123
       LED_BRIGHTNESS: 25
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     volumes:
       - data:/app/data
+    networks:
+      - pi-garage
+
+  redis:
+    image: redis:5 # Note: I had to use 5 (not 6 or 7) to get redis to start on Rpi 4 with Raspbian (32 bit) GNU/Linux 10 (buster) & Docker 24.0.7
+    networks:
+      - pi-garage
 
 volumes:
   data:
+
+networks: pi-garage
 ```
 
 ## Configuration environment variables
 
 The following environment variables can be injected into the Docker container:
 
-| Env Variable   | Example Values      | Notes                                                                                                                                           |
-| -------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| API_KEY        | `abc123`, `Sec3ret` | Alphanumeric security key that if set will be required for all API requests (except `/health` endpoint).<br />See Security for more information |
-| LED_BRIGHTNESS | `10`, `100`, `240`  | 0 will be off and 255 is maximum brightness.<br />By default maximum (255) brightness is set, but a much lower value can be used (< 50).        |
+| Env Variable   | Example Values       | Notes                                                                                                                                           |
+| -------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| REDIS_HOST     | `localhost`, `redis` | Hostname/ip address for Redis Host                                                                                                              |
+| REDIS_PORT     | `6739`               | Port for Redis host                                                                                                                             |
+| API_KEY        | `abc123`, `Sec3ret`  | Alphanumeric security key that if set will be required for all API requests (except `/health` endpoint).<br />See Security for more information |
+| LED_BRIGHTNESS | `10`, `100`, `240`   | 0 will be off and 255 is maximum brightness.<br />By default maximum (255) brightness is set, but a much lower value can be used (< 50).        |
+|                |                      |                                                                                                                                                 |
 
 ## LED Lights
 
@@ -74,6 +92,7 @@ The Automation Hat has several LED lights. Supported LED lights and their functi
 | OUTPUT 1, 2, 3 | Illuminated when Digital Ouput set `high`.          |
 | INPUT 1, 2, 3  | Not currently used.                                 |
 | RELAY 1, 2, 3  | `NO`/`NC` illuminated when relay set to `on`/`off`. |
+|                |                                                     |
 
 ## Security
 
@@ -101,6 +120,22 @@ If no client version is specified by the client then it is assumed to be the lat
 
 If some specific handling of a request the client version can be specified with the `x-client-version` header for both websockets and HTTP API.
 
+## Doors
+
+Doors may have the following config set for them.
+
+| Propety         | Type      | Example Values | Notes           |
+| --------------- | --------- | -------------- | --------------- |
+| label           | `string`  | "Door 1"       |                 |
+| isEnabled       | `boolean` | `true`         |                 |
+| openingDuration | `int`     | 20,000         | In milliseconds |
+| closingDuration | `int`     | 20,000         | In milliseconds |
+|                 |           |                |                 |
+
+Separate durations for opening and closing have been given to allow fine tuning of times so that the states can be closely
+aligned with individual doors. Although the mobile apps may use different units the durations in the API use milliseconds
+to be consistent with other durations in Pi Garage.
+
 ## Sequences
 
 > **Important**: In the below examples a duration of 1,000ms is used. It has been observed that having a duration after setting
@@ -121,24 +156,26 @@ a duration of 1,000ms.
 
 By default Door 1 targets Relay 1, Door 2 targets Relay 2 and Door 3 targets Relay 3.
 
-To change what happens in a sequence the API can be used to configure this and there is no limits to the creativity that can be done. A more advanced example is included below.
+### V2 Breaking Change
 
-Say for example you had a garage door that you wanted to control and you also had LED light's inside the garage and outside (say the driveway of) the garage that
-can be controlled via solid state relays (driven by digital input 1 and 2 respectively). You could then have the following sequences configured.
+In version 1 of Pi Garage the sequence was expected to be a long lived request so that a large number of possible things
+could be done with Pi Garage. Starting with V2 this has been rolled back and the sequence is expected to be the minimum
+required to "toggle" a door.
 
-**Opening**
+This was done so that the relays and digital IO would be in a "blocking" state for as small a period as possible.
+This was a problem with version 1 as it would mean you could not "cancel" an opening or closing door if it had a long
+running sequence.
 
-- Set digital input 1 `high` (turn on inside garage light)
-- Set digital input 2 `high` (turn outside garage light)
-- Set relay 1 to `toggle` for a duration of 1,000ms (press switch down)
-- Set relay 1 to `toggle` for a duration of 1,000ms (release switch)
+In version 2 the behaviour is that the blocking only occurs whilst the sequence is being ran (for a given door). This
+means with the default configuration a door is only "locked" for 2 seconds. This also means that an extra configuration
+element for a door (opening and closing times) needs to be added (will be defaulted to a sane value) for the duration of
+opening/closing the door as the sequence cannot be the source of truth anymore.
 
-**Closing**
+If you require complex sequences after upgrading to version 2 it is advised to use a 3rd party tool and interface with
+Pi Garage (such as Home Assistant Automations).
 
-- Set digital input 2 `low` (turn off outside garage light)
-- Set relay 1 to `toggle` for a duration of 1,000ms (press switch down)
-- Set relay 1 to `toggle` for a duration of 120,000ms (release switch then wait 2 minutes)
-- Set digital input 1 `low` with a delay of 1,000 ms (turn off inside light)
+In addition in version 2 the changing state API method has been changed from a synchronous to Asynchronous call. Meaning
+it will instantly return confirmation of the state change and perform the action in the background.
 
 ## API Documentation
 
