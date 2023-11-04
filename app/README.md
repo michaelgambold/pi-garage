@@ -70,16 +70,7 @@ For android the following devices can be used for correct resolution images
 
 Install dependencies
 
-```bash
-brew install ruby
-
-```
-
-Configure .zshrc
-
-```bash
-# toodo
-```
+For Mac you need to use ruby 3. The easiest way is to use `rbenv`.
 
 ### Upgrade Gems/Fastlane
 
