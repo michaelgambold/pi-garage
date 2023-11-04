@@ -20,7 +20,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   final _doorRepository = DoorRepository();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
-  List<SequenceObject> _sequence = [];
+  List<SequenceObject> _sequenceObjects = [];
 
   @override
   void initState() {
@@ -30,9 +30,10 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
 
   Future<void> _refresh() async {
     try {
-      final sequence = await _doorRepository.findDoorSequence(widget.doorId);
+      final sequenceObjects =
+          await _doorRepository.findDoorSequence(widget.doorId);
       setState(() {
-        _sequence = sequence;
+        _sequenceObjects = sequenceObjects;
       });
     } catch (e) {
       _scaffoldMessengerKey.currentState?.clearSnackBars();
@@ -46,24 +47,25 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   }
 
   void _addSequenceObject() {
-    setState(() => _sequence.add(const SequenceObject('on', 1000, 'relay1')));
+    setState(
+        () => _sequenceObjects.add(const SequenceObject('on', 1000, 'relay1')));
   }
 
   void _handleRemoveItem(int index) {
     setState(() {
-      _sequence.removeAt(index);
+      _sequenceObjects.removeAt(index);
     });
   }
 
   void _handleUpdateItem(int index, SequenceObject sequenceObject) {
     setState(() {
-      _sequence[index] = sequenceObject;
+      _sequenceObjects[index] = sequenceObject;
     });
   }
 
   void _save() async {
     try {
-      await _doorRepository.updateDoorSequence(widget.doorId, _sequence);
+      await _doorRepository.updateDoorSequence(widget.doorId, _sequenceObjects);
       _scaffoldMessengerKey.currentState?.clearSnackBars();
       _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
@@ -96,7 +98,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                     child: ListView(
                       children: [
                         SequenceList(
-                          sequence: _sequence,
+                          sequenceObjects: _sequenceObjects,
                           handleRemoveItem: _handleRemoveItem,
                           handleUpdateItem: _handleUpdateItem,
                         ),

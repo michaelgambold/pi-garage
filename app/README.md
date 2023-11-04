@@ -23,6 +23,23 @@ To run the app start a phone simulator (Android or iOS) and run
 $ flutter run
 ```
 
+## Widgetbook
+
+To simplify widget creation Widgetbooks has been configured so that individual widgets can be created independent of one another.
+
+See the below commands to run widgetbooks
+
+```bash
+# Build widgetbooks
+flutter pub run build_runner build
+
+# Watch for changes so you don't have to manually rebuild all the time
+flutter pub run build_runner watch
+
+# Run chrome widgetbook UI. Note you have to push "r" as it doesn't auto refresh changes
+bash flutter run -d chrome -t lib/widgetbook.dart
+```
+
 ## Build app icons
 
 The source file is `icon.ai`. A PNG is then created and put into `assets/icons/icon.png`.
