@@ -1,0 +1,6 @@
+This relase is mainly symbolic from an app perspective.
+
+The backend service had major functionality changes that resulted in a v2.0.0
+breaking version change.
+
+The only noteworthy change is that there is now an alert box for release notes.
