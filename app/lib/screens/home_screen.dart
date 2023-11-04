@@ -3,8 +3,10 @@ import 'package:pi_garage/models/config.dart';
 import 'package:pi_garage/models/door.dart';
 import 'package:pi_garage/providers/current_config_provider.dart';
 import 'package:pi_garage/services/app_version_service.dart';
+import 'package:pi_garage/services/local_storage_service.dart';
 import 'package:pi_garage/widgets/door_list.dart';
 import 'package:pi_garage/widgets/menu_drawer.dart';
+import 'package:pi_garage/widgets/release_notes.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
@@ -19,11 +21,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _appVersionService = AppVersionService();
+  final _localStorageService = LocalStorageService.instance;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
   List<Door> _doors = [];
-
+  bool _showReleaseNotes = false;
   Config? _config;
   io.Socket? _socket;
 
@@ -66,6 +69,30 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     _socket = socket;
+  }
+
+  Future<void> _checkToShowReleaseNotes() async {
+    var appVersion = await _appVersionService.getAppVersion();
+    var key = "viewed-release-notes-v$appVersion";
+    var viewedReleaseNotes = await _localStorageService.getBooleanValue(key);
+
+    if (viewedReleaseNotes != true && _showReleaseNotes == false) {
+      setState(() {
+        _showReleaseNotes = true;
+      });
+    } else if (viewedReleaseNotes == true && _showReleaseNotes == true) {
+      setState(() {
+        _showReleaseNotes = false;
+      });
+    }
+  }
+
+  Future<void> dismissReleaseNotes() async {
+    var appVersion = await _appVersionService.getAppVersion();
+    var key = "viewed-release-notes-v$appVersion";
+
+    await _localStorageService.setBooleanValue(key, true);
+    await _checkToShowReleaseNotes();
   }
 
   Future<void> _refresh() async {
@@ -112,6 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _refresh();
     }
 
+    _checkToShowReleaseNotes();
+
     return ScaffoldMessenger(
         key: _scaffoldMessengerKey,
         child: Scaffold(
@@ -125,7 +154,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   RefreshIndicator(
                     child: ListView(children: [DoorList(doors: _doors)]),
                     onRefresh: () => _refresh(),
-                  )
+                  ),
+                  if (_showReleaseNotes)
+                    (AlertDialog(
+                      title: const Text("Release Notes"),
+                      content: const ReleaseNotes(),
+                      actions: [
+                        TextButton(
+                            onPressed: () => dismissReleaseNotes(),
+                            child: const Text("Dismiss"))
+                      ],
+                    ))
                 ]))));
   }
 }
