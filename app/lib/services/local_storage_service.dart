@@ -31,33 +31,33 @@ class LocalStorageService {
     return myPrefs.getString(key) ?? "";
   }
 
-  removeAll() async {
+  Future<void> removeAll() async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.clear();
+    await myPrefs.clear();
   }
 
-  removeValue(String key) async {
+  Future<void> removeValue(String key) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.remove(key);
+    await myPrefs.remove(key);
   }
 
-  setBooleanValue(String key, bool value) async {
+  Future<void> setBooleanValue(String key, bool value) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setBool(key, value);
+    await myPrefs.setBool(key, value);
   }
 
-  setIntegerValue(String key, int value) async {
+  Future<void> setIntegerValue(String key, int value) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setInt(key, value);
+    await myPrefs.setInt(key, value);
   }
 
-  setStringListValue(String key, List<String> value) async {
+  Future<void> setStringListValue(String key, List<String> value) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setStringList(key, value);
+    await myPrefs.setStringList(key, value);
   }
 
-  setStringValue(String key, String value) async {
+  Future<void> setStringValue(String key, String value) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    myPrefs.setString(key, value);
+    await myPrefs.setString(key, value);
   }
 }

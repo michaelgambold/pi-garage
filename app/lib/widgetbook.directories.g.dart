@@ -89,6 +89,15 @@ final directories = <_i1.WidgetbookNode>[
         ],
       ),
       _i1.WidgetbookComponent(
+        name: 'ReleaseNotes',
+        useCases: [
+          _i1.WidgetbookUseCase(
+            name: 'default',
+            builder: _i2.releaseNotesModal,
+          )
+        ],
+      ),
+      _i1.WidgetbookComponent(
         name: 'SequenceList',
         useCases: [
           _i1.WidgetbookUseCase(
