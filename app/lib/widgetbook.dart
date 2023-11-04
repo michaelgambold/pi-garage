@@ -11,6 +11,7 @@ import 'package:pi_garage/widgets/door_list.dart';
 import 'package:pi_garage/widgets/door_list_item.dart';
 import 'package:pi_garage/widgets/floating_add_button.dart';
 import 'package:pi_garage/widgets/menu_drawer.dart';
+import 'package:pi_garage/widgets/release_notes.dart';
 import 'package:pi_garage/widgets/sequence_list.dart';
 import 'package:pi_garage/widgets/sequence_list_item.dart';
 import 'package:widgetbook/widgetbook.dart';
@@ -106,6 +107,11 @@ Widget floatingAddButton(BuildContext context) {
 @widgetbook.UseCase(name: 'default', type: MenuDrawer)
 Widget menuDrawer(BuildContext context) {
   return const MenuDrawer();
+}
+
+@widgetbook.UseCase(name: 'default', type: ReleaseNotes)
+Widget releaseNotesModal(BuildContext context) {
+  return Container(color: Colors.white, child: const ReleaseNotes());
 }
 
 @widgetbook.UseCase(name: 'default', type: SequenceListItem)
