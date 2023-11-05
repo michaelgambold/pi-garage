@@ -285,31 +285,49 @@ export class DoorsController {
     await this.doorsStateUpdateQueue.add(DoorStateJobName.CLOSING, {
       doorId,
     } as DoorsStateJobData);
+    this.logger.log(
+      `Added ${DoorStateJobName.CLOSING} job for door ${doorId} to door state queue`,
+    );
 
     await this.doorsStateUpdateQueue.add(
       DoorStateJobName.CLOSED,
       { doorId } as DoorsStateJobData,
-      { delay: 20_000 },
+      { delay: 20_000 }, // todo: replace this with the door open/close duration property
+    );
+    this.logger.log(
+      `Added ${DoorStateJobName.CLOSED} job for door ${doorId} to door state queue`,
     );
 
     await this.doorsSequenceRunQueue.add(DoorSequenceJobName.CLOSE, {
       doorId,
     } as DoorsSequenceJobData);
+    this.logger.log(
+      `Added ${DoorSequenceJobName.CLOSE} job for door ${doorId} to door sequence run queue`,
+    );
   }
 
   private async emitOpenMesages(doorId: number) {
     await this.doorsStateUpdateQueue.add(DoorStateJobName.OPENING, {
       doorId,
     } as DoorsStateJobData);
+    this.logger.log(
+      `Added ${DoorStateJobName.OPENING} job for door ${doorId} to door state queue`,
+    );
 
     await this.doorsStateUpdateQueue.add(
       DoorStateJobName.OPEN,
       { doorId } as DoorsStateJobData,
-      { delay: 20_000 },
+      { delay: 20_000 }, //todo:  replace this with the door open/close duration property
+    );
+    this.logger.log(
+      `Added ${DoorStateJobName.OPEN} job for door ${doorId} to door state queue`,
     );
 
     await this.doorsSequenceRunQueue.add(DoorSequenceJobName.OPEN, {
       doorId,
     } as DoorsSequenceJobData);
+    this.logger.log(
+      `Added ${DoorSequenceJobName.OPEN} job for door ${doorId} to door sequence run queue`,
+    );
   }
 }

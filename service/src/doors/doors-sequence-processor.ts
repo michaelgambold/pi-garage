@@ -23,6 +23,8 @@ export class DoorsSequenceProcessor extends WorkerHost {
 
   @UseRequestContext()
   async process(job: Job<DoorsSequenceJobData, void, string>): Promise<void> {
+    this.logger.log(`Processing job ${job.name} for door ${job.data.doorId}`);
+
     switch (job.name) {
       case DoorSequenceJobName.OPEN:
         await this.open(job.data);
@@ -36,21 +38,31 @@ export class DoorsSequenceProcessor extends WorkerHost {
         this.logger.warn(`Job name ${job.name} not supported`);
         break;
     }
+
+    this.logger.log(`Processed job ${job.name} for door ${job.data.doorId}`);
   }
 
   private async close(data: DoorsSequenceJobData): Promise<void> {
     const door = await this.doorsService.findOne(data.doorId);
 
+    this.logger.log(`Running sequence for door ${data.doorId}`);
+
     for (const sequenceObject of door.sequence) {
       await this.automationHatService.runSequenceObject(sequenceObject);
     }
+
+    this.logger.log(`Ran sequence for door ${data.doorId}`);
   }
 
   private async open(data: DoorsSequenceJobData): Promise<void> {
     const door = await this.doorsService.findOne(data.doorId);
 
+    this.logger.log(`Running sequence for door ${data.doorId}`);
+
     for (const sequenceObject of door.sequence) {
       await this.automationHatService.runSequenceObject(sequenceObject);
     }
+
+    this.logger.log(`Ran sequence for door ${data.doorId}`);
   }
 }
