@@ -7,7 +7,7 @@ class ReleaseNotes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Text("v2.0.0", style: TextStyle(fontWeight: FontWeight.bold)),
+      const Text("Version 2", style: TextStyle(fontWeight: FontWeight.bold)),
       const SizedBox(height: 10),
       const Text(
           "In this release a breaking change has been introduced in the backend service."),
