@@ -23,6 +23,8 @@ export class DoorsStateProcessor extends WorkerHost {
 
   @UseRequestContext()
   async process(job: Job<DoorsStateJobData, void, string>): Promise<void> {
+    this.logger.log(`Processing job ${job.name} for door ${job.data.doorId}`);
+
     const door = await this.doorsService.findOne(job.data.doorId);
 
     switch (job.name) {
@@ -51,5 +53,7 @@ export class DoorsStateProcessor extends WorkerHost {
       new Date(),
       `Door ${door.id} ${door.state}`,
     );
+
+    this.logger.log(`Processed job ${job.name} for door ${job.data.doorId}`);
   }
 }
