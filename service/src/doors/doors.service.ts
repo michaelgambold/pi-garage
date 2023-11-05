@@ -48,7 +48,7 @@ export class DoorsService {
   }
 
   findOne(id: number) {
-    return this.doorRepository.findOne({ id }, { populate: ['sequence'] });
+    return this.doorRepository.findOne({ id });
   }
 
   // async open(id: number): Promise<void> {
