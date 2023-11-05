@@ -5,6 +5,7 @@ import { DoorsService } from './doors.service';
 import { Logger } from '../logger/logger';
 import { MikroORM, UseRequestContext } from '@mikro-orm/core';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
+import { DoorsGateway } from './doors.gateway';
 
 @Processor(DoorQueue.DOORS_STATE_UPDATE)
 export class DoorsStateProcessor extends WorkerHost {
@@ -16,6 +17,7 @@ export class DoorsStateProcessor extends WorkerHost {
     private readonly orm: MikroORM,
     private readonly doorsService: DoorsService,
     private readonly auditLogService: AuditLogsService,
+    private readonly doorsGateway: DoorsGateway,
   ) {
     super();
     this.logger = new Logger(DoorsStateProcessor.name);
@@ -49,10 +51,17 @@ export class DoorsStateProcessor extends WorkerHost {
         return;
     }
 
+    // ensure data is flushed to db
+    await this.orm.em.flush();
+
     await this.auditLogService.create(
       new Date(),
       `Door ${door.id} ${door.state}`,
     );
+
+    // get all doors to emit (in future this might be only one door not all)
+    const doors = await this.doorsService.findAll();
+    this.doorsGateway.server.emit('doors:list', doors);
 
     this.logger.log(`Processed job ${job.name} for door ${job.data.doorId}`);
   }
