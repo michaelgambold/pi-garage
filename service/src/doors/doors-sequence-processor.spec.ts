@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DoorsSequenceProcessor } from './doors-sequence-processor';
 import { DoorsService } from './doors.service';
-import { MikroORM } from '@mikro-orm/core';
+import { Collection, MikroORM } from '@mikro-orm/core';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { ConfigService } from '@nestjs/config';
 import { Job } from 'bullmq';
 import { DoorSequenceJobName, DoorsSequenceJobData } from './types';
+import { SequenceObject } from '../entities/SequenceObject.entity';
+import { Door } from '../entities/Door.entity';
 
 describe('DoorsSequenceProcessor', () => {
   let provider: DoorsSequenceProcessor;
@@ -15,16 +17,32 @@ describe('DoorsSequenceProcessor', () => {
 
   beforeEach(async () => {
     const mockDoorsService = {
-      findOne: jest.fn().mockResolvedValue({
-        sequence: [
-          {
-            action: 'on',
-            duration: 1000,
-            id: 1,
-            index: 1,
-            target: 'relay1',
-          },
-        ],
+      findOne: jest.fn().mockImplementation(async (id: number) => {
+        const partialSequence: Partial<Collection<SequenceObject>> = {
+          init: jest.fn().mockResolvedValue(null),
+          getItems: jest.fn().mockImplementation(() => {
+            const partialSequence: Partial<SequenceObject>[] = [
+              {
+                id: 1,
+                action: 'on',
+                duration: 1000,
+                index: 1,
+                target: 'relay1',
+              },
+            ];
+            return partialSequence;
+          }),
+        };
+
+        const partialDoor: Partial<Door> = {
+          id,
+          isEnabled: true,
+          label: `door${id}`,
+          state: 'open',
+          sequence: partialSequence as Collection<SequenceObject>,
+        };
+
+        return partialDoor;
       }),
     };
 

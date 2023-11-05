@@ -44,10 +44,11 @@ export class DoorsSequenceProcessor extends WorkerHost {
 
   private async close(data: DoorsSequenceJobData): Promise<void> {
     const door = await this.doorsService.findOne(data.doorId);
+    await door.sequence.init();
 
     this.logger.log(`Running sequence for door ${data.doorId}`);
 
-    for (const sequenceObject of door.sequence) {
+    for (const sequenceObject of door.sequence.getItems()) {
       await this.automationHatService.runSequenceObject(sequenceObject);
     }
 
@@ -56,10 +57,11 @@ export class DoorsSequenceProcessor extends WorkerHost {
 
   private async open(data: DoorsSequenceJobData): Promise<void> {
     const door = await this.doorsService.findOne(data.doorId);
+    await door.sequence.init();
 
     this.logger.log(`Running sequence for door ${data.doorId}`);
 
-    for (const sequenceObject of door.sequence) {
+    for (const sequenceObject of door.sequence.getItems()) {
       await this.automationHatService.runSequenceObject(sequenceObject);
     }
 
