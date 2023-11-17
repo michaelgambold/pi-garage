@@ -84,16 +84,16 @@ Widget configList(BuildContext context) {
 
 @widgetbook.UseCase(name: 'default', type: DoorListItem)
 Widget doorListItem(BuildContext context) {
-  const door = Door(1, "Door", true, "open");
+  const door = Door(1, "Door", true, "open", 20000, 20000);
   return const DoorListItem(door: door);
 }
 
 @widgetbook.UseCase(name: 'default', type: DoorList)
 Widget doorList(BuildContext context) {
   var doors = const [
-    Door(1, "Door #1", true, "open"),
-    Door(2, "Door #2", true, "closed"),
-    Door(3, "Door #3", true, "opening")
+    Door(1, "Door #1", true, "open", 20000, 20000),
+    Door(2, "Door #2", true, "closed", 20000, 20000),
+    Door(3, "Door #3", true, "opening", 20000, 20000)
   ];
   return DoorList(doors: doors);
 }
