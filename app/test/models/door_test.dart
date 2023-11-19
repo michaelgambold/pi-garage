@@ -7,7 +7,9 @@ void main() {
       'id': 1,
       'isEnabled': true,
       'label': 'Door Label',
-      'state': "open"
+      'state': 'open',
+      'openDuration': 20000,
+      'closeDuration': 20000
     };
 
     final door = Door.fromJson(json);

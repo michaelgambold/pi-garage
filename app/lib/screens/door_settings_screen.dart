@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/update_door.dart';
 import '../repositories/door_repository.dart';
@@ -19,7 +20,10 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   final _doorRepository = DoorRepository();
+
   final _labelController = TextEditingController(text: '');
+  final _openDoorDurationController = TextEditingController(text: '0');
+  final _closeDoorDurationController = TextEditingController(text: '0');
   bool _isEnabled = false;
 
   @override
@@ -28,6 +32,8 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
 
     _doorRepository.findDoor(widget.doorId).then((value) {
       _labelController.text = value.label;
+      _openDoorDurationController.text = value.openDuration.toString();
+      _closeDoorDurationController.text = value.closeDuration.toString();
       setState(
         () {
           _isEnabled = value.isEnabled;
@@ -55,9 +61,10 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
       await _doorRepository.updateDoor(
           widget.doorId,
           UpdateDoor(
-            isEnabled: _isEnabled,
-            label: _labelController.text,
-          ));
+              isEnabled: _isEnabled,
+              label: _labelController.text,
+              openDuration: int.parse(_openDoorDurationController.text),
+              closeDuration: int.parse(_closeDoorDurationController.text)));
 
       _scaffoldMessengerKey.currentState?.clearSnackBars();
       _scaffoldMessengerKey.currentState?.showSnackBar(
@@ -88,10 +95,6 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    TextFormField(
-                      decoration: const InputDecoration(hintText: 'Label'),
-                      controller: _labelController,
-                    ),
                     CheckboxListTile(
                       contentPadding: EdgeInsets.zero,
                       title: const Text('Enabled'),
@@ -101,6 +104,24 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
                         });
                       },
                       value: _isEnabled,
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(labelText: 'Label'),
+                      controller: _labelController,
+                    ),
+                    TextFormField(
+                      controller: _openDoorDurationController,
+                      decoration: const InputDecoration(
+                          labelText: "Open Duration (ms)"),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    TextFormField(
+                      controller: _closeDoorDurationController,
+                      decoration: const InputDecoration(
+                          labelText: "Close Duration (ms)"),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                     const Spacer(),
                     ElevatedButton(
