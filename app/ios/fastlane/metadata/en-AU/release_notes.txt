@@ -1,1 +1,1 @@
-Various small bug fixes.
+Add ability to set open/close duration for a given door.
