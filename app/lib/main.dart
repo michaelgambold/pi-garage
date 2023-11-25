@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
         title: 'Pi Garage',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          useMaterial3: false,
         ),
         home: const HomeScreen(title: 'Pi Garage'),
         onUnknownRoute: (settings) {
