@@ -124,8 +124,8 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                     const Spacer(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
+                    FilledButton(
+                      style: FilledButton.styleFrom(
                           minimumSize: const Size.fromHeight(40)),
                       onPressed: _save,
                       child: const Text('Save'),

@@ -102,8 +102,8 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                           handleRemoveItem: _handleRemoveItem,
                           handleUpdateItem: _handleUpdateItem,
                         ),
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
+                        FilledButton(
+                            style: FilledButton.styleFrom(
                                 minimumSize: const Size.fromHeight(40)),
                             onPressed: () => _save(),
                             child: const Text('Save')),
@@ -116,7 +116,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                   Positioned(
                       bottom: 30,
                       right: 20,
-                      child: FloatingActionButton(
+                      child: FilledButton(
                         onPressed: () {
                           _addSequenceObject();
                         },

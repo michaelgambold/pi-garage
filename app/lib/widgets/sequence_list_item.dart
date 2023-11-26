@@ -121,8 +121,8 @@ class _SequenceListItemState extends State<SequenceListItem> {
             // technically column 2
             Flexible(
                 flex: 0,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+                child: FilledButton(
+                    style: FilledButton.styleFrom(
                       minimumSize: Size.zero,
                       padding: EdgeInsets.zero,
                     ),

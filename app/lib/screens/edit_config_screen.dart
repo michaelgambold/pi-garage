@@ -173,14 +173,14 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
                     controller: _apiKeyController,
                   ),
                   const Spacer(),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
+                  FilledButton(
+                      style: FilledButton.styleFrom(
                           backgroundColor: Colors.grey,
                           minimumSize: const Size.fromHeight(40)),
                       onPressed: () => _testConnection(),
                       child: const Text('Test')),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+                  FilledButton(
+                    style: FilledButton.styleFrom(
                         minimumSize: const Size.fromHeight(40)),
                     onPressed: () async {
                       // Validate will return true if the form is valid, or false if

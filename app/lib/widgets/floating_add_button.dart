@@ -11,9 +11,11 @@ class FloatingAddButton extends StatelessWidget {
     return Positioned(
         bottom: 30,
         right: 20,
-        child: FloatingActionButton(
-          onPressed: () => onPressed(),
-          child: const Icon(Icons.add),
-        ));
+        child: FilledButton(
+            onPressed: () => onPressed(), child: const Icon(Icons.add)));
+    // child: FloatingActionButton(
+    //   onPressed: () => onPressed(),
+    //   child: const Icon(Icons.add),
+    // ));
   }
 }
