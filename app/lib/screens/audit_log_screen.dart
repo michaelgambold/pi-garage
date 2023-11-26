@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pi_garage/widgets/layout.dart';
 
 import '../models/audit_log.dart';
 import '../repositories/audit_log_repository.dart';
@@ -39,27 +40,22 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
   Widget build(BuildContext context) {
     var scaffoldMessenger = ScaffoldMessenger.of(context);
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Container(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
-            child: RefreshIndicator(
-                onRefresh: () async {
-                  try {
-                    await _refresh();
-                  } catch (e) {
-                    scaffoldMessenger.clearSnackBars();
-                    scaffoldMessenger.showSnackBar(SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(e.toString())));
-                  }
-                },
-                child: ListView(
-                  children: [
-                    for (var log in _auditLogs) AuditLogCard(auditLog: log)
-                  ],
-                ))));
+    return Layout(
+        title: widget.title,
+        child: RefreshIndicator(
+            onRefresh: () async {
+              try {
+                await _refresh();
+              } catch (e) {
+                scaffoldMessenger.clearSnackBars();
+                scaffoldMessenger.showSnackBar(SnackBar(
+                    backgroundColor: Colors.red, content: Text(e.toString())));
+              }
+            },
+            child: ListView(
+              children: [
+                for (var log in _auditLogs) AuditLogCard(auditLog: log)
+              ],
+            )));
   }
 }

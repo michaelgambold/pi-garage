@@ -3,6 +3,7 @@ import 'package:pi_garage/models/config.dart';
 import 'package:pi_garage/providers/current_config_provider.dart';
 import 'package:pi_garage/repositories/config_repository.dart';
 import 'package:pi_garage/services/http_service.dart';
+import 'package:pi_garage/widgets/layout.dart';
 import 'package:provider/provider.dart';
 
 class EditConfigScreen extends StatefulWidget {
@@ -133,70 +134,66 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
     final currentConfig = currentConfigProvider.currentConfig;
     _scaffoldMesseger = ScaffoldMessenger.of(context);
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Container(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: 'Name',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'A name is required';
-                      }
-                      return null;
-                    },
-                    controller: _nameController,
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: 'FQDN',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'A FQDN is required';
-                      }
-                      return null;
-                    },
-                    controller: _fqdnController,
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(hintText: 'API Key'),
-                    controller: _apiKeyController,
-                  ),
-                  const Spacer(),
-                  FilledButton(
-                      style: FilledButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                          minimumSize: const Size.fromHeight(40)),
-                      onPressed: () => _testConnection(),
-                      child: const Text('Test')),
-                  FilledButton(
-                    style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40)),
-                    onPressed: () async {
-                      // Validate will return true if the form is valid, or false if
-                      // the form is invalid.
-                      if (!formKey.currentState!.validate()) {
-                        return;
-                      }
-                      await _handleSave();
-                      if (currentConfig?.id == _config.id) {
-                        await currentConfigProvider.reloadCurrentConfig();
-                      }
-                    },
-                    child: const Text('Save'),
-                  ),
-                ],
+    return Layout(
+        title: widget.title,
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Name',
+                ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'A name is required';
+                  }
+                  return null;
+                },
+                controller: _nameController,
               ),
-            )));
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'FQDN',
+                ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'A FQDN is required';
+                  }
+                  return null;
+                },
+                controller: _fqdnController,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(hintText: 'API Key'),
+                controller: _apiKeyController,
+              ),
+              const Spacer(),
+              FilledButton(
+                  style: FilledButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      minimumSize: const Size.fromHeight(40)),
+                  onPressed: () => _testConnection(),
+                  child: const Text('Test')),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(40)),
+                onPressed: () async {
+                  // Validate will return true if the form is valid, or false if
+                  // the form is invalid.
+                  if (!formKey.currentState!.validate()) {
+                    return;
+                  }
+                  await _handleSave();
+                  if (currentConfig?.id == _config.id) {
+                    await currentConfigProvider.reloadCurrentConfig();
+                  }
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        ));
   }
 }

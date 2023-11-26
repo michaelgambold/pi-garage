@@ -3,6 +3,7 @@ import 'package:pi_garage/models/config.dart';
 import 'package:pi_garage/repositories/config_repository.dart';
 import 'package:pi_garage/widgets/config_list.dart';
 import 'package:pi_garage/widgets/floating_add_button.dart';
+import 'package:pi_garage/widgets/layout.dart';
 import 'package:uuid/uuid.dart';
 
 class ConfigsScreen extends StatefulWidget {
@@ -64,27 +65,22 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
   Widget build(BuildContext context) {
     _scaffoldMesseger = ScaffoldMessenger.of(context);
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Container(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
-            child: Stack(children: [
-              RefreshIndicator(
-                onRefresh: _refresh,
-                child: ListView(
-                  children: [
-                    ConfigList(
-                      configs: _configs,
-                      editConfig: (config) =>
-                          _handleEditConfig(context, config),
-                      removeConfig: _handleRemoveConfig,
-                    ),
-                  ],
+    return Layout(
+        title: widget.title,
+        child: Stack(children: [
+          RefreshIndicator(
+            onRefresh: _refresh,
+            child: ListView(
+              children: [
+                ConfigList(
+                  configs: _configs,
+                  editConfig: (config) => _handleEditConfig(context, config),
+                  removeConfig: _handleRemoveConfig,
                 ),
-              ),
-              FloatingAddButton(onPressed: _handleAddPressed)
-            ])));
+              ],
+            ),
+          ),
+          FloatingAddButton(onPressed: _handleAddPressed)
+        ]));
   }
 }

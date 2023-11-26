@@ -123,9 +123,9 @@ class _SequenceListItemState extends State<SequenceListItem> {
                 flex: 0,
                 child: FilledButton(
                     style: FilledButton.styleFrom(
-                      minimumSize: Size.zero,
-                      padding: EdgeInsets.zero,
-                    ),
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.grey),
                     onPressed: () => widget.onRemoveHandler(widget.index),
                     child: const Icon(Icons.clear))),
           ],

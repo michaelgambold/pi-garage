@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pi_garage/widgets/layout.dart';
 
 import '../models/sequence_object.dart';
 import '../repositories/door_repository.dart';
@@ -85,43 +86,38 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldMessenger(
+    return Layout(
         key: _scaffoldMessengerKey,
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
+        title: widget.title,
+        child: Stack(children: [
+          RefreshIndicator(
+            child: ListView(
+              children: [
+                SequenceList(
+                  sequenceObjects: _sequenceObjects,
+                  handleRemoveItem: _handleRemoveItem,
+                  handleUpdateItem: _handleUpdateItem,
+                ),
+                FilledButton(
+                    style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(40)),
+                    onPressed: () => _save(),
+                    child: const Text('Save')),
+              ],
             ),
-            body: Container(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
-                child: Stack(children: [
-                  RefreshIndicator(
-                    child: ListView(
-                      children: [
-                        SequenceList(
-                          sequenceObjects: _sequenceObjects,
-                          handleRemoveItem: _handleRemoveItem,
-                          handleUpdateItem: _handleUpdateItem,
-                        ),
-                        FilledButton(
-                            style: FilledButton.styleFrom(
-                                minimumSize: const Size.fromHeight(40)),
-                            onPressed: () => _save(),
-                            child: const Text('Save')),
-                      ],
-                    ),
-                    onRefresh: () async {
-                      await _refresh();
-                    },
-                  ),
-                  Positioned(
-                      bottom: 30,
-                      right: 20,
-                      child: FilledButton(
-                        onPressed: () {
-                          _addSequenceObject();
-                        },
-                        child: const Icon(Icons.add),
-                      ))
-                ]))));
+            onRefresh: () async {
+              await _refresh();
+            },
+          ),
+          Positioned(
+              bottom: 30,
+              right: 20,
+              child: FilledButton(
+                onPressed: () {
+                  _addSequenceObject();
+                },
+                child: const Icon(Icons.add),
+              ))
+        ]));
   }
 }

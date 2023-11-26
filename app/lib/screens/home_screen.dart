@@ -5,6 +5,7 @@ import 'package:pi_garage/providers/current_config_provider.dart';
 import 'package:pi_garage/services/app_version_service.dart';
 import 'package:pi_garage/services/local_storage_service.dart';
 import 'package:pi_garage/widgets/door_list.dart';
+import 'package:pi_garage/widgets/layout.dart';
 import 'package:pi_garage/widgets/menu_drawer.dart';
 import 'package:pi_garage/widgets/release_notes.dart';
 import 'package:provider/provider.dart';
@@ -141,30 +142,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _checkToShowReleaseNotes();
 
-    return ScaffoldMessenger(
-        key: _scaffoldMessengerKey,
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
-            ),
-            drawer: const MenuDrawer(),
-            body: Container(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
-                child: Stack(children: [
-                  RefreshIndicator(
-                    child: ListView(children: [DoorList(doors: _doors)]),
-                    onRefresh: () => _refresh(),
-                  ),
-                  if (_showReleaseNotes)
-                    (AlertDialog(
-                      title: const Text("Release Notes"),
-                      content: const ReleaseNotes(),
-                      actions: [
-                        TextButton(
-                            onPressed: () => dismissReleaseNotes(),
-                            child: const Text("Dismiss"))
-                      ],
-                    ))
-                ]))));
+    return Layout(
+        scaffoldMessangerKey: _scaffoldMessengerKey,
+        title: widget.title,
+        drawer: const MenuDrawer(),
+        child: Stack(children: [
+          RefreshIndicator(
+            child: ListView(children: [DoorList(doors: _doors)]),
+            onRefresh: () => _refresh(),
+          ),
+          if (_showReleaseNotes)
+            (AlertDialog(
+              title: const Text("Release Notes"),
+              content: const ReleaseNotes(),
+              actions: [
+                TextButton(
+                    onPressed: () => dismissReleaseNotes(),
+                    child: const Text("Dismiss"))
+              ],
+            ))
+        ]));
   }
 }
