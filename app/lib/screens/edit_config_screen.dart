@@ -138,7 +138,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
           title: Text(widget.title),
         ),
         body: Container(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
             child: Form(
               key: formKey,
               child: Column(

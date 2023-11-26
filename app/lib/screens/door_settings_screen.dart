@@ -92,7 +92,7 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
               title: Text(widget.title),
             ),
             body: Container(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
                 child: Column(
                   children: [
                     CheckboxListTile(

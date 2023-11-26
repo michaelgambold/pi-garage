@@ -92,7 +92,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
               title: Text(widget.title),
             ),
             body: Container(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
                 child: Stack(children: [
                   RefreshIndicator(
                     child: ListView(

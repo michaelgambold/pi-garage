@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             drawer: const MenuDrawer(),
             body: Container(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
                 child: Stack(children: [
                   RefreshIndicator(
                     child: ListView(children: [DoorList(doors: _doors)]),

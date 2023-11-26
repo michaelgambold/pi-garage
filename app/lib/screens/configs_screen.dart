@@ -69,7 +69,7 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
           title: Text(widget.title),
         ),
         body: Container(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 20),
             child: Stack(children: [
               RefreshIndicator(
                 onRefresh: _refresh,
