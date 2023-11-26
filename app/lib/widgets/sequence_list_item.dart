@@ -121,11 +121,11 @@ class _SequenceListItemState extends State<SequenceListItem> {
             // technically column 2
             Flexible(
                 flex: 0,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size.zero,
-                      padding: EdgeInsets.zero,
-                    ),
+                child: FilledButton(
+                    style: FilledButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.grey),
                     onPressed: () => widget.onRemoveHandler(widget.index),
                     child: const Icon(Icons.clear))),
           ],

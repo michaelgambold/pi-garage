@@ -44,10 +44,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Pi Garage',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: false,
-        ),
+        theme: ThemeData(colorSchemeSeed: Colors.blue),
         home: const HomeScreen(title: 'Pi Garage'),
         onUnknownRoute: (settings) {
           // do somthing better here. this shows the back arrow on the home

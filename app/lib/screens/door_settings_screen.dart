@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pi_garage/widgets/layout.dart';
 
 import '../models/update_door.dart';
 import '../repositories/door_repository.dart';
@@ -85,52 +86,47 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldMessenger(
-        key: _scaffoldMessengerKey,
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(widget.title),
+    return Layout(
+        title: widget.title,
+        scaffoldMessangerKey: _scaffoldMessengerKey,
+        child: Column(
+          children: [
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Enabled'),
+              onChanged: (value) {
+                setState(() {
+                  _isEnabled = value ?? _isEnabled;
+                });
+              },
+              value: _isEnabled,
             ),
-            body: Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Enabled'),
-                      onChanged: (value) {
-                        setState(() {
-                          _isEnabled = value ?? _isEnabled;
-                        });
-                      },
-                      value: _isEnabled,
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(labelText: 'Label'),
-                      controller: _labelController,
-                    ),
-                    TextFormField(
-                      controller: _openDoorDurationController,
-                      decoration: const InputDecoration(
-                          labelText: "Open Duration (ms)"),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                    TextFormField(
-                      controller: _closeDoorDurationController,
-                      decoration: const InputDecoration(
-                          labelText: "Close Duration (ms)"),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(40)),
-                      onPressed: _save,
-                      child: const Text('Save'),
-                    ),
-                  ],
-                ))));
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Label'),
+              controller: _labelController,
+            ),
+            TextFormField(
+              controller: _openDoorDurationController,
+              decoration:
+                  const InputDecoration(labelText: "Open Duration (ms)"),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
+            TextFormField(
+              controller: _closeDoorDurationController,
+              decoration:
+                  const InputDecoration(labelText: "Close Duration (ms)"),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
+            const Spacer(),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(40)),
+              onPressed: _save,
+              child: const Text('Save'),
+            ),
+          ],
+        ));
   }
 }

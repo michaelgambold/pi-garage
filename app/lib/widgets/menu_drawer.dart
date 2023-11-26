@@ -43,40 +43,38 @@ class _MenuDrawerState extends State<MenuDrawer> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-              ),
+              // decoration: const BoxDecoration(color: Colors.blue),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                          const Text("Menu",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                              )),
-                          const SizedBox(
-                            height: 6,
-                          ),
-                          ConfigDropdown(
-                              configs: _configs,
-                              currentConfigId: currentConfig?.id,
-                              onChange: (value) =>
-                                  currentConfigProvider.setCurrentConfig(value))
-                        ])),
-                    SizedBox(
-                        height: _appVersionTextSize,
-                        child: Text(
-                          _appVersion,
+                Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      const Text("Menu",
                           style: TextStyle(
-                            color: Colors.white54,
-                            fontSize: _appVersionTextSize,
-                          ),
-                        ))
-                  ])),
+                            // color: Colors.white,
+                            fontSize: 24,
+                          )),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      ConfigDropdown(
+                          configs: _configs,
+                          currentConfigId: currentConfig?.id,
+                          onChange: (value) =>
+                              currentConfigProvider.setCurrentConfig(value))
+                    ])),
+                SizedBox(
+                    height: _appVersionTextSize,
+                    child: Text(
+                      _appVersion,
+                      style: TextStyle(
+                        // color: Colors.white54,
+                        fontSize: _appVersionTextSize,
+                      ),
+                    ))
+              ])),
           ListTile(
             title: const Text("Configs"),
             onTap: () {
