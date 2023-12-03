@@ -6,8 +6,14 @@ class Door {
   final int openDuration;
   final int closeDuration;
 
-  const Door(this.id, this.label, this.isEnabled, this.state, this.openDuration,
-      this.closeDuration);
+  const Door({
+    required this.id,
+    required this.label,
+    required this.isEnabled,
+    required this.state,
+    required this.openDuration,
+    required this.closeDuration,
+  });
 
   Door.fromJson(Map<String, dynamic> json)
       : id = json['id'],

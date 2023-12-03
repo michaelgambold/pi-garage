@@ -4,7 +4,12 @@ class Config {
   String fqdn;
   String? apiKey;
 
-  Config(this.id, this.name, this.fqdn, this.apiKey);
+  Config({
+    required this.id,
+    required this.name,
+    required this.fqdn,
+    this.apiKey,
+  });
 
   Config.fromJson(Map<String, dynamic> json)
       : id = json['id'],

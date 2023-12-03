@@ -4,11 +4,12 @@ class UpdateDoor {
   final int closeDuration;
   final int openDuration;
 
-  const UpdateDoor(
-      {required this.label,
-      required this.isEnabled,
-      required this.closeDuration,
-      required this.openDuration});
+  const UpdateDoor({
+    required this.label,
+    required this.isEnabled,
+    required this.closeDuration,
+    required this.openDuration,
+  });
 
   Map<String, dynamic> toJson() => {
         'label': label,

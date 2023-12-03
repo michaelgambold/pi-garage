@@ -3,7 +3,11 @@ class SequenceObject {
   final int duration;
   final String target;
 
-  const SequenceObject(this.action, this.duration, this.target);
+  const SequenceObject({
+    required this.action,
+    required this.duration,
+    required this.target,
+  });
 
   SequenceObject.fromJson(Map<String, dynamic> json)
       : action = json['action'],
