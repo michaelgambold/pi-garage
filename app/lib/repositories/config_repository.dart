@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/services/local_storage_service.dart';
+
+import '../models/config.dart';
+import '../services/local_storage_service.dart';
 
 class ConfigRepository {
   Future<void> addConfig(Config config) async {
