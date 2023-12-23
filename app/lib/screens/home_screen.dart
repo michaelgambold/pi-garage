@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/models/door.dart';
-import 'package:pi_garage/providers/current_config_provider.dart';
-import 'package:pi_garage/services/app_version_service.dart';
-import 'package:pi_garage/services/local_storage_service.dart';
-import 'package:pi_garage/widgets/door_list.dart';
-import 'package:pi_garage/widgets/layout.dart';
-import 'package:pi_garage/widgets/menu_drawer.dart';
-import 'package:pi_garage/widgets/release_notes.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+
+import '../models/config.dart';
+import '../models/door.dart';
+import '../providers/current_config_provider.dart';
+import '../services/app_version_service.dart';
+import '../services/local_storage_service.dart';
+import '../widgets/door_list.dart';
+import '../widgets/layout.dart';
+import '../widgets/menu_drawer.dart';
+import '../widgets/release_notes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.title}) : super(key: key);

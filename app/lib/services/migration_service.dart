@@ -1,7 +1,8 @@
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/repositories/config_repository.dart';
-import 'package:pi_garage/services/local_storage_service.dart';
 import 'package:uuid/uuid.dart';
+
+import '../models/config.dart';
+import '../repositories/config_repository.dart';
+import 'local_storage_service.dart';
 
 class MigrationService {
   Future<void> runAll() async {

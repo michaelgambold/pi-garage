@@ -10,109 +10,179 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:pi_garage/widgetbook.dart' as _i2;
+import 'package:pi_garage/widgets/audit_log/audit_log_card.dart' as _i3;
+import 'package:pi_garage/widgets/audit_log/audit_log_list.dart' as _i4;
+import 'package:pi_garage/widgets/config/config_dropdown.dart' as _i5;
+import 'package:pi_garage/widgets/config/config_list.dart' as _i6;
+import 'package:pi_garage/widgets/config/config_list_item.dart' as _i7;
+import 'package:pi_garage/widgets/door/door_list.dart' as _i8;
+import 'package:pi_garage/widgets/door/door_list_item.dart' as _i9;
+import 'package:pi_garage/widgets/sequence/sequence_list.dart' as _i10;
+import 'package:pi_garage/widgets/sequence/sequence_list_item.dart' as _i11;
 import 'package:widgetbook/widgetbook.dart' as _i1;
 
 final directories = <_i1.WidgetbookNode>[
   _i1.WidgetbookFolder(
     name: 'widgets',
     children: [
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'AuditLogCard',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.auditLogCard,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.auditLogCard,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'ConfigDropdown',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.configDropdown,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.configDropdown,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'ConfigList',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.configList,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.configList,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'ConfigListItem',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.configListItem,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.configListItem,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'DoorList',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.doorList,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.doorList,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'DoorListItem',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.doorListItem,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.doorListItem,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'FloatingAddButton',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.floatingAddButton,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.floatingAddButton,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'MenuDrawer',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.menuDrawer,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.menuDrawer,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'ReleaseNotes',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.releaseNotesModal,
-          )
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.releaseNotesModal,
+        ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'SequenceList',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.sequenceList,
-          )
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.sequenceList,
+        ),
+      ),
+      _i1.WidgetbookLeafComponent(
+        name: 'SequenceListItem',
+        useCase: _i1.WidgetbookUseCase(
+          name: 'default',
+          builder: _i2.sequenceListItem,
+        ),
+      ),
+      _i1.WidgetbookFolder(
+        name: 'audit_log',
+        children: [
+          _i1.WidgetbookLeafComponent(
+            name: 'AuditLogCard',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i3.defaultUseCase,
+            ),
+          ),
+          _i1.WidgetbookLeafComponent(
+            name: 'AuditLogList',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i4.defaultUseCase,
+            ),
+          ),
         ],
       ),
-      _i1.WidgetbookComponent(
-        name: 'SequenceListItem',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'default',
-            builder: _i2.sequenceListItem,
-          )
+      _i1.WidgetbookFolder(
+        name: 'config',
+        children: [
+          _i1.WidgetbookLeafComponent(
+            name: 'ConfigDropdown',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i5.defaultUseCase,
+            ),
+          ),
+          _i1.WidgetbookLeafComponent(
+            name: 'ConfigList',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i6.defaultUseCase,
+            ),
+          ),
+          _i1.WidgetbookLeafComponent(
+            name: 'ConfigListItem',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i7.defaultUseCase,
+            ),
+          ),
+        ],
+      ),
+      _i1.WidgetbookFolder(
+        name: 'door',
+        children: [
+          _i1.WidgetbookLeafComponent(
+            name: 'DoorList',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i8.defaultUseCase,
+            ),
+          ),
+          _i1.WidgetbookLeafComponent(
+            name: 'DoorListItem',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i9.defaultUseCase,
+            ),
+          ),
+        ],
+      ),
+      _i1.WidgetbookFolder(
+        name: 'sequence',
+        children: [
+          _i1.WidgetbookLeafComponent(
+            name: 'SequenceList',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i10.defaultUseCase,
+            ),
+          ),
+          _i1.WidgetbookLeafComponent(
+            name: 'SequenceListItem',
+            useCase: _i1.WidgetbookUseCase(
+              name: 'default',
+              builder: _i11.defaultUseCase,
+            ),
+          ),
         ],
       ),
     ],

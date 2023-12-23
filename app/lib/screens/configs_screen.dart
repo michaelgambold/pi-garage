@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/repositories/config_repository.dart';
-import 'package:pi_garage/widgets/config_list.dart';
-import 'package:pi_garage/widgets/floating_add_button.dart';
-import 'package:pi_garage/widgets/layout.dart';
 import 'package:uuid/uuid.dart';
+
+import '../models/config.dart';
+import '../repositories/config_repository.dart';
+import '../widgets/config_list.dart';
+import '../widgets/floating_add_button.dart';
+import '../widgets/layout.dart';
 
 class ConfigsScreen extends StatefulWidget {
   const ConfigsScreen({Key? key, required this.title}) : super(key: key);
@@ -35,8 +36,8 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
 
   Future<void> _handleAddPressed() async {
     try {
-      await _configRepo
-          .addConfig(Config(const Uuid().v4(), 'New Config', '', null));
+      await _configRepo.addConfig(Config(
+          id: const Uuid().v4(), name: 'New Config', fqdn: '', apiKey: null));
       await _refresh();
     } catch (e) {
       _scaffoldMesseger?.clearSnackBars();

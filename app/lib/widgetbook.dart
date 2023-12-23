@@ -44,13 +44,19 @@ class WidgetbookApp extends StatelessWidget {
 
 @widgetbook.UseCase(name: 'default', type: AuditLogCard)
 Widget auditLogCard(BuildContext context) {
-  var auditLog = AuditLog(DateTime.now(), "Some detail");
+  var auditLog = AuditLog(timestamp: DateTime.now(), detail: "Some detail");
   return AuditLogCard(auditLog: auditLog);
 }
 
 @widgetbook.UseCase(name: 'default', type: ConfigDropdown)
 Widget configDropdown(BuildContext context) {
-  var configs = [Config("abc123", "Default Config", "http://localhost", null)];
+  var configs = [
+    Config(
+        id: "abc123",
+        name: "Default Config",
+        fqdn: "http://localhost",
+        apiKey: null)
+  ];
   return ConfigDropdown(
     configs: configs,
     currentConfigId: configs[0].id,
@@ -60,7 +66,11 @@ Widget configDropdown(BuildContext context) {
 
 @widgetbook.UseCase(name: 'default', type: ConfigListItem)
 Widget configListItem(BuildContext context) {
-  var config = Config("abc123", "Configuration", "http://localhost", null);
+  var config = Config(
+      id: "abc123",
+      name: "Configuration",
+      fqdn: "http://localhost",
+      apiKey: null);
   return ConfigListItem(
     config: config,
     remove: () => {},
@@ -71,9 +81,21 @@ Widget configListItem(BuildContext context) {
 @widgetbook.UseCase(name: 'default', type: ConfigList)
 Widget configList(BuildContext context) {
   var configs = [
-    Config("abc123", "Configuration #1", "http://localhost", null),
-    Config("abc123", "Configuration #2", "http://localhost", null),
-    Config("abc123", "Configuration #3", "http://localhost", null)
+    Config(
+        id: "abc123",
+        name: "Configuration #1",
+        fqdn: "http://localhost",
+        apiKey: null),
+    Config(
+        id: "abc123",
+        name: "Configuration #2",
+        fqdn: "http://localhost",
+        apiKey: null),
+    Config(
+        id: "abc123",
+        name: "Configuration #3",
+        fqdn: "http://localhost",
+        apiKey: null)
   ];
   return ConfigList(
     configs: configs,
@@ -84,16 +106,40 @@ Widget configList(BuildContext context) {
 
 @widgetbook.UseCase(name: 'default', type: DoorListItem)
 Widget doorListItem(BuildContext context) {
-  const door = Door(1, "Door", true, "open", 20000, 20000);
+  const door = Door(
+      id: 1,
+      label: "Door",
+      isEnabled: true,
+      state: "open",
+      openDuration: 20000,
+      closeDuration: 20000);
   return const DoorListItem(door: door);
 }
 
 @widgetbook.UseCase(name: 'default', type: DoorList)
 Widget doorList(BuildContext context) {
   var doors = const [
-    Door(1, "Door #1", true, "open", 20000, 20000),
-    Door(2, "Door #2", true, "closed", 20000, 20000),
-    Door(3, "Door #3", true, "opening", 20000, 20000)
+    Door(
+        id: 1,
+        label: "Door #1",
+        isEnabled: true,
+        state: "open",
+        openDuration: 20000,
+        closeDuration: 20000),
+    Door(
+        id: 2,
+        label: "Door #2",
+        isEnabled: true,
+        state: "closed",
+        openDuration: 20000,
+        closeDuration: 20000),
+    Door(
+        id: 3,
+        label: "Door #3",
+        isEnabled: true,
+        state: "opening",
+        openDuration: 20000,
+        closeDuration: 20000)
   ];
   return DoorList(doors: doors);
 }
@@ -116,7 +162,8 @@ Widget releaseNotesModal(BuildContext context) {
 
 @widgetbook.UseCase(name: 'default', type: SequenceListItem)
 Widget sequenceListItem(BuildContext context) {
-  var sequenceObject = const SequenceObject("on", 1000, "relay1");
+  var sequenceObject =
+      const SequenceObject(action: "on", duration: 1000, target: "relay1");
   return SequenceListItem(
       sequenceObject: sequenceObject,
       index: 0,
@@ -127,8 +174,8 @@ Widget sequenceListItem(BuildContext context) {
 @widgetbook.UseCase(name: 'default', type: SequenceList)
 Widget sequenceList(BuildContext context) {
   var sequenceObjects = const [
-    SequenceObject("on", 1000, "relay1"),
-    SequenceObject("off", 1000, "relay1")
+    SequenceObject(action: "on", duration: 1000, target: "relay1"),
+    SequenceObject(action: "off", duration: 1000, target: "relay1")
   ];
   return SequenceList(
       sequenceObjects: sequenceObjects,

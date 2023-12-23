@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/repositories/config_repository.dart';
 
+import '../models/config.dart';
+import '../repositories/config_repository.dart';
 import 'app_version_service.dart';
 import 'http_service.dart';
 

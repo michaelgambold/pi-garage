@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/sequence_object.dart';
 
 class SequenceListItem extends StatefulWidget {
@@ -62,9 +63,10 @@ class _SequenceListItemState extends State<SequenceListItem> {
                               onChanged: (value) => widget.onUpdateHandler(
                                   widget.index,
                                   SequenceObject(
-                                      value.toString(),
-                                      int.parse(_durationController.text),
-                                      widget.sequenceObject.target))))
+                                      action: value.toString(),
+                                      duration:
+                                          int.parse(_durationController.text),
+                                      target: widget.sequenceObject.target))))
                     ],
                   ),
                   Row(
@@ -95,9 +97,10 @@ class _SequenceListItemState extends State<SequenceListItem> {
                               onChanged: (value) => widget.onUpdateHandler(
                                   widget.index,
                                   SequenceObject(
-                                      widget.sequenceObject.action,
-                                      int.parse(_durationController.text),
-                                      value.toString()))))
+                                      action: widget.sequenceObject.action,
+                                      duration:
+                                          int.parse(_durationController.text),
+                                      target: value.toString()))))
                     ],
                   ),
                   Row(
@@ -111,9 +114,11 @@ class _SequenceListItemState extends State<SequenceListItem> {
                             onChanged: (value) => widget.onUpdateHandler(
                                 widget.index,
                                 SequenceObject(
-                                    widget.sequenceObject.action,
-                                    int.tryParse(_durationController.text) ?? 0,
-                                    widget.sequenceObject.target)),
+                                    action: widget.sequenceObject.action,
+                                    duration: int.tryParse(
+                                            _durationController.text) ??
+                                        0,
+                                    target: widget.sequenceObject.target)),
                           ))
                     ],
                   ),
