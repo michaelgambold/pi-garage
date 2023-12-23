@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../models/config.dart';
 import '../models/door.dart';
 import '../providers/current_config_provider.dart';
+import '../repositories/door_repository.dart';
 import '../services/app_version_service.dart';
 import '../services/local_storage_service.dart';
-import '../widgets/door_list.dart';
+import '../widgets/door/door_list.dart';
 import '../widgets/layout.dart';
 import '../widgets/menu_drawer.dart';
 import '../widgets/release_notes.dart';
@@ -24,6 +26,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _appVersionService = AppVersionService();
   final _localStorageService = LocalStorageService.instance;
+  final _doorRepository = DoorRepository();
+
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
@@ -143,13 +147,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _checkToShowReleaseNotes();
 
+    Future<void> handleDoorIconClicked(int doorId) async {
+      try {
+        await HapticFeedback.mediumImpact();
+        await _doorRepository.changeDoorState(doorId, 'toggle');
+      } catch (e) {
+        _scaffoldMessengerKey.currentState?.clearSnackBars();
+        _scaffoldMessengerKey.currentState?.showSnackBar(
+            SnackBar(backgroundColor: Colors.red, content: Text(e.toString())));
+      }
+    }
+
+    void handleDoorSequenceClicked(int doorId) {
+      Navigator.pushNamed(context, '/doors/${doorId.toString()}/sequence');
+    }
+
+    void handleDoorSettingsClicked(int doorId) {
+      Navigator.pushNamed(context, '/doors/${doorId.toString()}/settings');
+    }
+
     return Layout(
         scaffoldMessangerKey: _scaffoldMessengerKey,
         title: widget.title,
         drawer: const MenuDrawer(),
         child: Stack(children: [
           RefreshIndicator(
-            child: ListView(children: [DoorList(doors: _doors)]),
+            child: DoorList(
+              doors: _doors,
+              onDoorIconClicked: handleDoorIconClicked,
+              onDoorSequenceClicked: handleDoorSequenceClicked,
+              onDoorSettingsClicked: handleDoorSettingsClicked,
+            ),
             onRefresh: () => _refresh(),
           ),
           if (_showReleaseNotes)

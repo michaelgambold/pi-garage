@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/sequence_object.dart';
 import '../repositories/door_repository.dart';
 import '../widgets/layout.dart';
-import '../widgets/sequence_list.dart';
+import '../widgets/sequence/sequence_list.dart';
 
 class DoorSequenceScreen extends StatefulWidget {
   const DoorSequenceScreen(
@@ -95,8 +95,8 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
               children: [
                 SequenceList(
                   sequenceObjects: _sequenceObjects,
-                  handleRemoveItem: _handleRemoveItem,
-                  handleUpdateItem: _handleUpdateItem,
+                  onRemoveItem: _handleRemoveItem,
+                  onUpdateItem: _handleUpdateItem,
                 ),
                 FilledButton(
                     style: FilledButton.styleFrom(

@@ -186,7 +186,7 @@ class _ActionColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.only(left: 16.0),
+        padding: const EdgeInsets.only(left: 8.0),
         child: Column(children: [
           FilledButton(
               style: FilledButton.styleFrom(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 class ReleaseNotes extends StatelessWidget {
   const ReleaseNotes({Key? key}) : super(key: key);
@@ -26,4 +27,9 @@ class ReleaseNotes extends StatelessWidget {
       )
     ]);
   }
+}
+
+@widgetbook.UseCase(name: 'default', type: ReleaseNotes)
+Widget defaultUseCase(BuildContext context) {
+  return Container(color: Colors.white, child: const ReleaseNotes());
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/models/config.dart';
+
+import '../models/config.dart';
 
 class ConfigListItem extends StatelessWidget {
   const ConfigListItem(

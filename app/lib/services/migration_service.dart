@@ -28,7 +28,8 @@ class MigrationService {
 
     // create new config item
     const uuid = Uuid();
-    final config = Config(uuid.v4(), "default", fqdn, apiKey);
+    final config =
+        Config(id: uuid.v4(), name: "default", fqdn: fqdn, apiKey: apiKey);
 
     await configRepo.updateAllConfigs([config]);
     await configRepo.setCurrentConfig(config.id);

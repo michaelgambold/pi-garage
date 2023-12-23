@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 class FloatingAddButton extends StatelessWidget {
   const FloatingAddButton({Key? key, required this.onPressed})
@@ -12,10 +13,13 @@ class FloatingAddButton extends StatelessWidget {
         bottom: 30,
         right: 20,
         child: FilledButton(
-            onPressed: () => onPressed(), child: const Icon(Icons.add)));
-    // child: FloatingActionButton(
-    //   onPressed: () => onPressed(),
-    //   child: const Icon(Icons.add),
-    // ));
+          onPressed: () => onPressed(),
+          child: const Icon(Icons.add),
+        ));
   }
+}
+
+@widgetbook.UseCase(name: 'default', type: FloatingAddButton)
+Widget defaultUseCase(BuildContext context) {
+  return FloatingAddButton(onPressed: () => {});
 }

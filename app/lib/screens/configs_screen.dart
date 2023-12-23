@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 
 import '../models/config.dart';
 import '../repositories/config_repository.dart';
-import '../widgets/config_list.dart';
+import '../widgets/config/config_list.dart';
 import '../widgets/floating_add_button.dart';
 import '../widgets/layout.dart';
 
@@ -71,14 +71,10 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
         child: Stack(children: [
           RefreshIndicator(
             onRefresh: _refresh,
-            child: ListView(
-              children: [
-                ConfigList(
-                  configs: _configs,
-                  editConfig: (config) => _handleEditConfig(context, config),
-                  removeConfig: _handleRemoveConfig,
-                ),
-              ],
+            child: ConfigList(
+              configs: _configs,
+              editConfig: (config) => _handleEditConfig(context, config),
+              removeConfig: _handleRemoveConfig,
             ),
           ),
           FloatingAddButton(onPressed: _handleAddPressed)
