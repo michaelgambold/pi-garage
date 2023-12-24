@@ -31,6 +31,7 @@ import {
   DoorsStateJobData,
 } from './types';
 import { Logger } from '../logger/logger';
+import { Door } from '../entities/Door.entity';
 
 @UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
 @ApiSecurity('api-key')
@@ -248,7 +249,7 @@ export class DoorsController {
         throw new BadRequestException('Cannot open an open/opening door');
       }
 
-      await this.emitOpenMesages(id);
+      await this.emitOpenMesages(door);
       this.automationHatService.turnOffCommsLight();
       return;
     }
@@ -260,7 +261,7 @@ export class DoorsController {
         throw new BadRequestException('Cannot close a closed/closing door');
       }
 
-      await this.emitCloseMessages(id);
+      await this.emitCloseMessages(door);
       this.automationHatService.turnOffCommsLight();
       return;
     }
@@ -268,9 +269,9 @@ export class DoorsController {
     // Handle toggle door
     if (body.state === 'toggle') {
       if (door.state === 'closed' || door.state === 'closing') {
-        await this.emitOpenMesages(id);
+        await this.emitOpenMesages(door);
       } else if (door.state === 'open' || door.state === 'opening') {
-        await this.emitCloseMessages(id);
+        await this.emitCloseMessages(door);
       }
       this.automationHatService.turnOffCommsLight();
       return;
@@ -281,53 +282,53 @@ export class DoorsController {
     throw new BadRequestException('Invalid state');
   }
 
-  private async emitCloseMessages(doorId: number) {
+  private async emitCloseMessages(door: Door) {
     await this.doorsStateUpdateQueue.add(DoorStateJobName.CLOSING, {
-      doorId,
+      doorId: door.id,
     } as DoorsStateJobData);
     this.logger.log(
-      `Added ${DoorStateJobName.CLOSING} job for door ${doorId} to door state queue`,
+      `Added ${DoorStateJobName.CLOSING} job for door ${door.id} to door state queue`,
     );
 
     await this.doorsStateUpdateQueue.add(
       DoorStateJobName.CLOSED,
-      { doorId } as DoorsStateJobData,
-      { delay: 20_000 }, // todo: replace this with the door open/close duration property
+      { doorId: door.id } as DoorsStateJobData,
+      { delay: door.closeDuration },
     );
     this.logger.log(
-      `Added ${DoorStateJobName.CLOSED} job for door ${doorId} to door state queue`,
+      `Added ${DoorStateJobName.CLOSED} job for door ${door.id} to door state queue`,
     );
 
     await this.doorsSequenceRunQueue.add(DoorSequenceJobName.CLOSE, {
-      doorId,
+      doorId: door.id,
     } as DoorsSequenceJobData);
     this.logger.log(
-      `Added ${DoorSequenceJobName.CLOSE} job for door ${doorId} to door sequence run queue`,
+      `Added ${DoorSequenceJobName.CLOSE} job for door ${door.id} to door sequence run queue`,
     );
   }
 
-  private async emitOpenMesages(doorId: number) {
+  private async emitOpenMesages(door: Door) {
     await this.doorsStateUpdateQueue.add(DoorStateJobName.OPENING, {
-      doorId,
+      doorId: door.id,
     } as DoorsStateJobData);
     this.logger.log(
-      `Added ${DoorStateJobName.OPENING} job for door ${doorId} to door state queue`,
+      `Added ${DoorStateJobName.OPENING} job for door ${door.id} to door state queue`,
     );
 
     await this.doorsStateUpdateQueue.add(
       DoorStateJobName.OPEN,
-      { doorId } as DoorsStateJobData,
-      { delay: 20_000 }, //todo:  replace this with the door open/close duration property
+      { doorId: door.id } as DoorsStateJobData,
+      { delay: door.openDuration },
     );
     this.logger.log(
-      `Added ${DoorStateJobName.OPEN} job for door ${doorId} to door state queue`,
+      `Added ${DoorStateJobName.OPEN} job for door ${door.id} to door state queue`,
     );
 
     await this.doorsSequenceRunQueue.add(DoorSequenceJobName.OPEN, {
-      doorId,
+      doorId: door.id,
     } as DoorsSequenceJobData);
     this.logger.log(
-      `Added ${DoorSequenceJobName.OPEN} job for door ${doorId} to door sequence run queue`,
+      `Added ${DoorSequenceJobName.OPEN} job for door ${door.id} to door sequence run queue`,
     );
   }
 }
