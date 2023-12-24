@@ -19,8 +19,7 @@ class DoorSequenceScreen extends StatefulWidget {
 
 class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   final _doorRepository = DoorRepository();
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   List<SequenceObject> _sequenceObjects = [];
 
   @override
@@ -64,9 +63,10 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
     });
   }
 
-  void _save() async {
+  Future<void> _save() async {
     try {
       await _doorRepository.updateDoorSequence(widget.doorId, _sequenceObjects);
+
       _scaffoldMessengerKey.currentState?.clearSnackBars();
       _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
@@ -87,7 +87,7 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-        key: _scaffoldMessengerKey,
+        scaffoldMessangerKey: _scaffoldMessengerKey,
         title: widget.title,
         child: Stack(children: [
           RefreshIndicator(
@@ -101,7 +101,9 @@ class _DoorSequenceScreenState extends State<DoorSequenceScreen> {
                 FilledButton(
                     style: FilledButton.styleFrom(
                         minimumSize: const Size.fromHeight(40)),
-                    onPressed: () => _save(),
+                    onPressed: () async {
+                      await _save();
+                    },
                     child: const Text('Save')),
               ],
             ),

@@ -57,7 +57,7 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
     super.dispose();
   }
 
-  _save() async {
+  Future<void> _save() async {
     try {
       await _doorRepository.updateDoor(
           widget.doorId,

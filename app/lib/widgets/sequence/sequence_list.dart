@@ -27,9 +27,6 @@ class SequenceList extends StatelessWidget {
                 onChanged: (sequenceObject) =>
                     onUpdateItem(index, sequenceObject),
                 onRemove: () => onRemoveItem(index),
-                // index: index,
-                // onRemoveHandler: handleRemoveItem,
-                // onUpdateHandler: handleUpdateItem
               ))
           .toList(),
     );
