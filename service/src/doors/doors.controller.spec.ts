@@ -360,6 +360,8 @@ describe('DoorsController', () => {
         isEnabled: true,
         label: 'door1',
         state: 'closed',
+        openDuration: 20_000,
+        closeDuration: 20_000,
       });
 
       await controller.updateState(1, { state: 'open' });
@@ -387,6 +389,8 @@ describe('DoorsController', () => {
         isEnabled: true,
         label: 'door1',
         state: 'open',
+        openDuration: 20_000,
+        closeDuration: 20_000,
       });
 
       await controller.updateState(1, { state: 'toggle' });
@@ -414,6 +418,8 @@ describe('DoorsController', () => {
         isEnabled: true,
         label: 'door1',
         state: 'closed',
+        openDuration: 20_000,
+        closeDuration: 20_000,
       });
 
       await controller.updateState(1, { state: 'toggle' });
@@ -441,6 +447,8 @@ describe('DoorsController', () => {
         isEnabled: true,
         label: 'door1',
         state: 'open',
+        openDuration: 20_000,
+        closeDuration: 20_000,
       });
 
       await controller.updateState(1, { state: 'close' });
