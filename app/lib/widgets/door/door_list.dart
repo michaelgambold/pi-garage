@@ -38,14 +38,17 @@ class DoorList extends StatelessWidget {
 @widgetbook.UseCase(name: 'default', type: DoorList)
 Widget defaultUseCase(BuildContext context) {
   Future<void> handleDoorIconClicked(int doorId) async {
+    // ignore: avoid_print
     print("Door $doorId icon clicked");
   }
 
   void handleDoorSequenceClicked(int doorId) {
+    // ignore: avoid_print
     print("Door $doorId sequence clicked");
   }
 
   void handleDoorSettingsClicked(int doorId) {
+    // ignore: avoid_print
     print("Door $doorId settings clicked");
   }
 

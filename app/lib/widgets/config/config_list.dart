@@ -50,10 +50,12 @@ Widget defaultUseCase(BuildContext context) {
   }
 
   void handleEditConfig(Config config) {
+    // ignore: avoid_print
     print("handle edit config");
   }
 
   void handleRemoveConfig(Config config) {
+    // ignore: avoid_print
     print("handle remove config");
   }
 

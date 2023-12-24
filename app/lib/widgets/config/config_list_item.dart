@@ -59,10 +59,12 @@ Widget defaultUseCase(BuildContext context) {
       apiKey: null);
 
   void handleEdit() {
+    // ignore: avoid_print
     print("handle edit");
   }
 
   void handleRemove() {
+    // ignore: avoid_print
     print("handle remove");
   }
 

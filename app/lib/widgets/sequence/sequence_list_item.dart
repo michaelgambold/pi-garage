@@ -205,11 +205,13 @@ Widget defaultUseCase(BuildContext context) {
       const SequenceObject(action: "on", duration: 10000, target: "relay1");
 
   void handleOnChanged(SequenceObject sequenceObject) {
+    // ignore: avoid_print
     print(sequenceObject.toJson());
     sequenceObject = sequenceObject;
   }
 
   void handleOnRemove() {
+    // ignore: avoid_print
     print("On Remove");
   }
 

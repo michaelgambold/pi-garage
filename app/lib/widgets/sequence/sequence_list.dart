@@ -40,9 +40,19 @@ Widget defaultUseCase(BuildContext context) {
     const SequenceObject(action: 'off', duration: 1000, target: "relay1"),
   ];
 
+  void handleOnRemoveItem(int index) {
+    // ignore: avoid_print
+    print("Remove item: $index");
+  }
+
+  void handleOnUpdateItem(int index, SequenceObject sequenceObject) {
+    // ignore: avoid_print
+    print("Update item: $index, value: ${sequenceObject.toJson()}");
+  }
+
   return SequenceList(
-    onRemoveItem: (i) => print("Remove item: $i"),
-    onUpdateItem: (i, s) => print("Update item: $i, value: ${s.toJson()}"),
+    onRemoveItem: handleOnRemoveItem,
+    onUpdateItem: handleOnUpdateItem,
     sequenceObjects: sequenceObjects,
   );
 }

@@ -75,14 +75,17 @@ Widget defaultUseCase(BuildContext context) {
       state: "open");
 
   Future<void> handleDoorIconClicked() async {
+    // ignore: avoid_print
     print("Handle door icon clicked");
   }
 
   void handleSettingsClicked() {
+    // ignore: avoid_print
     print("Handle settings clicked");
   }
 
   void handleSequenceClicked() {
+    // ignore: avoid_print
     print("Handle sequence clicked");
   }
 
