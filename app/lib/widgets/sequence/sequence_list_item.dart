@@ -202,7 +202,7 @@ class _ActionColumn extends StatelessWidget {
 @widgetbook.UseCase(name: 'default', type: SequenceListItem)
 Widget defaultUseCase(BuildContext context) {
   var sequenceObject =
-      SequenceObject(action: "on", duration: 10000, target: "relay1");
+      const SequenceObject(action: "on", duration: 10000, target: "relay1");
 
   void handleOnChanged(SequenceObject sequenceObject) {
     print(sequenceObject.toJson());

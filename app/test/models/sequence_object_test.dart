@@ -13,7 +13,8 @@ void main() {
   });
 
   test('To JSON', () {
-    const sequenceObject = SequenceObject('toggle', 1000, 'relay1');
+    const sequenceObject =
+        SequenceObject(action: 'toggle', duration: 1000, target: 'relay1');
 
     final json = sequenceObject.toJson();
 
