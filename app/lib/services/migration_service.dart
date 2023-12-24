@@ -1,7 +1,8 @@
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/repositories/config_repository.dart';
-import 'package:pi_garage/services/local_storage_service.dart';
 import 'package:uuid/uuid.dart';
+
+import '../models/config.dart';
+import '../repositories/config_repository.dart';
+import 'local_storage_service.dart';
 
 class MigrationService {
   Future<void> runAll() async {
@@ -27,7 +28,8 @@ class MigrationService {
 
     // create new config item
     const uuid = Uuid();
-    final config = Config(uuid.v4(), "default", fqdn, apiKey);
+    final config =
+        Config(id: uuid.v4(), name: "default", fqdn: fqdn, apiKey: apiKey);
 
     await configRepo.updateAllConfigs([config]);
     await configRepo.setCurrentConfig(config.id);

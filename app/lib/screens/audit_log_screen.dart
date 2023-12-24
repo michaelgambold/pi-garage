@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/widgets/layout.dart';
 
 import '../models/audit_log.dart';
 import '../repositories/audit_log_repository.dart';
-import '../widgets/audit_log_card.dart';
+import '../widgets/audit_log/audit_log_list.dart';
+import '../widgets/layout.dart';
 
 class AuditLogScreen extends StatefulWidget {
   const AuditLogScreen({Key? key, required this.title}) : super(key: key);
@@ -52,10 +52,8 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
                     backgroundColor: Colors.red, content: Text(e.toString())));
               }
             },
-            child: ListView(
-              children: [
-                for (var log in _auditLogs) AuditLogCard(auditLog: log)
-              ],
+            child: AuditLogList(
+              auditLogs: _auditLogs,
             )));
   }
 }

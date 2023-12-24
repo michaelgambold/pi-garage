@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/providers/current_config_provider.dart';
-import 'package:pi_garage/screens/audit_log_screen.dart';
-import 'package:pi_garage/screens/configs_screen.dart';
-import 'package:pi_garage/screens/door_sequence_screen.dart';
-import 'package:pi_garage/screens/door_settings_screen.dart';
-import 'package:pi_garage/screens/edit_config_screen.dart';
-import 'package:pi_garage/screens/home_screen.dart';
-import 'package:pi_garage/services/migration_service.dart';
 import 'package:provider/provider.dart';
+
+import 'providers/current_config_provider.dart';
+import 'screens/audit_log_screen.dart';
+import 'screens/configs_screen.dart';
+import 'screens/door_sequence_screen.dart';
+import 'screens/door_settings_screen.dart';
+import 'screens/edit_config_screen.dart';
+import 'screens/home_screen.dart';
+import 'services/migration_service.dart';
 
 Future<void> main() async {
   try {

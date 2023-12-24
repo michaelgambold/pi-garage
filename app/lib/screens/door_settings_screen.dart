@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pi_garage/widgets/layout.dart';
 
 import '../models/update_door.dart';
 import '../repositories/door_repository.dart';
+import '../widgets/layout.dart';
 
 class DoorSettingsScreen extends StatefulWidget {
   const DoorSettingsScreen(
@@ -57,7 +57,7 @@ class _DoorSettingsScreenState extends State<DoorSettingsScreen> {
     super.dispose();
   }
 
-  _save() async {
+  Future<void> _save() async {
     try {
       await _doorRepository.updateDoor(
           widget.doorId,

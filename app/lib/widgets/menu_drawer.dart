@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/providers/current_config_provider.dart';
-import 'package:pi_garage/repositories/config_repository.dart';
-import 'package:pi_garage/services/app_version_service.dart';
-import 'package:pi_garage/widgets/config_dropdown.dart';
 import 'package:provider/provider.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+
+import '../models/config.dart';
+import '../providers/current_config_provider.dart';
+import '../repositories/config_repository.dart';
+import '../services/app_version_service.dart';
+import 'config/config_dropdown.dart';
 
 class MenuDrawer extends StatefulWidget {
   const MenuDrawer({Key? key}) : super(key: key);
@@ -43,38 +45,42 @@ class _MenuDrawerState extends State<MenuDrawer> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-              // decoration: const BoxDecoration(color: Colors.blue),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+            // decoration: const BoxDecoration(color: Colors.blue),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Menu",
+                  style: TextStyle(
+                    // color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                ConfigDropdown(
+                  configs: _configs,
+                  currentConfigId: currentConfig?.id,
+                  onChange: (value) =>
+                      currentConfigProvider.setCurrentConfig(value),
+                ),
                 Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      const Text("Menu",
-                          style: TextStyle(
-                            // color: Colors.white,
-                            fontSize: 24,
-                          )),
-                      const SizedBox(
-                        height: 6,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        _appVersion,
+                        style: TextStyle(
+                          fontSize: _appVersionTextSize,
+                        ),
                       ),
-                      ConfigDropdown(
-                          configs: _configs,
-                          currentConfigId: currentConfig?.id,
-                          onChange: (value) =>
-                              currentConfigProvider.setCurrentConfig(value))
-                    ])),
-                SizedBox(
-                    height: _appVersionTextSize,
-                    child: Text(
-                      _appVersion,
-                      style: TextStyle(
-                        // color: Colors.white54,
-                        fontSize: _appVersionTextSize,
-                      ),
-                    ))
-              ])),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           ListTile(
             title: const Text("Configs"),
             onTap: () {
@@ -93,4 +99,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
       ),
     );
   }
+}
+
+// This widget book is broken as needs a provider for some reason??
+@widgetbook.UseCase(name: 'default', type: MenuDrawer)
+Widget defaultUseCase(BuildContext context) {
+  return const MenuDrawer();
 }

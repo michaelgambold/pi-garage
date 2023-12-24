@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/models/config.dart';
-import 'package:pi_garage/providers/current_config_provider.dart';
-import 'package:pi_garage/repositories/config_repository.dart';
-import 'package:pi_garage/services/http_service.dart';
-import 'package:pi_garage/widgets/layout.dart';
 import 'package:provider/provider.dart';
+
+import '../models/config.dart';
+import '../providers/current_config_provider.dart';
+import '../repositories/config_repository.dart';
+import '../services/http_service.dart';
+import '../widgets/layout.dart';
 
 class EditConfigScreen extends StatefulWidget {
   const EditConfigScreen(

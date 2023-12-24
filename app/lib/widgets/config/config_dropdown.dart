@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pi_garage/models/config.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+
+import '../../models/config.dart';
 
 class ConfigDropdown extends StatelessWidget {
   const ConfigDropdown(
@@ -24,4 +26,26 @@ class ConfigDropdown extends StatelessWidget {
           .toList(),
     );
   }
+}
+
+@widgetbook.UseCase(name: 'default', type: ConfigDropdown)
+Widget defaultUseCase(BuildContext context) {
+  List<Config> configs = [];
+
+  for (var i = 0; i < 2; i++) {
+    configs.add(Config(
+        fqdn: 'http://localhost:300$i',
+        id: '$i',
+        name: 'Config #$i',
+        apiKey: '$i'));
+  }
+
+  void handleChange(String id) {}
+
+  return Container(
+      color: Colors.white,
+      child: ConfigDropdown(
+          configs: configs,
+          currentConfigId: configs[0].id,
+          onChange: handleChange));
 }

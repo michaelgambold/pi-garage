@@ -19,8 +19,12 @@ void main() {
   });
 
   test('To JSON', () {
-    final config = Config('b234baa5-1f77-44d9-8fbc-4254b4842c14', 'Config 1',
-        'http://localhost', 'abc123');
+    final config = Config(
+      id: 'b234baa5-1f77-44d9-8fbc-4254b4842c14',
+      name: 'Config 1',
+      fqdn: 'http://localhost',
+      apiKey: 'abc123',
+    );
 
     final json = config.toJson();
 
