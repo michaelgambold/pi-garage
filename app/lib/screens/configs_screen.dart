@@ -19,7 +19,8 @@ class ConfigsScreen extends StatefulWidget {
 class _ConfigsScreenState extends State<ConfigsScreen> {
   final _configRepo = ConfigRepository();
   List<Config> _configs = [];
-  ScaffoldMessengerState? _scaffoldMesseger;
+
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
@@ -40,8 +41,8 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
           id: const Uuid().v4(), name: 'New Config', fqdn: '', apiKey: null));
       await _refresh();
     } catch (e) {
-      _scaffoldMesseger?.clearSnackBars();
-      _scaffoldMesseger?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
           SnackBar(backgroundColor: Colors.red, content: Text(e.toString())));
     }
   }
@@ -51,8 +52,8 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
       await _configRepo.removeConfig(config.id);
       await _refresh();
     } catch (e) {
-      _scaffoldMesseger?.clearSnackBars();
-      _scaffoldMesseger?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.clearSnackBars();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
           SnackBar(backgroundColor: Colors.red, content: Text(e.toString())));
     }
   }
@@ -64,9 +65,8 @@ class _ConfigsScreenState extends State<ConfigsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _scaffoldMesseger = ScaffoldMessenger.of(context);
-
     return Layout(
+        scaffoldMessangerKey: _scaffoldMessengerKey,
         title: widget.title,
         child: Stack(children: [
           RefreshIndicator(

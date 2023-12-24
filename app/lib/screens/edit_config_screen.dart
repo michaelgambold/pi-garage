@@ -20,8 +20,9 @@ class EditConfigScreen extends StatefulWidget {
 }
 
 class _EditConfigScreenState extends State<EditConfigScreen> {
-  ScaffoldMessengerState? _scaffoldMesseger;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
   final _configRepo = ConfigRepository();
 
   late Config _config;
@@ -49,10 +50,10 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
   }
 
   Future<void> _testConnection() async {
-    _scaffoldMesseger?.clearSnackBars();
+    _scaffoldMessengerKey.currentState?.clearSnackBars();
 
     if (_fqdnController.text.isEmpty) {
-      _scaffoldMesseger?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
           content: Text('FQDN required'),
           backgroundColor: Colors.red,
@@ -68,7 +69,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
           .get(Uri.parse('${_fqdnController.text}/test'), headers);
 
       if (res.statusCode == 200) {
-        _scaffoldMesseger?.showSnackBar(
+        _scaffoldMessengerKey.currentState?.showSnackBar(
           const SnackBar(
             content: Text('Test Successful'),
           ),
@@ -77,7 +78,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
       }
 
       if (res.statusCode == 401) {
-        _scaffoldMesseger?.showSnackBar(
+        _scaffoldMessengerKey.currentState?.showSnackBar(
           const SnackBar(
             content: Text('API key required'),
             backgroundColor: Colors.red,
@@ -86,7 +87,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
         return;
       }
 
-      _scaffoldMesseger?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
           content: Text('Test Failed'),
           backgroundColor: Colors.red,
@@ -94,7 +95,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
       );
       return;
     } catch (e) {
-      _scaffoldMesseger?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text(e.toString()),
           backgroundColor: Colors.red,
@@ -104,7 +105,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
   }
 
   Future<void> _handleSave() async {
-    _scaffoldMesseger?.clearSnackBars();
+    _scaffoldMessengerKey.currentState?.clearSnackBars();
 
     try {
       _config.apiKey =
@@ -114,13 +115,13 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
 
       await _configRepo.updateConfig(_config);
 
-      _scaffoldMesseger?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
           content: Text('Settings Saved'),
         ),
       );
     } catch (e) {
-      _scaffoldMesseger?.showSnackBar(
+      _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(
           content: Text('Settings Saved'),
           backgroundColor: Colors.red,
@@ -133,9 +134,9 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
   Widget build(BuildContext context) {
     final currentConfigProvider = context.watch<CurrentConfigProvider>();
     final currentConfig = currentConfigProvider.currentConfig;
-    _scaffoldMesseger = ScaffoldMessenger.of(context);
 
     return Layout(
+        scaffoldMessangerKey: _scaffoldMessengerKey,
         title: widget.title,
         child: Form(
           key: formKey,
@@ -144,7 +145,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
             children: <Widget>[
               TextFormField(
                 decoration: const InputDecoration(
-                  hintText: 'Name',
+                  labelText: 'Name',
                 ),
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
@@ -156,7 +157,7 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
               ),
               TextFormField(
                 decoration: const InputDecoration(
-                  hintText: 'FQDN',
+                  labelText: "FQDN",
                 ),
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
@@ -167,19 +168,21 @@ class _EditConfigScreenState extends State<EditConfigScreen> {
                 controller: _fqdnController,
               ),
               TextFormField(
-                decoration: const InputDecoration(hintText: 'API Key'),
+                decoration: const InputDecoration(labelText: 'API Key'),
                 controller: _apiKeyController,
               ),
               const Spacer(),
               FilledButton(
                   style: FilledButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      minimumSize: const Size.fromHeight(40)),
+                    backgroundColor: Colors.grey,
+                    minimumSize: const Size.fromHeight(40),
+                  ),
                   onPressed: () => _testConnection(),
                   child: const Text('Test')),
               FilledButton(
                 style: FilledButton.styleFrom(
-                    minimumSize: const Size.fromHeight(40)),
+                  minimumSize: const Size.fromHeight(40),
+                ),
                 onPressed: () async {
                   // Validate will return true if the form is valid, or false if
                   // the form is invalid.
