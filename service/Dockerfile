@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
+COPY .npmrc ./
+
 RUN npm ci
 
 COPY . .
@@ -17,7 +19,9 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --production
+COPY .npmrc ./
+
+RUN npm ci --omit=dev
 
 
 FROM node:18-slim
