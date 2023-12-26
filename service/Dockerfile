@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY package*.json ./
 
-COPY .npmrc ./
-
 RUN npm ci
 
 COPY . .
@@ -13,27 +11,27 @@ COPY . .
 RUN npm run build
 
 
-FROM node:18 as prod-deps
+# FROM node:18 as prod-deps
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY package*.json ./
+# COPY package*.json ./
 
-COPY .npmrc ./
-
-RUN npm ci --omit=dev
+# RUN npm ci --omit=dev
 
 
-FROM node:18-slim
+FROM node:18
 
 ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package*.json ./
+
+RUN npm ci --omit=dev
 
 COPY --from=build /app/dist ./dist
 
-COPY --from=prod-deps /app/node_modules ./node_modules
+# COPY --from=prod-deps /app/node_modules ./node_modules
 
 ENTRYPOINT [ "node", "dist/main.js" ]
