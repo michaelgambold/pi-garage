@@ -1,4 +1,4 @@
-FROM node:18.18 as build
+FROM node:18 as build
 
 WORKDIR /app
 
@@ -20,18 +20,19 @@ RUN npm run build
 # RUN npm ci --omit=dev
 
 
-# FROM node:18.18
+FROM node:18.18
 
-# ENV NODE_ENV=production
+ENV NODE_ENV=production
 
-# WORKDIR /app
+WORKDIR /app
 
-# COPY package*.json ./
+COPY package*.json ./
 
 # RUN npm ci --omit=dev
 
-# COPY --from=build /app/dist ./dist
+COPY --from=build /app/dist ./dist
 
-# # COPY --from=prod-deps /app/node_modules ./node_modules
+# COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=build /app/node_modules ./node_modules
 
-# ENTRYPOINT [ "node", "dist/main.js" ]
+ENTRYPOINT [ "node", "dist/main.js" ]
