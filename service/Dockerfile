@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --maxsockets 1
+RUN npm ci
 
 COPY . .
 
