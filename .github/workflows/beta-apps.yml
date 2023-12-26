@@ -2,7 +2,7 @@ name: Beta Apps
 
 on:
   push:
-    branches: main
+    # branches: main
 
 jobs:
   docker:
