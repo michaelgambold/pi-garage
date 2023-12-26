@@ -1,4 +1,6 @@
-FROM node:18.18 as build
+ARG NODE_VERSION=18.18
+
+FROM node:${NODE_VERSION} as build
 
 WORKDIR /app
 
@@ -11,28 +13,18 @@ COPY . .
 RUN npm run build
 
 
-# FROM node:18 as prod-deps
-
-# WORKDIR /app
-
-# COPY package*.json ./
-
-# RUN npm ci --omit=dev
-
-
-FROM node:18.18
+FROM node:${NODE_VERSION}
 
 ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY package*.json ./
-
-# RUN npm ci --omit=dev
-
 COPY --from=build /app/dist ./dist
 
-# COPY --from=prod-deps /app/node_modules ./node_modules
+COPY package*.json ./
+
 COPY --from=build /app/node_modules ./node_modules
+
+RUN npm prune --production
 
 ENTRYPOINT [ "node", "dist/main.js" ]
