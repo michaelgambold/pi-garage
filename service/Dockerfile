@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY package*.json ./
 
-COPY .npmrc ./
-
 RUN npm ci
 
 COPY . .
@@ -18,8 +16,6 @@ FROM node:18 as prod-deps
 WORKDIR /app
 
 COPY package*.json ./
-
-COPY .npmrc ./
 
 RUN npm ci --omit=dev
 
