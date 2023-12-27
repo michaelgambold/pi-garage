@@ -43,7 +43,7 @@
     "@nestjs/websockets": "^10.2.8",
     "automation-hat": "^2.0.0",
     "bullmq": "^4.13.2",
-    "date-fns": "^2.30.0",
+    "date-fns": "^3.0.6",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.5",
     "rxjs": "^7.5.7",
