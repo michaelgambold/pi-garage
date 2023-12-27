@@ -16,8 +16,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          config: .github/buildkitd.toml
 
       - name: Extract Docker Metadata
         id: meta
@@ -31,35 +29,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Build and push
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: ./service
-      #     platforms: linux/arm/v7,linux/arm64
-      #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     # cache-from: type=gha
-      #     # cache-to: type=gha,mode=max
-
-      # - name: Build and push (armv7)
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: ./service
-      #     platforms: linux/arm/v7
-      #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     # cache-from: type=gha
-      #     # cache-to: type=gha,mode=max
-
-      - name: Build and push (armv64)
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: ./service
-          platforms: linux/arm64
+          platforms: linux/arm64,linux/arm/v7
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
