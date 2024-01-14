@@ -41,7 +41,7 @@
     "@nestjs/platform-socket.io": "^10.2.8",
     "@nestjs/swagger": "^7.1.15",
     "@nestjs/websockets": "^10.2.8",
-    "automation-hat": "^2.0.0",
+    "automation-hat": "^2.1.0",
     "bullmq": "^4.13.2",
     "date-fns": "^2.30.0",
     "reflect-metadata": "^0.1.13",
