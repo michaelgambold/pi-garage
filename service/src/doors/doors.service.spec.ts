@@ -6,10 +6,14 @@ import { AuditLog } from '../entities/AuditLog.entity';
 import { Door } from '../entities/Door.entity';
 import { DoorsGateway } from './doors.gateway';
 import { DoorsService } from './doors.service';
+import { EntityManager } from '@mikro-orm/core';
 
 describe('DoorsService', () => {
   let service: DoorsService;
-  // let automationHatService: AutomationHatService;
+
+  const mockEntityManager = {
+    persistAndFlush: jest.fn(),
+  };
 
   const mockDoorRepository = {
     findAll: jest
@@ -64,23 +68,19 @@ describe('DoorsService', () => {
           provide: DoorsGateway,
           useValue: mockDoorsGateway,
         },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
+        },
       ],
     }).compile();
 
     service = module.get<DoorsService>(DoorsService);
-    // automationHatService =
-    //   module.get<AutomationHatService>(AutomationHatService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-  // it('should close door', async () => {
-  //   const spy = jest.spyOn(automationHatService, 'runSequenceObject');
-  //   await service.close(1);
-  //   expect(spy).toBeCalled();
-  // });
 
   it('should find all doors', async () => {
     const doors = await service.findAll();
@@ -94,18 +94,6 @@ describe('DoorsService', () => {
     expect(door.label).toEqual('door1');
     expect(door.state).toEqual('closed');
   });
-
-  // it('should open a door', async () => {
-  //   const spy = jest.spyOn(automationHatService, 'runSequenceObject');
-  //   await service.open(1);
-  //   expect(spy).toBeCalled();
-  // });
-
-  // it('should toggle a door', async () => {
-  //   const spy = jest.spyOn(automationHatService, 'runSequenceObject');
-  //   await service.toggle(1);
-  //   expect(spy).toBeCalled();
-  // });
 
   it('should update a door', async () => {
     const door = await service.findOne(1);

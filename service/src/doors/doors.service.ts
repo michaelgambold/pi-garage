@@ -1,3 +1,4 @@
+import { EntityManager } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/sqlite';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
@@ -10,6 +11,7 @@ export class DoorsService {
   private readonly logger: Logger;
 
   constructor(
+    private readonly em: EntityManager,
     @InjectRepository(Door)
     private readonly doorRepository: EntityRepository<Door>,
     @Inject(forwardRef(() => DoorsGateway))
@@ -89,7 +91,7 @@ export class DoorsService {
   // }
 
   async update(door: Door): Promise<void> {
-    await this.doorRepository.persistAndFlush(door);
+    await this.em.persistAndFlush(door);
 
     // emit all doors inc updated through doors gateway
     const doors = await this.findAll();
