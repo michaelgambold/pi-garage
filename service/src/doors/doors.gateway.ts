@@ -1,4 +1,4 @@
-import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { MikroORM, CreateRequestContext } from '@mikro-orm/core';
 import { forwardRef, Inject, UseGuards } from '@nestjs/common';
 import {
   OnGatewayConnection,
@@ -73,7 +73,7 @@ export class DoorsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('doors:list')
-  @UseRequestContext()
+  @CreateRequestContext()
   async handleDoorsList(client: Socket) {
     const doorsListEvent = 'doors:list';
 

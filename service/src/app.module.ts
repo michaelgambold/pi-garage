@@ -7,7 +7,7 @@ import { DoorsModule } from './doors/doors.module';
 import { HealthModule } from './health/health.module';
 import { AutomationHatModule } from './automation-hat/automation-hat.module';
 import { AuthModule } from './auth/auth.module';
-import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { MikroORM, CreateRequestContext } from '@mikro-orm/core';
 import { DatabaseSeeder } from './seeders/DatabaseSeeder';
 import { Door } from './entities/Door.entity';
 import { TestModule } from './test/test.module';
@@ -51,7 +51,7 @@ export class AppModule {
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 
-  @UseRequestContext()
+  @CreateRequestContext()
   async onModuleInit(): Promise<void> {
     await this.orm.getMigrator().up();
     await this.orm.getSeeder().seed(DatabaseSeeder);

@@ -3,7 +3,7 @@ import { Job } from 'bullmq';
 import { DoorQueue, DoorSequenceJobName, DoorsSequenceJobData } from './types';
 import { DoorsService } from './doors.service';
 import { Logger } from '../logger/logger';
-import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { MikroORM, CreateRequestContext } from '@mikro-orm/core';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 
 @Processor(DoorQueue.DOORS_SEQUENCE_RUN)
@@ -21,7 +21,7 @@ export class DoorsSequenceProcessor extends WorkerHost {
     this.logger = new Logger(DoorsSequenceProcessor.name);
   }
 
-  @UseRequestContext()
+  @CreateRequestContext()
   async process(job: Job<DoorsSequenceJobData, void, string>): Promise<void> {
     this.logger.log(`Processing job ${job.name} for door ${job.data.doorId}`);
 
