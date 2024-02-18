@@ -1,35 +1,22 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-// import { Redis } from 'ioredis';
-// import RedisMock from 'ioredis-mock';
-import { DoorsLockService } from './doors-lock.service';
+import { DoorsLockOutService } from './doors-lock-out.service';
 
 describe('DoorsLockService', () => {
   let module: TestingModule;
-  let service: DoorsLockService;
+  let service: DoorsLockOutService;
   const doorId = 1;
-
-  // let redis;
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      providers: [DoorsLockService, ConfigService],
+      providers: [DoorsLockOutService, ConfigService],
     }).compile();
 
     await module.init();
 
-    service = module.get<DoorsLockService>(DoorsLockService);
+    service = module.get<DoorsLockOutService>(DoorsLockOutService);
 
     await service.unlockDoor(doorId);
-    // const config = module.get<ConfigService>(ConfigService);
-
-    // redis = new RedisMock({
-    //   host: config.get('REDIS_HOST'),
-    //   port: config.get('REDIS_PORT'),
-    // });
-
-    // Redis.mockImplementation();
-    // await module.init();
   });
 
   afterEach(async () => {
@@ -41,22 +28,22 @@ describe('DoorsLockService', () => {
   });
 
   it('should be unlocked when missing from redis', async () => {
-    const doorLocked = await service.isLocked(doorId);
+    const doorLocked = await service.isLockedOut(doorId);
     expect(doorLocked).toEqual(false);
   });
 
   it('should be able to lock door', async () => {
-    await service.lockDoor(doorId);
+    await service.lockOutDoor(doorId);
 
-    const doorLocked = await service.isLocked(1);
+    const doorLocked = await service.isLockedOut(1);
     expect(doorLocked).toEqual(true);
   });
 
   it('should be able to unlock door', async () => {
-    await service.lockDoor(doorId);
+    await service.lockOutDoor(doorId);
     await service.unlockDoor(doorId);
 
-    const doorLocked = await service.isLocked(doorId);
+    const doorLocked = await service.isLockedOut(doorId);
     expect(doorLocked).toEqual(false);
   });
 });

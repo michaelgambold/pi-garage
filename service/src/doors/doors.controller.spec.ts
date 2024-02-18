@@ -1,6 +1,7 @@
 import { Collection } from '@mikro-orm/core';
 import {
   BadRequestException,
+  ConflictException,
   // ConflictException,
   HttpException,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { DoorsController } from './doors.controller';
 import { DoorsService } from './doors.service';
 import { SequenceObjectDto } from './dto/sequence-object.dto';
 import { GetDoorDto } from './dto/get-door.dto';
+import { DoorsLockOutService } from './doors-lock-out.service';
 
 interface MockQueue {
   add(jobName: string, data: unknown, options: unknown): Promise<void>;
@@ -28,6 +30,7 @@ describe('DoorsController', () => {
   let commsOnSpy: jest.SpyInstance<void, []>;
 
   let mockDoorsService: any;
+  let doorsLockService: DoorsLockOutService;
 
   const mockSequenceRunQueue: MockQueue = {
     async add() {
@@ -105,6 +108,7 @@ describe('DoorsController', () => {
         ConfigService,
         AutomationHatService,
         AuthService,
+        DoorsLockOutService,
         {
           provide: DoorsService,
           useValue: mockDoorsService,
@@ -123,6 +127,7 @@ describe('DoorsController', () => {
     controller = module.get<DoorsController>(DoorsController);
     automationHatService =
       module.get<AutomationHatService>(AutomationHatService);
+    doorsLockService = module.get<DoorsLockOutService>(DoorsLockOutService);
 
     commsOffSpy = jest.spyOn(automationHatService, 'turnOffCommsLight');
     commsOnSpy = jest.spyOn(automationHatService, 'turnOnCommsLight');
@@ -343,10 +348,12 @@ describe('DoorsController', () => {
   describe('Update Door State', () => {
     let sequenceQueueSpy: jest.SpyInstance;
     let stateQueueSpy: jest.SpyInstance;
+    let isLockedSpy: jest.SpyInstance;
 
     beforeEach(() => {
       sequenceQueueSpy = jest.spyOn(mockSequenceRunQueue, 'add');
       stateQueueSpy = jest.spyOn(mockStateUpdateQueue, 'add');
+      isLockedSpy = jest.spyOn(doorsLockService, 'isLockedOut');
     });
 
     afterEach(() => {
@@ -354,7 +361,38 @@ describe('DoorsController', () => {
       stateQueueSpy.mockClear();
     });
 
+    it('should return 400 for invalid door id', async () => {
+      const badIds = [-1, 0, 4];
+
+      for (const id of badIds) {
+        await expect(
+          controller.updateState(id, { state: 'toggle' }),
+        ).rejects.toThrowError(BadRequestException);
+      }
+
+      expect(commsOffSpy).toBeCalledTimes(3);
+      expect(commsOnSpy).toBeCalledTimes(3);
+    });
+
+    it('should return 409 when door is locked out', async () => {
+      isLockedSpy.mockReturnValue(true);
+
+      await expect(
+        controller.updateState(1, { state: 'close' }),
+      ).rejects.toMatchObject({
+        constructor: ConflictException,
+        message: 'Door changing state is locked out',
+      });
+
+      expect(sequenceQueueSpy).not.toBeCalled();
+      expect(stateQueueSpy).toBeCalledTimes(0);
+
+      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toBeCalled();
+    });
+
     it('should update state to open if closed', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -384,6 +422,7 @@ describe('DoorsController', () => {
     });
 
     it('should toggle doors state from open to closed', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -413,6 +452,7 @@ describe('DoorsController', () => {
     });
 
     it('should toggle doors state from closed to open', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -442,6 +482,7 @@ describe('DoorsController', () => {
     });
 
     it('should update state to closed from open', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -471,6 +512,7 @@ describe('DoorsController', () => {
     });
 
     it('should reject opening an open door', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -493,6 +535,7 @@ describe('DoorsController', () => {
     });
 
     it('should reject opening an opening door', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -515,6 +558,7 @@ describe('DoorsController', () => {
     });
 
     it('should reject closing a closed door', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -537,6 +581,7 @@ describe('DoorsController', () => {
     });
 
     it('should reject closing a closing door', async () => {
+      isLockedSpy.mockReturnValue(false);
       mockDoorsService.findOne.mockResolvedValue({
         id: 1,
         isEnabled: true,
@@ -557,67 +602,5 @@ describe('DoorsController', () => {
       expect(commsOnSpy).toBeCalled();
       expect(commsOffSpy).toBeCalled();
     });
-
-    it('should return 400 for invalid door id', async () => {
-      const badIds = [-1, 0, 4];
-
-      for (const id of badIds) {
-        await expect(
-          controller.updateState(id, { state: 'toggle' }),
-        ).rejects.toThrowError(BadRequestException);
-      }
-
-      expect(commsOffSpy).toBeCalledTimes(3);
-      expect(commsOnSpy).toBeCalledTimes(3);
-    });
-
-    // it('should return 409 when trying to change state quickly', async () => {
-    //   mockDoorsService.findOne.mockResolvedValue({
-    //     id: 1,
-    //     isEnabled: true,
-    //     updatedAt: new Date(),
-    //     label: 'door1',
-    //     state: 'open',
-    //   });
-
-    //   await expect(
-    //     controller.updateState(1, { state: 'toggle' }),
-    //   ).rejects.toThrowError(ConflictException);
-
-    //   mockDoorsService.findOne.mockReset();
-    // });
-
-    // it('should return 409 when door is opening', async () => {
-    //   mockDoorsService.findOne.mockResolvedValue({
-    //     id: 1,
-    //     isEnabled: true,
-    //     label: 'door1',
-    //     state: 'opening',
-    //   });
-
-    //   await expect(
-    //     controller.updateState(1, { state: 'toggle' }),
-    //   ).rejects.toThrowError(ConflictException);
-
-    //   mockDoorsService.findOne.mockReset();
-    // });
-
-    // it('should return 409 when door is closing', async () => {
-    //   mockDoorsService.findOne.mockResolvedValue({
-    //     id: 1,
-    //     isEnabled: true,
-    //     label: 'door1',
-    //     state: 'closing',
-    //   });
-
-    //   await expect(
-    //     controller.updateState(1, { state: 'toggle' }),
-    //   ).rejects.toThrowError(ConflictException);
-
-    //   expect(commsOnSpy).toBeCalled();
-    //   expect(commsOffSpy).toBeCalled();
-
-    //   mockDoorsService.findOne.mockReset();
-    // });
   });
 });

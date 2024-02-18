@@ -8,6 +8,7 @@ import {
   Get,
   Body,
   Put,
+  ConflictException,
   // ConflictException,
 } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
@@ -32,6 +33,7 @@ import {
 } from './types';
 import { Logger } from '../logger/logger';
 import { Door } from '../entities/Door.entity';
+import { DoorsLockOutService } from './doors-lock-out.service';
 
 @UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
 @ApiSecurity('api-key')
@@ -46,6 +48,7 @@ export class DoorsController {
     private readonly doorsSequenceRunQueue: Queue,
     @InjectQueue(DoorQueue.DOORS_STATE_UPDATE)
     private readonly doorsStateUpdateQueue: Queue,
+    private readonly doorsLockService: DoorsLockOutService,
   ) {
     this.logger = new Logger(DoorsController.name);
   }
@@ -231,16 +234,13 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
-    // TODO: check if door is currently locked out in redis. i.e. is it
-    // currently running a sequence and if so then return bad request.
-    // The implication is that you will not be able to push the button
-    // whilst this is happening unless we do something where you can "cancel"
-    // a current sequence but sequences now should only be 2 seconds or so,
-    // so it maybe not an issue and the lockout is okay being a short duration.
+    const doorLocked = await this.doorsLockService.isLockedOut(id);
+    if (doorLocked) {
+      this.automationHatService.turnOffCommsLight();
+      throw new ConflictException('Door changing state is locked out');
+    }
 
     const door = await this.doorsService.findOne(id);
-
-    // const client = await this.doorsSequenceRunQueue.client;
 
     // Handle open door
     if (body.state === 'open') {
