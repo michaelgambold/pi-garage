@@ -234,8 +234,8 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
-    const doorLocked = await this.doorsLockService.isLockedOut(id);
-    if (doorLocked) {
+    const doorLockedOut = await this.doorsLockService.isLockedOut(id);
+    if (doorLockedOut) {
       this.automationHatService.turnOffCommsLight();
       throw new ConflictException('Door changing state is locked out');
     }

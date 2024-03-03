@@ -21,8 +21,6 @@ export class DoorsLockOutService implements OnModuleInit, OnModuleDestroy {
       port: this.config.get('REDIS_PORT'),
       keyPrefix: 'door-lock-out',
     }).on('error', (error) => {
-      console.log(error);
-
       this.logger.error(error);
     });
   }
