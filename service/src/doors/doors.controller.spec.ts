@@ -169,8 +169,8 @@ describe('DoorsController', () => {
 
       expect(dtos).toEqual(expected);
 
-      expect(commsOffSpy).toBeCalled();
-      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
     });
   });
 
@@ -182,8 +182,8 @@ describe('DoorsController', () => {
       expect(door.isEnabled).toBeTruthy();
       expect(door.label).toBeTruthy();
 
-      expect(commsOffSpy).toBeCalled();
-      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
     });
 
     it('should return 400 for invalid door number', async () => {
@@ -193,8 +193,8 @@ describe('DoorsController', () => {
         await expect(controller.get(id)).rejects.toThrow(BadRequestException);
       }
 
-      expect(commsOffSpy).toBeCalled();
-      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
     });
   });
 
@@ -208,8 +208,8 @@ describe('DoorsController', () => {
       expect(sequenceObject.duration).toEqual(1000);
       expect(sequenceObject.target).toEqual('relay1');
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should throw an error when an invalid door is passed', async () => {
@@ -221,8 +221,8 @@ describe('DoorsController', () => {
       }
 
       expect(failed).toEqual(true);
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
   });
 
@@ -235,8 +235,8 @@ describe('DoorsController', () => {
         openDuration: 20_000,
       });
 
-      expect(commsOffSpy).toBeCalled();
-      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
     });
 
     it('should return 400 when given invalid door number', async () => {
@@ -248,8 +248,8 @@ describe('DoorsController', () => {
         );
       }
 
-      expect(commsOffSpy).toBeCalled();
-      expect(commsOnSpy).toBeCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
     });
   });
 
@@ -266,8 +266,8 @@ describe('DoorsController', () => {
       await controller.updateSequence(1, dto);
 
       expect(mockDoorsService.update).toBeCalled();
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should fail to update for invalid action/target combos', async () => {
@@ -304,8 +304,8 @@ describe('DoorsController', () => {
         }
 
         expect(error).toBeDefined();
-        expect(commsOnSpy).toBeCalled();
-        expect(commsOffSpy).toBeCalled();
+        expect(commsOnSpy).toHaveBeenCalled();
+        expect(commsOffSpy).toHaveBeenCalled();
       }
     });
 
@@ -320,8 +320,8 @@ describe('DoorsController', () => {
 
       expect(error).toBeDefined();
       expect(error.getStatus()).toEqual(400);
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should fail to update for negative duration', async () => {
@@ -339,8 +339,8 @@ describe('DoorsController', () => {
         }),
       );
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
   });
 
@@ -369,8 +369,8 @@ describe('DoorsController', () => {
         ).rejects.toThrowError(BadRequestException);
       }
 
-      expect(commsOffSpy).toBeCalledTimes(3);
-      expect(commsOnSpy).toBeCalledTimes(3);
+      expect(commsOffSpy).toHaveBeenCalledTimes(3);
+      expect(commsOnSpy).toHaveBeenCalledTimes(3);
     });
 
     it('should return 409 when door is locked out', async () => {
@@ -383,11 +383,11 @@ describe('DoorsController', () => {
         message: 'Door changing state is locked out',
       });
 
-      expect(sequenceQueueSpy).not.toBeCalled();
-      expect(stateQueueSpy).toBeCalledTimes(0);
+      expect(sequenceQueueSpy).not.toHaveBeenCalled();
+      expect(stateQueueSpy).toHaveBeenCalledWith(0);
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should update state to open if closed', async () => {
@@ -403,9 +403,9 @@ describe('DoorsController', () => {
 
       await controller.updateState(1, { state: 'open' });
 
-      expect(sequenceQueueSpy).toBeCalledWith('open', { doorId: 1 });
+      expect(sequenceQueueSpy).toHaveBeenCalledWith('open', { doorId: 1 });
 
-      expect(stateQueueSpy).toBeCalledTimes(2);
+      expect(stateQueueSpy).toHaveBeenCalledTimes(2);
       expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'opening', {
         doorId: 1,
       });
@@ -416,8 +416,8 @@ describe('DoorsController', () => {
         { delay: 20000 },
       );
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should toggle doors state from open to closed', async () => {
@@ -433,9 +433,9 @@ describe('DoorsController', () => {
 
       await controller.updateState(1, { state: 'toggle' });
 
-      expect(sequenceQueueSpy).toBeCalledWith('close', { doorId: 1 });
+      expect(sequenceQueueSpy).toHaveBeenCalledWith('close', { doorId: 1 });
 
-      expect(stateQueueSpy).toBeCalledTimes(2);
+      expect(stateQueueSpy).toHaveBeenCalledTimes(2);
       expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'closing', {
         doorId: 1,
       });
@@ -446,8 +446,8 @@ describe('DoorsController', () => {
         { delay: 20000 },
       );
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should toggle doors state from closed to open', async () => {
@@ -463,9 +463,9 @@ describe('DoorsController', () => {
 
       await controller.updateState(1, { state: 'toggle' });
 
-      expect(sequenceQueueSpy).toBeCalledWith('open', { doorId: 1 });
+      expect(sequenceQueueSpy).toHaveBeenCalledWith('open', { doorId: 1 });
 
-      expect(stateQueueSpy).toBeCalledTimes(2);
+      expect(stateQueueSpy).toHaveBeenCalledTimes(2);
       expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'opening', {
         doorId: 1,
       });
@@ -476,8 +476,8 @@ describe('DoorsController', () => {
         { delay: 20000 },
       );
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should update state to closed from open', async () => {
@@ -493,9 +493,9 @@ describe('DoorsController', () => {
 
       await controller.updateState(1, { state: 'close' });
 
-      expect(sequenceQueueSpy).toBeCalledWith('close', { doorId: 1 });
+      expect(sequenceQueueSpy).toHaveBeenCalledWith('close', { doorId: 1 });
 
-      expect(stateQueueSpy).toBeCalledTimes(2);
+      expect(stateQueueSpy).toHaveBeenCalledTimes(2);
       expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'closing', {
         doorId: 1,
       });
@@ -506,8 +506,8 @@ describe('DoorsController', () => {
         { delay: 20000 },
       );
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should reject opening an open door', async () => {
@@ -526,8 +526,8 @@ describe('DoorsController', () => {
         message: 'Cannot open an open/opening door',
       });
 
-      expect(sequenceQueueSpy).not.toBeCalled();
-      expect(stateQueueSpy).toBeCalledTimes(0);
+      expect(sequenceQueueSpy).not.toHaveBeenCalled();
+      expect(stateQueueSpy).toHaveBeenCalledTimes(0);
 
       expect(commsOnSpy).toBeCalled();
       expect(commsOffSpy).toBeCalled();
@@ -550,10 +550,10 @@ describe('DoorsController', () => {
       });
 
       expect(sequenceQueueSpy).not.toBeCalled();
-      expect(stateQueueSpy).toBeCalledTimes(0);
+      expect(stateQueueSpy).toHaveBeenCalledTimes(0);
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should reject closing a closed door', async () => {
@@ -572,11 +572,11 @@ describe('DoorsController', () => {
         message: 'Cannot close a closed/closing door',
       });
 
-      expect(sequenceQueueSpy).not.toBeCalled();
-      expect(stateQueueSpy).toBeCalledTimes(0);
+      expect(sequenceQueueSpy).not.toHaveBeenCalled();
+      expect(stateQueueSpy).toHaveBeenCalledTimes(0);
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
 
     it('should reject closing a closing door', async () => {
@@ -595,11 +595,11 @@ describe('DoorsController', () => {
         message: 'Cannot close a closed/closing door',
       });
 
-      expect(sequenceQueueSpy).not.toBeCalled();
-      expect(stateQueueSpy).toBeCalledTimes(0);
+      expect(sequenceQueueSpy).not.toHaveBeenCalled();
+      expect(stateQueueSpy).toHaveBeenCalledTimes(0);
 
-      expect(commsOnSpy).toBeCalled();
-      expect(commsOffSpy).toBeCalled();
+      expect(commsOnSpy).toHaveBeenCalled();
+      expect(commsOffSpy).toHaveBeenCalled();
     });
   });
 });

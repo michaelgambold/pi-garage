@@ -117,8 +117,8 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).toBeCalledWith(1);
-    expect(automationHatServiceSpy).toBeCalledWith(expectedSequenceObj);
+    expect(doorsServiceSpy).toHaveBeenCalledWith(1);
+    expect(automationHatServiceSpy).toHaveBeenCalledWith(expectedSequenceObj);
   });
 
   it('should process door close job', async () => {
@@ -144,8 +144,8 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).toBeCalledWith(1);
-    expect(automationHatServiceSpy).toBeCalledWith(expectedSequenceObj);
+    expect(doorsServiceSpy).toHaveBeenCalledWith(1);
+    expect(automationHatServiceSpy).toHaveBeenCalledWith(expectedSequenceObj);
   });
 
   it('should ignore jobs it does not know about', async () => {
@@ -164,7 +164,7 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).not.toBeCalled();
-    expect(automationHatServiceSpy).not.toBeCalled();
+    expect(doorsServiceSpy).not.toHaveBeenCalled();
+    expect(automationHatServiceSpy).not.toHaveBeenCalled();
   });
 });

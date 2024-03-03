@@ -137,6 +137,6 @@ describe('HttpApiKeyAuthGuard', () => {
 
     expect(() => {
       guard.canActivate(mockContext as ExecutionContext);
-    }).toThrowError(UnauthorizedException);
+    }).toThrow(UnauthorizedException);
   });
 });

@@ -29,7 +29,7 @@ describe('HealthController', () => {
     const res = await controller.getHealth();
     expect(res).toEqual({ message: 'ok' });
 
-    expect(commsOffSpy).toBeCalled();
-    expect(commsOnSpy).toBeCalled();
+    expect(commsOffSpy).toHaveBeenCalled();
+    expect(commsOnSpy).toHaveBeenCalled();
   });
 });

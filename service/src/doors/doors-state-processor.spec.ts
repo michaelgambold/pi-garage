@@ -102,9 +102,9 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).toBeCalledWith(job.data.doorId);
+    expect(doorsServiceSpy).toHaveBeenCalledWith(job.data.doorId);
     expect(auditLogsServiceSpy.mock.calls[0][1]).toEqual('Door 1 closed');
-    expect(gatewayEmitSpy).toBeCalledWith('doors:list', [
+    expect(gatewayEmitSpy).toHaveBeenCalledWith('doors:list', [
       { id: 1 },
       { id: 2 },
       { id: 3 },
@@ -125,9 +125,9 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).toBeCalledWith(job.data.doorId);
+    expect(doorsServiceSpy).toHaveBeenCalledWith(job.data.doorId);
     expect(auditLogsServiceSpy.mock.calls[0][1]).toEqual('Door 1 closing');
-    expect(gatewayEmitSpy).toBeCalledWith('doors:list', [
+    expect(gatewayEmitSpy).toHaveBeenCalledWith('doors:list', [
       { id: 1 },
       { id: 2 },
       { id: 3 },
@@ -148,9 +148,9 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).toBeCalledWith(job.data.doorId);
+    expect(doorsServiceSpy).toHaveBeenCalledWith(job.data.doorId);
     expect(auditLogsServiceSpy.mock.calls[0][1]).toEqual('Door 1 open');
-    expect(gatewayEmitSpy).toBeCalledWith('doors:list', [
+    expect(gatewayEmitSpy).toHaveBeenCalledWith('doors:list', [
       { id: 1 },
       { id: 2 },
       { id: 3 },
@@ -171,9 +171,9 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).toBeCalledWith(job.data.doorId);
+    expect(doorsServiceSpy).toHaveBeenCalledWith(job.data.doorId);
     expect(auditLogsServiceSpy.mock.calls[0][1]).toEqual('Door 1 opening');
-    expect(gatewayEmitSpy).toBeCalledWith('doors:list', [
+    expect(gatewayEmitSpy).toHaveBeenCalledWith('doors:list', [
       { id: 1 },
       { id: 2 },
       { id: 3 },
@@ -194,8 +194,8 @@ describe('DoorsSequenceProcessor', () => {
 
     await provider.process(job as Job);
 
-    expect(doorsServiceSpy).toBeCalledWith(job.data.doorId);
-    expect(auditLogsServiceSpy).not.toBeCalled();
-    expect(gatewayEmitSpy).not.toBeCalled();
+    expect(doorsServiceSpy).toHaveBeenCalledWith(job.data.doorId);
+    expect(auditLogsServiceSpy).not.toHaveBeenCalled();
+    expect(gatewayEmitSpy).not.toHaveBeenCalled();
   });
 });

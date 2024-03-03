@@ -86,10 +86,10 @@ describe('DoorsGateway', () => {
 
       gateway.handleConnection(client as any);
 
-      expect(getServerVersionSpy).not.toBeCalled();
+      expect(getServerVersionSpy).not.toHaveBeenCalled();
       expect(satisfiesSpy).not.toHaveBeenCalled();
-      expect(hasApiKeySpy).toBeCalled();
-      expect(validateApiKeySpy).toBeCalledWith('abc123');
+      expect(hasApiKeySpy).toHaveBeenCalled();
+      expect(validateApiKeySpy).toHaveBeenCalledWith('abc123');
     });
 
     it('should connect with valid key and valid client version', () => {
@@ -118,10 +118,10 @@ describe('DoorsGateway', () => {
 
       gateway.handleConnection(client as any);
 
-      expect(getServerVersionSpy).toBeCalled();
+      expect(getServerVersionSpy).toHaveBeenCalled();
       expect(satisfiesSpy).toHaveBeenCalledWith('2.0.0', '2.0.0');
-      expect(hasApiKeySpy).toBeCalled();
-      expect(validateApiKeySpy).toBeCalledWith('abc123');
+      expect(hasApiKeySpy).toHaveBeenCalled();
+      expect(validateApiKeySpy).toHaveBeenCalledWith('abc123');
     });
 
     it('should throw error if key is invalid', () => {
@@ -152,13 +152,13 @@ describe('DoorsGateway', () => {
       // have to spy on client.emit
       gateway.handleConnection(client as any);
 
-      expect(getServerVersionSpy).not.toBeCalled();
+      expect(getServerVersionSpy).not.toHaveBeenCalled();
       expect(satisfiesSpy).not.toHaveBeenCalled();
-      expect(hasApiKeySpy).toBeCalled();
-      expect(validateApiKeySpy).toBeCalledWith('abc123');
+      expect(hasApiKeySpy).toHaveBeenCalled();
+      expect(validateApiKeySpy).toHaveBeenCalledWith('abc123');
 
-      expect(clientEmitSpy).toBeCalledWith('error', 'Unauthorized');
-      expect(clientDisconnectSpy).toBeCalled();
+      expect(clientEmitSpy).toHaveBeenCalledWith('error', 'Unauthorized');
+      expect(clientDisconnectSpy).toHaveBeenCalled();
     });
 
     it('should connect if no key has been configured', () => {
@@ -182,10 +182,10 @@ describe('DoorsGateway', () => {
 
       gateway.handleConnection(client as any);
 
-      expect(getServerVersionSpy).not.toBeCalled();
+      expect(getServerVersionSpy).not.toHaveBeenCalled();
       expect(satisfiesSpy).not.toHaveBeenCalled();
-      expect(hasApiKeySpy).toBeCalled();
-      expect(validateApiKeySpy).not.toBeCalled();
+      expect(hasApiKeySpy).toHaveBeenCalled();
+      expect(validateApiKeySpy).not.toHaveBeenCalled();
     });
 
     it('should throw error if client version is invalid', () => {
@@ -216,13 +216,16 @@ describe('DoorsGateway', () => {
 
       gateway.handleConnection(client as any);
 
-      expect(getServerVersionSpy).toBeCalled();
+      expect(getServerVersionSpy).toHaveBeenCalled();
       expect(satisfiesSpy).toHaveBeenCalledWith('1.0.0', '2.0.0');
-      expect(hasApiKeySpy).not.toBeCalled();
-      expect(validateApiKeySpy).not.toBeCalled();
+      expect(hasApiKeySpy).not.toHaveBeenCalled();
+      expect(validateApiKeySpy).not.toHaveBeenCalled();
 
-      expect(clientEmitSpy).toBeCalledWith('error', 'Invalid client version');
-      expect(clientDisconnectSpy).toBeCalled();
+      expect(clientEmitSpy).toHaveBeenCalledWith(
+        'error',
+        'Invalid client version',
+      );
+      expect(clientDisconnectSpy).toHaveBeenCalled();
     });
   });
 
@@ -247,7 +250,7 @@ describe('DoorsGateway', () => {
 
       await gateway.handleDoorsList(client);
 
-      expect(findAllDoorsSpy).toBeCalled();
+      expect(findAllDoorsSpy).toHaveBeenCalled();
       expect(client.emit).toHaveBeenCalledWith('doors:list', [
         { id: 1 },
         { id: 2 },
