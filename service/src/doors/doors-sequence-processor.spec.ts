@@ -8,6 +8,7 @@ import { Job } from 'bullmq';
 import { DoorSequenceJobName, DoorsSequenceJobData } from './types';
 import { SequenceObject } from '../entities/SequenceObject.entity';
 import { Door } from '../entities/Door.entity';
+import { DoorsLockOutService } from './doors-lock-out.service';
 
 describe('DoorsSequenceProcessor', () => {
   let provider: DoorsSequenceProcessor;
@@ -50,6 +51,11 @@ describe('DoorsSequenceProcessor', () => {
       runSequenceObject: jest.fn().mockResolvedValue(undefined),
     };
 
+    const mockDoorsLockOutService = {
+      lockOutDoor: jest.fn(),
+      unlockDoor: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DoorsSequenceProcessor,
@@ -65,6 +71,10 @@ describe('DoorsSequenceProcessor', () => {
         {
           provide: AutomationHatService,
           useValue: mockAutomationHatService,
+        },
+        {
+          provide: DoorsLockOutService,
+          useValue: mockDoorsLockOutService,
         },
       ],
     }).compile();

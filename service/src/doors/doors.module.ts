@@ -13,6 +13,7 @@ import { DoorsSequenceProcessor } from './doors-sequence-processor';
 import { DoorQueue } from './types';
 import { DoorsStateProcessor } from './doors-state-processor';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
+import { DoorsLockOutService } from './doors-lock-out.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AuditLogsModule } from '../audit-logs/audit-logs.module';
     DoorsGateway,
     DoorsSequenceProcessor,
     DoorsStateProcessor,
+    DoorsLockOutService,
   ],
 })
 export class DoorsModule {}
