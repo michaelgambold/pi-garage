@@ -384,7 +384,7 @@ describe('DoorsController', () => {
       });
 
       expect(sequenceQueueSpy).not.toHaveBeenCalled();
-      expect(stateQueueSpy).toHaveBeenCalledWith(0);
+      expect(stateQueueSpy).toHaveBeenCalledTimes(0);
 
       expect(commsOnSpy).toHaveBeenCalled();
       expect(commsOffSpy).toHaveBeenCalled();
