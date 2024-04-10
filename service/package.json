@@ -42,7 +42,7 @@
     "@nestjs/swagger": "^7.3.0",
     "@nestjs/websockets": "^10.3.3",
     "automation-hat": "^2.1.0",
-    "bullmq": "^4.13.2",
+    "bullmq": "^5.7.1",
     "date-fns": "^3.3.0",
     "ioredis": "^5.3.2",
     "reflect-metadata": "^0.1.13",
