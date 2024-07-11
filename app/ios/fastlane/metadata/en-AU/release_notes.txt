@@ -1,1 +1,1 @@
-Add default timeout to all Pi Garage API calls.
+Upgrade dependencies.
