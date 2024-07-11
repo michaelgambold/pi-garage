@@ -1,5 +1,11 @@
 # Upgrading to new Pi Garage versions
 
+## Upgrading to 3.0.0+
+
+- Deprecated Android 4.4 (Kit Kat).
+- No change to iOS (as far as I know).
+- Backend service no change in dependencies.
+
 ## Upgrading to version 2.0.0+
 
 - Version 2.0.0 of the backend service introduced the requirement for Redis.
