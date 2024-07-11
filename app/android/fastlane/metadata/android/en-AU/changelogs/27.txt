@@ -1,0 +1,3 @@
+Upgrade dependencies.
+
+Deprecate Android 4.4 (Kit Kat).
