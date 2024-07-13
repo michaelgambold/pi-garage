@@ -35,6 +35,9 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
+      - name: Run Flutter Doctor
+        run: flutter doctor -v
+
       - name: Build App
         run: flutter build appbundle
         env:
