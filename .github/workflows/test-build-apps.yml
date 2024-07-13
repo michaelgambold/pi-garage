@@ -5,31 +5,91 @@ on:
     branches-ignore:
       - "main"
 
+env:
+  FLUTTER_VERSION: 3.22.0
+  RUBY_VERSION: 3.2.2
+
 concurrency:
   group: ${{ github.ref }}_test_build_apps
   cancel-in-progress: true
 
 jobs:
-  # android:
-  #   runs-on: ubuntu-latest
+  android:
+    runs-on: ubuntu-latest
 
-  #   defaults:
-  #     run:
-  #       working-directory: ./app
+    defaults:
+      run:
+        working-directory: ./app
 
-  #   steps:
-  #     - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: "stable"
+      - name: Decode Keystore File
+        uses: timheuer/base64-to-file@v1
+        id: android_keystore
+        with:
+          fileName: "android_keystore.keystore"
+          encodedString: ${{ secrets.KEYSTORE_FILE }}
 
-  #     - name: Install packages
-  #       run: flutter pub get
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
-  #     - name: Build apk
-  #       run: flutter build apk
+      - name: Build App
+        run: flutter build appbundle
+        env:
+          KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
+  ios:
+    runs-on: macos-latest
+
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: Install gems
+        run: bundle install
+        working-directory: ./app/ios
+
+      - name: Update signing settings
+        run: bundle exec fastlane update_signing_settings
+        env:
+          IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+          IOS_PROFILE_NAME: ${{ secrets.IOS_PROFILE_NAME }}
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+        working-directory: ./app/ios
+
+      - name: Get iOS certs
+        run: bundle exec fastlane get_ios_certs
+        env:
+          IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }} # remove in future to see if we need
+          IOS_CERT_GIT_REPO: ${{ secrets.IOS_CERT_GIT_REPO }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+        working-directory: ./app/ios
+
+      - name: Build App
+        run: flutter build ipa --release
+
+  # Come back to this and see if we want to try and build
+  # Docker? Maybe for just one arch?
   service:
     runs-on: ubuntu-latest
 
