@@ -62,7 +62,7 @@ jobs:
         working-directory: ./app/android
 
   ios:
-    runs-on: macos-12 # macos-11 iTMSTransporter error until macos-latest is 12
+    runs-on: macos-latest
 
     defaults:
       run:
