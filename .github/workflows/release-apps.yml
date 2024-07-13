@@ -62,7 +62,7 @@ jobs:
         working-directory: ./app/android
 
   ios:
-    runs-on: macos-12 # macos-11 iTMSTransporter error until macos-latest is 12
+    runs-on: macos-latest
 
     defaults:
       run:
@@ -114,28 +114,28 @@ jobs:
           encodedString: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
 
       - name: Update reviewer email address
-        uses: DamianReeves/write-file-action@v1.2
+        uses: DamianReeves/write-file-action@v1.3
         with:
           path: ./ios/fastlane/metadata/review_information/email_address.txt
           write-mode: overwrite
           contents: ${{ secrets.REVIEWER_EMAIL_ADDRESS }}
 
       - name: Update reviewer first name
-        uses: DamianReeves/write-file-action@v1.2
+        uses: DamianReeves/write-file-action@v1.3
         with:
           path: ./ios/fastlane/metadata/review_information/first_name.txt
           write-mode: overwrite
           contents: ${{ secrets.REVIEWER_FIRST_NAME }}
 
       - name: Update reviewer last name
-        uses: DamianReeves/write-file-action@v1.2
+        uses: DamianReeves/write-file-action@v1.3
         with:
           path: ./ios/fastlane/metadata/review_information/last_name.txt
           write-mode: overwrite
           contents: ${{ secrets.REVIEWER_LAST_NAME }}
 
       - name: Update reviewer contact number
-        uses: DamianReeves/write-file-action@v1.2
+        uses: DamianReeves/write-file-action@v1.3
         with:
           path: ./ios/fastlane/metadata/review_information/phone_number.txt
           write-mode: overwrite
@@ -172,7 +172,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./service
           platforms: linux/arm64,linux/arm/v7
