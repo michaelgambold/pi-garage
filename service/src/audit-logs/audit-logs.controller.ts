@@ -1,15 +1,9 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
 import { AuditLogsService } from './audit-logs.service';
 import { AuditLogDto } from './dto/audit-log.dto';
-import { AuditLog } from '../entities/AuditLog.entity';
 
 @ApiSecurity('api-key')
 @ApiTags('audit-logs')

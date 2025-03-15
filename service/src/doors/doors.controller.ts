@@ -9,18 +9,10 @@ import {
   Body,
   Put,
   ConflictException,
-  // ConflictException,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiOkResponse,
-  ApiResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-// import { differenceInMilliseconds } from 'date-fns';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
