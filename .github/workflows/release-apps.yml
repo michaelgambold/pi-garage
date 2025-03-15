@@ -1,8 +1,7 @@
 name: Release Apps
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 env:
   FLUTTER_VERSION: 3.22.0
