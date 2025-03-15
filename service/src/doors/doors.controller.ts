@@ -9,12 +9,10 @@ import {
   Body,
   Put,
   ConflictException,
-  // ConflictException,
 } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-// import { differenceInMilliseconds } from 'date-fns';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
@@ -35,8 +33,9 @@ import { Logger } from '../logger/logger';
 import { Door } from '../entities/Door.entity';
 import { DoorsLockOutService } from './doors-lock-out.service';
 
-@UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
 @ApiSecurity('api-key')
+@ApiTags('Doors')
+@UseGuards(HttpClientVersionGuard, HttpApiKeyAuthGuard)
 @Controller('api/v1/doors')
 export class DoorsController {
   private readonly logger: Logger;
@@ -53,7 +52,36 @@ export class DoorsController {
     this.logger = new Logger(DoorsController.name);
   }
 
-  @ApiResponse({ type: GetDoorDto, isArray: true, status: 200 })
+  @ApiOkResponse({
+    type: GetDoorDto,
+    isArray: true,
+    example: [
+      {
+        id: 1,
+        label: 'Door 1',
+        isEnabled: true,
+        state: 'open',
+        openDuration: 20000,
+        closeDuration: 20000,
+      },
+      {
+        id: 2,
+        label: 'Door 2',
+        isEnabled: true,
+        state: 'closed',
+        openDuration: 20000,
+        closeDuration: 20000,
+      },
+      {
+        id: 3,
+        label: 'Door 3',
+        isEnabled: false,
+        state: 'closed',
+        openDuration: 20000,
+        closeDuration: 20000,
+      },
+    ],
+  })
   @Get()
   async getAll(): Promise<GetDoorDto[]> {
     this.automationHatService.turnOnCommsLight();
@@ -74,7 +102,17 @@ export class DoorsController {
     });
   }
 
-  @ApiResponse({ type: GetDoorDto, status: 200 })
+  @ApiOkResponse({
+    type: GetDoorDto,
+    example: {
+      id: 1,
+      label: 'Door 1',
+      isEnabled: true,
+      state: 'open',
+      openDuration: 20000,
+      closeDuration: 20000,
+    },
+  })
   @Get(':id')
   async get(@Param('id', ParseIntPipe) id: number): Promise<GetDoorDto> {
     this.automationHatService.turnOnCommsLight();
@@ -99,7 +137,22 @@ export class DoorsController {
     };
   }
 
-  @ApiResponse({ status: 200, type: SequenceObjectDto, isArray: true })
+  @ApiOkResponse({
+    type: SequenceObjectDto,
+    isArray: true,
+    example: [
+      {
+        action: 'on',
+        duration: 1000,
+        target: 'relay1',
+      },
+      {
+        action: 'off',
+        duration: 1000,
+        target: 'relay1',
+      },
+    ],
+  })
   @Get(':id/sequence')
   async getSequence(
     @Param('id', ParseIntPipe) id: number,
@@ -124,11 +177,25 @@ export class DoorsController {
     }));
   }
 
+  @ApiBody({
+    type: UpdateDoorDto,
+    examples: {
+      'Update Door': {
+        value: {
+          label: 'Door 1',
+          isEnabled: true,
+          openDuration: 20000,
+          closeDuration: 20000,
+        },
+      },
+    },
+  })
+  @ApiOkResponse({ type: null })
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateDoorDto,
-  ) {
+  ): Promise<void> {
     this.automationHatService.turnOnCommsLight();
 
     if (![1, 2, 3].includes(id)) {
@@ -148,7 +215,18 @@ export class DoorsController {
     this.automationHatService.turnOffCommsLight();
   }
 
-  @ApiBody({ type: [SequenceObjectDto] })
+  @ApiBody({
+    type: [SequenceObjectDto],
+    examples: {
+      'Update Sequence': {
+        value: [
+          { action: 'on', duration: 1000, target: 'relay1' },
+          { action: 'off', duration: 1000, target: 'relay1' },
+        ],
+      },
+    },
+  })
+  @ApiOkResponse({ type: null })
   @Put(':id/sequence')
   async updateSequence(
     @Param('id', ParseIntPipe) id: number,
@@ -221,6 +299,11 @@ export class DoorsController {
     this.automationHatService.turnOffCommsLight();
   }
 
+  @ApiBody({
+    type: UpdateStateDto,
+    examples: { 'Update State': { value: { state: 'open' } } },
+  })
+  @ApiOkResponse({ type: null })
   @Post(':id/state')
   async updateState(
     @Param('id', ParseIntPipe) id: number,

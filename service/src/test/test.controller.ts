@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiSecurity } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
 
@@ -10,7 +10,9 @@ import { HttpClientVersionGuard } from '../client-version/http-client-version.gu
 @ApiSecurity('api-key')
 @Controller('test')
 export class TestController {
-  // TODO: should this be under /api? ie. /api/test or /api/test-connection?
+  // TODO: should this be under /api? ie. /api/test or /api/test-connection or /api/auth/test or /api/test-authentication?
+  @ApiOperation({ summary: 'Test connection with authentication' })
+  @ApiOkResponse({ type: null })
   @Get()
   async test() {
     return;
