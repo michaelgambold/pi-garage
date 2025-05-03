@@ -216,7 +216,7 @@ describe('DoorsController', () => {
       let failed = false;
       try {
         await controller.getSequence(100);
-      } catch (e) {
+      } catch {
         failed = true;
       }
 
