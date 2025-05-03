@@ -19,10 +19,7 @@ class WidgetbookApp extends StatelessWidget {
       // Use the generated directories variable
       directories: directories,
       addons: const [],
-      integrations: [
-        // To make addons & knobs work with Widgetbook Cloud
-        WidgetbookCloudIntegration(),
-      ],
+      integrations: const [],
     );
   }
 }
