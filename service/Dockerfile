@@ -1,7 +1,7 @@
 ARG NODE_VERSION=20.15
 
 
-FROM node:${NODE_VERSION} as build
+FROM node:${NODE_VERSION} AS build
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 
-FROM node:${NODE_VERSION} as prod-deps
+FROM node:${NODE_VERSION} AS prod-deps
 
 WORKDIR /app
 
