@@ -15,7 +15,7 @@ fun getLocalProperty(key: String, defaultValue: String): String {
 val flutterVersionCode = getLocalProperty("flutter.versionCode", "1").toInt()
 val flutterVersionName = getLocalProperty("flutter.versionName", "1.0")
 
-val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystorePropertiesFile = rootProject.file("key.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) {
         load(FileInputStream(keystorePropertiesFile))
