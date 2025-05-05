@@ -1,11 +1,15 @@
 import java.util.Properties
+import java.io.FileInputStream
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) {
-        load(keystorePropertiesFile.inputStream())
+        load(FileInputStream(keystorePropertiesFile))
     } else {
-        throw FileNotFoundException("keystore.properties file not found in the project root.")
+        put("keyAlias", System.getenv("KEY_ALIAS") ?: "")
+        put("keyPassword", System.getenv("KEY_PASSWORD") ?: "")
+        put("storeFile", System.getenv("KEYSTORE_FILE") ?: "")
+        put("storePassword", System.getenv("STORE_PASSWORD") ?: "")
     }
 }
 
@@ -40,14 +44,14 @@ android {
         versionName = flutter.versionName
     }
 
-     signingConfigs {
-       create("release") {
-           keyAlias = keystoreProperties["keyAlias"] as String
-           keyPassword keystoreProperties["keyPassword"] as String
-           storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
-           storePassword keystoreProperties["storePassword"] as String
-       }
-   }
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
 
     buildTypes {
         release {
