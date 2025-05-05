@@ -1,3 +1,14 @@
+import java.util.Properties
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        load(keystorePropertiesFile.inputStream())
+    } else {
+        throw FileNotFoundException("keystore.properties file not found in the project root.")
+    }
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -30,11 +41,11 @@ android {
     }
 
      signingConfigs {
-       release {
-           keyAlias keystoreProperties['keyAlias']
-           keyPassword keystoreProperties['keyPassword']
-           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-           storePassword keystoreProperties['storePassword']
+       create("release") {
+           keyAlias = keystoreProperties["keyAlias"] as String
+           keyPassword keystoreProperties["keyPassword"] as String
+           storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
+           storePassword keystoreProperties["storePassword"] as String
        }
    }
 
