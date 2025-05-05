@@ -61,7 +61,7 @@ jobs:
         working-directory: ./app/android
 
   ios:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     defaults:
       run:
