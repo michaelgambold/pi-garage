@@ -1,6 +1,20 @@
 import java.util.Properties
 import java.io.FileInputStream
 
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties().apply {
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
+}
+
+fun getLocalProperty(key: String, defaultValue: String): String {
+    return localProperties.getProperty(key) ?: defaultValue
+}
+
+val flutterVersionCode = getLocalProperty("flutter.versionCode", "1").toInt()
+val flutterVersionName = getLocalProperty("flutter.versionName", "1.0")
+
 val keystorePropertiesFile = rootProject.file("keystore.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) {
@@ -40,8 +54,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = flutterVersionCode
+        versionName = flutterVersionName
     }
 
     signingConfigs {
