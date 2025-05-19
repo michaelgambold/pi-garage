@@ -8,6 +8,8 @@
     }
   ],
   "settings": {
-    "jest.disabledWorkspaceFolders": ["app"]
+    "jest.disabledWorkspaceFolders": ["app"],
+    "typescript.tsserver.nodePath": "node",
+    "eslint.runtime": "node"
   }
 }

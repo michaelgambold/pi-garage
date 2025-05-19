@@ -88,8 +88,16 @@
     "rootDir": "./src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t|j)s$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
     },
+    "transformIgnorePatterns": [
+      "node_modules/(?!@mikro-orm)"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s",
       "!**/*.module.ts",
