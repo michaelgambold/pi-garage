@@ -4,11 +4,7 @@ Mobile app built with Flutter.
 
 ## Getting Started
 
-Install Flutter. On mac this can be installed with
-
-```
-$ brew install --cask flutter
-```
+Install Flutter. Go to the flutter website and install as per recommended way.
 
 Updates of Flutter dependencies should be handled by dependabot. To update dependencies as per lock file
 run
