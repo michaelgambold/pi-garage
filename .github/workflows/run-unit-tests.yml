@@ -12,6 +12,13 @@ concurrency:
   group: ${{ github.ref }}_run_unit_tests
   cancel-in-progress: true
 
+env:
+  FLUTTER_VERSION: 3.29.3
+  NODE_VERSION: 20.15.x
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+  REDIS_VERSION: 7
+
 jobs:
   app:
     runs-on: ubuntu-latest
@@ -25,7 +32,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Install packages
         run: flutter pub get
@@ -35,12 +42,6 @@ jobs:
 
   service:
     runs-on: ubuntu-latest
-
-    env:
-      REDIS_HOST: localhost
-      REDIS_PORT: 6379
-      REDIS_VERSION: 7
-      NODE_VERSION: 20.15.x
 
     defaults:
       run:
