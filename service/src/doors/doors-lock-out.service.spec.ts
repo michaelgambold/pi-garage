@@ -1,15 +1,42 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { GenericContainer, StartedTestContainer } from 'testcontainers';
 import { DoorsLockOutService } from './doors-lock-out.service';
 
 describe('DoorsLockService', () => {
   let module: TestingModule;
   let service: DoorsLockOutService;
+  let config: ConfigService;
+  let container: StartedTestContainer;
+
   const doorId = 1;
+
+  beforeAll(async () => {
+    try {
+      container = await new GenericContainer('redis')
+        .withExposedPorts(6379)
+        .start();
+      const redisHost = container.getHost();
+      const redisPort = container.getMappedPort(6379);
+
+      config = new ConfigService();
+      config.set('REDIS_HOST', redisHost);
+      config.set('REDIS_PORT', redisPort);
+    } catch (error) {
+      console.error('Error starting Redis container:', error);
+      throw error;
+    }
+  });
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      providers: [DoorsLockOutService, ConfigService],
+      providers: [
+        DoorsLockOutService,
+        {
+          provide: ConfigService,
+          useValue: config,
+        },
+      ],
     }).compile();
 
     await module.init();
@@ -21,6 +48,10 @@ describe('DoorsLockService', () => {
 
   afterEach(async () => {
     await module.close();
+  });
+
+  afterAll(async () => {
+    await container.stop();
   });
 
   it('should be defined', async () => {
