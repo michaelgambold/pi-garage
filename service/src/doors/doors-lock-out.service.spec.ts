@@ -26,7 +26,7 @@ describe('DoorsLockService', () => {
       console.error('Error starting Redis container:', error);
       throw error;
     }
-  });
+  }, 10_000);
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
