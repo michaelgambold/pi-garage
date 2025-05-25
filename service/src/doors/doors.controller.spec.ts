@@ -13,8 +13,7 @@ import { Door } from '../entities/Door.entity';
 import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsController } from './doors.controller';
 import { DoorsService } from './doors.service';
-import { SequenceObjectDto } from './dto/sequence-object.dto';
-import { GetDoorDto } from './dto/get-door.dto';
+import { SequenceObjectDto, GetDoorDto } from './dto';
 import { DoorsLockOutService } from './doors-lock-out.service';
 
 interface MockQueue {
