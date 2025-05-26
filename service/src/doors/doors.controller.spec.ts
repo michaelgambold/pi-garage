@@ -1,9 +1,5 @@
 import { Collection } from '@mikro-orm/core';
-import {
-  BadRequestException,
-  ConflictException,
-  HttpException,
-} from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth/auth.service';
@@ -15,7 +11,6 @@ import { DoorsController } from './doors.controller';
 import { DoorsService } from './doors.service';
 import { SequenceObjectDto, GetDoorDto } from './dto';
 import { DoorsLockOutService } from './doors-lock-out.service';
-import { mock } from 'node:test';
 
 interface MockQueue {
   add(jobName: string, data: unknown, options: unknown): Promise<void>;
@@ -30,22 +25,6 @@ describe('DoorsController', () => {
   let doorsStateUpdateQueue: jest.Mocked<MockQueue>;
   let doorsLockOutService: jest.Mocked<DoorsLockOutService>;
 
-  // const j = jest.fn().mockReturnValue({});
-  // jest.spyOn = jest.fn().mockReturnValue(j);
-
-  // let doorsLockService: DoorsLockOutService;
-
-  // const mockSequenceRunQueue: MockQueue = {
-  //   async add() {
-  //     return;
-  //   },
-  // };
-  // const mockStateUpdateQueue: MockQueue = {
-  //   async add() {
-  //     return;
-  //   },
-  // };
-
   beforeEach(async () => {
     doorsService = {
       findAll: jest.fn().mockResolvedValue([]),
@@ -57,65 +36,18 @@ describe('DoorsController', () => {
       turnOnCommsLight: jest.fn(),
       turnOffCommsLight: jest.fn(),
     } as unknown as jest.Mocked<AutomationHatService>;
-    // mockDoorsService = {
-    //   // doorRepository: {},
-    //   // doorsGateway: jest.fn(),
-    //   // em: jest.fn(),
-    //   findAll: jest.fn().mockResolvedValue([
-    //     {
-    //       id: 1,
-    //       isEnabled: true,
-    //       label: 'door1',
-    //       state: 'open',
-    //       closeDuration: 20_000,
-    //       openDuration: 20_000,
-    //     },
-    //     {
-    //       id: 2,
-    //       isEnabled: true,
-    //       label: 'door2',
-    //       state: 'open',
-    //       closeDuration: 20_000,
-    //       openDuration: 20_000,
-    //     },
-    //     {
-    //       id: 3,
-    //       isEnabled: true,
-    //       label: 'door3',
-    //       state: 'open',
-    //       closeDuration: 20_000,
-    //       openDuration: 20_000,
-    //     },
-    //   ]),
-    //   findOne: jest.fn().mockImplementation(async (id: number) => {
-    //     const partialSequence: Partial<Collection<SequenceObject>> = {
-    //       init: jest.fn().mockResolvedValue(null),
-    //       getItems: jest.fn().mockImplementation(() => {
-    //         const partialSequence: Partial<SequenceObject>[] = [
-    //           {
-    //             action: 'on',
-    //             duration: 1000,
-    //             index: 1,
-    //             target: 'relay1',
-    //           },
-    //         ];
-    //         return partialSequence;
-    //       }),
-    //       set: jest.fn().mockResolvedValue(null),
-    //     };
 
-    //     const partialDoor: Partial<Door> = {
-    //       id,
-    //       isEnabled: true,
-    //       label: `door${id}`,
-    //       state: 'open',
-    //       sequence: partialSequence as Collection<SequenceObject>,
-    //     };
+    doorsLockOutService = {
+      isLockedOut: jest.fn().mockResolvedValue(false),
+    } as unknown as jest.Mocked<DoorsLockOutService>;
 
-    //     return partialDoor;
-    //   }),
-    //   update: jest.fn().mockResolvedValue(undefined),
-    // };
+    doorsSequenceRunQueue = {
+      add: jest.fn(),
+    } as unknown as jest.Mocked<MockQueue>;
+
+    doorsStateUpdateQueue = {
+      add: jest.fn(),
+    } as unknown as jest.Mocked<MockQueue>;
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [ClientVersionModule],
@@ -488,262 +420,297 @@ describe('DoorsController', () => {
     });
   });
 
-  // describe('Update Door State', () => {
-  //   let sequenceQueueSpy: jest.SpyInstance;
-  //   let stateQueueSpy: jest.SpyInstance;
-  //   let isLockedSpy: jest.SpyInstance;
+  describe('Update Door State', () => {
+    it.each([-1, 0, 4])(
+      'should return 400 for invalid door id: %p',
+      async (id) => {
+        // Act
+        await expect(
+          controller.updateState(id, { state: 'toggle' }),
+        ).rejects.toThrow(BadRequestException);
 
-  //   beforeEach(() => {
-  //     sequenceQueueSpy = jest.spyOn(mockSequenceRunQueue, 'add');
-  //     stateQueueSpy = jest.spyOn(mockStateUpdateQueue, 'add');
-  //     isLockedSpy = jest.spyOn(doorsLockService, 'isLockedOut');
-  //   });
+        // Assert
+        expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+        expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+      },
+    );
 
-  //   afterEach(() => {
-  //     sequenceQueueSpy.mockClear();
-  //     stateQueueSpy.mockClear();
-  //   });
+    it('should return 409 when door is locked out', async () => {
+      // Assert
+      doorsLockOutService.isLockedOut.mockResolvedValue(true);
 
-  //   it('should return 400 for invalid door id', async () => {
-  //     const badIds = [-1, 0, 4];
+      // Act
+      await expect(
+        controller.updateState(1, { state: 'close' }),
+      ).rejects.toMatchObject({
+        constructor: ConflictException,
+        message: 'Door changing state is locked out',
+      });
 
-  //     for (const id of badIds) {
-  //       await expect(
-  //         controller.updateState(id, { state: 'toggle' }),
-  //       ).rejects.toThrowError(BadRequestException);
-  //     }
+      // Assert
+      expect(doorsService.findOne).not.toHaveBeenCalled();
+      expect(doorsSequenceRunQueue.add).not.toHaveBeenCalled();
+      expect(doorsStateUpdateQueue.add).not.toHaveBeenCalled();
 
-  //     expect(commsOffSpy).toHaveBeenCalledTimes(3);
-  //     expect(commsOnSpy).toHaveBeenCalledTimes(3);
-  //   });
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //   it('should return 409 when door is locked out', async () => {
-  //     isLockedSpy.mockReturnValue(true);
+    it('should update state to open if closed', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'closed',
+        openDuration: 20_000,
+        closeDuration: 20_000,
+      } as Door);
 
-  //     await expect(
-  //       controller.updateState(1, { state: 'close' }),
-  //     ).rejects.toMatchObject({
-  //       constructor: ConflictException,
-  //       message: 'Door changing state is locked out',
-  //     });
+      // Act
+      await controller.updateState(1, { state: 'open' });
 
-  //     expect(sequenceQueueSpy).not.toHaveBeenCalled();
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(0);
+      // Assert
+      expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
+      expect(doorsStateUpdateQueue.add).toHaveBeenCalledTimes(2);
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(1, 'opening', {
+        doorId: 1,
+      });
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(
+        2,
+        'open',
+        { doorId: 1 },
+        { delay: 20_000 },
+      );
 
-  //   it('should update state to open if closed', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'closed',
-  //       openDuration: 20_000,
-  //       closeDuration: 20_000,
-  //     });
+      expect(doorsSequenceRunQueue.add).toHaveBeenCalledWith('open', {
+        doorId: 1,
+      });
 
-  //     await controller.updateState(1, { state: 'open' });
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //     expect(sequenceQueueSpy).toHaveBeenCalledWith('open', { doorId: 1 });
+    it('should toggle doors state from open to closed', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'open',
+        openDuration: 20_000,
+        closeDuration: 20_000,
+      } as Door);
 
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(2);
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'opening', {
-  //       doorId: 1,
-  //     });
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(
-  //       2,
-  //       'open',
-  //       { doorId: 1 },
-  //       { delay: 20000 },
-  //     );
+      // Act
+      await controller.updateState(1, { state: 'toggle' });
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
+      // Assert
+      expect(doorsLockOutService);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //   it('should toggle doors state from open to closed', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'open',
-  //       openDuration: 20_000,
-  //       closeDuration: 20_000,
-  //     });
+      expect(doorsStateUpdateQueue.add).toHaveBeenCalledTimes(2);
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(1, 'closing', {
+        doorId: 1,
+      });
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(
+        2,
+        'closed',
+        { doorId: 1 },
+        { delay: 20000 },
+      );
+      expect(doorsSequenceRunQueue.add).toHaveBeenCalledWith('close', {
+        doorId: 1,
+      });
 
-  //     await controller.updateState(1, { state: 'toggle' });
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //     expect(sequenceQueueSpy).toHaveBeenCalledWith('close', { doorId: 1 });
+    it('should toggle doors state from closed to open', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'closed',
+        openDuration: 20_000,
+        closeDuration: 20_000,
+      } as Door);
 
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(2);
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'closing', {
-  //       doorId: 1,
-  //     });
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(
-  //       2,
-  //       'closed',
-  //       { doorId: 1 },
-  //       { delay: 20000 },
-  //     );
+      // Act
+      await controller.updateState(1, { state: 'toggle' });
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
+      // Assert
+      expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //   it('should toggle doors state from closed to open', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'closed',
-  //       openDuration: 20_000,
-  //       closeDuration: 20_000,
-  //     });
+      expect(doorsStateUpdateQueue.add).toHaveBeenCalledTimes(2);
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(1, 'opening', {
+        doorId: 1,
+      });
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(
+        2,
+        'open',
+        { doorId: 1 },
+        { delay: 20000 },
+      );
+      expect(doorsSequenceRunQueue.add).toHaveBeenCalledWith('open', {
+        doorId: 1,
+      });
 
-  //     await controller.updateState(1, { state: 'toggle' });
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //     expect(sequenceQueueSpy).toHaveBeenCalledWith('open', { doorId: 1 });
+    it('should update state to closed from open', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'open',
+        openDuration: 20_000,
+        closeDuration: 20_000,
+      } as Door);
 
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(2);
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'opening', {
-  //       doorId: 1,
-  //     });
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(
-  //       2,
-  //       'open',
-  //       { doorId: 1 },
-  //       { delay: 20000 },
-  //     );
+      // Act
+      await controller.updateState(1, { state: 'close' });
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
+      // Assert
+      expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //   it('should update state to closed from open', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'open',
-  //       openDuration: 20_000,
-  //       closeDuration: 20_000,
-  //     });
+      expect(doorsStateUpdateQueue.add).toHaveBeenCalledTimes(2);
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(1, 'closing', {
+        doorId: 1,
+      });
+      expect(doorsStateUpdateQueue.add).toHaveBeenNthCalledWith(
+        2,
+        'closed',
+        { doorId: 1 },
+        { delay: 20000 },
+      );
+      expect(doorsSequenceRunQueue.add).toHaveBeenCalledWith('close', {
+        doorId: 1,
+      });
 
-  //     await controller.updateState(1, { state: 'close' });
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //     expect(sequenceQueueSpy).toHaveBeenCalledWith('close', { doorId: 1 });
+    it('should reject opening an open door', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'open',
+      } as Door);
 
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(2);
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(1, 'closing', {
-  //       doorId: 1,
-  //     });
-  //     expect(stateQueueSpy).toHaveBeenNthCalledWith(
-  //       2,
-  //       'closed',
-  //       { doorId: 1 },
-  //       { delay: 20000 },
-  //     );
+      // Act
+      await expect(
+        controller.updateState(1, { state: 'open' }),
+      ).rejects.toMatchObject({
+        constructor: BadRequestException,
+        message: 'Cannot open an open/opening door',
+      });
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
+      // Assert
+      expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //   it('should reject opening an open door', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'open',
-  //     });
+      expect(doorsStateUpdateQueue.add).toHaveBeenCalledTimes(0);
+      expect(doorsSequenceRunQueue.add).not.toHaveBeenCalled();
 
-  //     await expect(
-  //       controller.updateState(1, { state: 'open' }),
-  //     ).rejects.toMatchObject({
-  //       constructor: BadRequestException,
-  //       message: 'Cannot open an open/opening door',
-  //     });
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //     expect(sequenceQueueSpy).not.toHaveBeenCalled();
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(0);
+    it('should reject opening an opening door', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'opening',
+      } as Door);
 
-  //     expect(commsOnSpy).toBeCalled();
-  //     expect(commsOffSpy).toBeCalled();
-  //   });
+      // Act
+      await expect(
+        controller.updateState(1, { state: 'open' }),
+      ).rejects.toMatchObject({
+        constructor: BadRequestException,
+        message: 'Cannot open an open/opening door',
+      });
 
-  //   it('should reject opening an opening door', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'opening',
-  //     });
+      // Assert
+      expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //     await expect(
-  //       controller.updateState(1, { state: 'open' }),
-  //     ).rejects.toMatchObject({
-  //       constructor: BadRequestException,
-  //       message: 'Cannot open an open/opening door',
-  //     });
+      expect(doorsStateUpdateQueue.add).not.toHaveBeenCalled();
+      expect(doorsSequenceRunQueue.add).not.toHaveBeenCalled();
 
-  //     expect(sequenceQueueSpy).not.toBeCalled();
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(0);
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
+    it('should reject closing a closed door', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'closed',
+      } as Door);
 
-  //   it('should reject closing a closed door', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'closed',
-  //     });
+      // Act
+      await expect(
+        controller.updateState(1, { state: 'close' }),
+      ).rejects.toMatchObject({
+        constructor: BadRequestException,
+        message: 'Cannot close a closed/closing door',
+      });
 
-  //     await expect(
-  //       controller.updateState(1, { state: 'close' }),
-  //     ).rejects.toMatchObject({
-  //       constructor: BadRequestException,
-  //       message: 'Cannot close a closed/closing door',
-  //     });
+      // Assert
+      expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //     expect(sequenceQueueSpy).not.toHaveBeenCalled();
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(0);
+      expect(doorsStateUpdateQueue.add).toHaveBeenCalledTimes(0);
+      expect(doorsSequenceRunQueue.add).not.toHaveBeenCalled();
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
 
-  //   it('should reject closing a closing door', async () => {
-  //     isLockedSpy.mockReturnValue(false);
-  //     mockDoorsService.findOne.mockResolvedValue({
-  //       id: 1,
-  //       isEnabled: true,
-  //       label: 'door1',
-  //       state: 'closing',
-  //     });
+    it('should reject closing a closing door', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        isEnabled: true,
+        label: 'door1',
+        state: 'closing',
+      } as Door);
 
-  //     await expect(
-  //       controller.updateState(1, { state: 'close' }),
-  //     ).rejects.toMatchObject({
-  //       constructor: BadRequestException,
-  //       message: 'Cannot close a closed/closing door',
-  //     });
+      // Act
+      await expect(
+        controller.updateState(1, { state: 'close' }),
+      ).rejects.toMatchObject({
+        constructor: BadRequestException,
+        message: 'Cannot close a closed/closing door',
+      });
 
-  //     expect(sequenceQueueSpy).not.toHaveBeenCalled();
-  //     expect(stateQueueSpy).toHaveBeenCalledTimes(0);
+      // Assert
+      expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
 
-  //     expect(commsOnSpy).toHaveBeenCalled();
-  //     expect(commsOffSpy).toHaveBeenCalled();
-  //   });
-  // });
+      expect(doorsStateUpdateQueue.add).not.toHaveBeenCalled();
+      expect(doorsSequenceRunQueue.add).not.toHaveBeenCalled();
+
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
+  });
 });

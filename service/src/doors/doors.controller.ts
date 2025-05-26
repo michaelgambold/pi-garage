@@ -56,7 +56,7 @@ export class DoorsController {
     private readonly doorsSequenceRunQueue: Queue,
     @InjectQueue(DoorQueue.DOORS_STATE_UPDATE)
     private readonly doorsStateUpdateQueue: Queue,
-    private readonly doorsLockService: DoorsLockOutService,
+    private readonly doorsLockOutService: DoorsLockOutService,
   ) {
     this.logger = new Logger(DoorsController.name);
   }
@@ -325,7 +325,7 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
-    const doorLockedOut = await this.doorsLockService.isLockedOut(id);
+    const doorLockedOut = await this.doorsLockOutService.isLockedOut(id);
     if (doorLockedOut) {
       this.automationHatService.turnOffCommsLight();
       throw new ConflictException('Door changing state is locked out');
