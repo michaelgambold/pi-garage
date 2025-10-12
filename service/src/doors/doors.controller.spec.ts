@@ -282,7 +282,14 @@ describe('DoorsController', () => {
       'should return 400 for invalid door number: %p',
       async (id) => {
         // Act
-        await expect(controller.get(id)).rejects.toThrow(BadRequestException);
+        await expect(
+          controller.update(id, {
+            isEnabled: true,
+            label: 'new label',
+            closeDuration: 20_000,
+            openDuration: 20_000,
+          }),
+        ).rejects.toThrow(BadRequestException);
 
         // Assert
         expect(doorsService.findOne).not.toHaveBeenCalled();
@@ -705,6 +712,46 @@ describe('DoorsController', () => {
       // Assert
       expect(doorsLockOutService.isLockedOut).toHaveBeenCalledWith(1);
       expect(doorsService.findOne).toHaveBeenCalledWith(1);
+
+      expect(doorsStateUpdateQueue.add).not.toHaveBeenCalled();
+      expect(doorsSequenceRunQueue.add).not.toHaveBeenCalled();
+
+      expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+      expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+    });
+  });
+
+  describe('Override Door State', () => {
+    it.each([-1, 0, 4])(
+      'should return 400 for invalid door id: %p',
+      async (id) => {
+        // Act
+        await expect(
+          controller.overrideState(id, { state: 'open' }),
+        ).rejects.toThrow(BadRequestException);
+
+        // Assert
+        expect(automationHatService.turnOnCommsLight).toHaveBeenCalled();
+        expect(automationHatService.turnOffCommsLight).toHaveBeenCalled();
+      },
+    );
+
+    it('should override door state', async () => {
+      // Arrange
+      doorsService.findOne.mockResolvedValue({
+        id: 1,
+        state: 'opening',
+      } as Door);
+
+      // Act
+      await controller.overrideState(1, { state: 'closed' });
+
+      // Assert
+      expect(doorsService.findOne).toHaveBeenCalledWith(1);
+      expect(doorsService.update).toHaveBeenCalledWith({
+        id: 1,
+        state: 'closed',
+      });
 
       expect(doorsStateUpdateQueue.add).not.toHaveBeenCalled();
       expect(doorsSequenceRunQueue.add).not.toHaveBeenCalled();
