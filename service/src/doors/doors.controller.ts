@@ -10,7 +10,13 @@ import {
   Put,
   ConflictException,
 } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { HttpApiKeyAuthGuard } from '../auth/http-api-key-auth.guard';
@@ -18,10 +24,13 @@ import { AutomationHatService } from '../automation-hat/automation-hat.service';
 import { HttpClientVersionGuard } from '../client-version/http-client-version.guard';
 import { SequenceObject } from '../entities/SequenceObject.entity';
 import { DoorsService } from './doors.service';
-import { GetDoorDto } from './dto/get-door.dto';
-import { SequenceObjectDto } from './dto/sequence-object.dto';
-import { UpdateDoorDto } from './dto/update-door.dto';
-import { UpdateStateDto } from './dto/update-state.dto';
+import {
+  GetDoorDto,
+  OverrideStateDto,
+  SequenceObjectDto,
+  UpdateDoorDto,
+  UpdateStateDto,
+} from './dto';
 import {
   DoorQueue,
   DoorSequenceJobName,
@@ -47,7 +56,7 @@ export class DoorsController {
     private readonly doorsSequenceRunQueue: Queue,
     @InjectQueue(DoorQueue.DOORS_STATE_UPDATE)
     private readonly doorsStateUpdateQueue: Queue,
-    private readonly doorsLockService: DoorsLockOutService,
+    private readonly doorsLockOutService: DoorsLockOutService,
   ) {
     this.logger = new Logger(DoorsController.name);
   }
@@ -124,7 +133,6 @@ export class DoorsController {
     }
 
     const door = await this.doorsService.findOne(id);
-
     this.automationHatService.turnOffCommsLight();
 
     return {
@@ -317,7 +325,7 @@ export class DoorsController {
       throw new BadRequestException('Invalid Door id');
     }
 
-    const doorLockedOut = await this.doorsLockService.isLockedOut(id);
+    const doorLockedOut = await this.doorsLockOutService.isLockedOut(id);
     if (doorLockedOut) {
       this.automationHatService.turnOffCommsLight();
       throw new ConflictException('Door changing state is locked out');
@@ -363,6 +371,37 @@ export class DoorsController {
     this.logger.warn(`Invalid state ${body.state}`);
     this.automationHatService.turnOffCommsLight();
     throw new BadRequestException('Invalid state');
+  }
+
+  @ApiOperation({
+    summary: 'Override the state of a door',
+    description:
+      'This endpoint allows you to override the state of a door without runnning a sequence. Note that any running sequence/door job may override this.',
+  })
+  @ApiBody({
+    type: OverrideStateDto,
+    examples: { 'Override State': { value: { state: 'open' } } },
+  })
+  @ApiOkResponse({ type: null })
+  @Put(':id/state/override')
+  async overrideState(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: OverrideStateDto,
+  ): Promise<void> {
+    this.automationHatService.turnOnCommsLight();
+
+    if (![1, 2, 3].includes(id)) {
+      this.automationHatService.turnOffCommsLight();
+      this.logger.warn('Invalid door id');
+      throw new BadRequestException('Invalid Door id');
+    }
+
+    const door = await this.doorsService.findOne(id);
+    door.state = body.state;
+
+    await this.doorsService.update(door);
+
+    this.automationHatService.turnOffCommsLight();
   }
 
   private async emitCloseMessages(door: Door) {

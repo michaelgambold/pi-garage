@@ -16,8 +16,8 @@ env:
   FLUTTER_VERSION: 3.29.3
   NODE_VERSION: 20.15.x
   REDIS_HOST: localhost
-  REDIS_PORT: 6379
-  REDIS_VERSION: 7
+  # REDIS_PORT: 6379
+  # REDIS_VERSION: 7
 
 jobs:
   app:
@@ -57,10 +57,10 @@ jobs:
           cache: "npm"
           cache-dependency-path: service/package-lock.json
 
-      - name: Start Redis
-        uses: supercharge/redis-github-action@1.8.0
-        with:
-          redis-version: ${{ env.REDIS_VERSION }}
+      # - name: Start Redis
+      #   uses: supercharge/redis-github-action@1.8.0
+      #   with:
+      #     redis-version: ${{ env.REDIS_VERSION }}
 
       - name: Install packages
         run: npm ci
