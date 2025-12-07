@@ -166,6 +166,10 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.pushNamed(context, '/doors/${doorId.toString()}/settings');
     }
 
+    void handleOverrideDoorStateClicked(int doorId) {
+      Navigator.pushNamed(context, '/doors/${doorId.toString()}/override-state');
+    }
+
     return Layout(
         scaffoldMessangerKey: _scaffoldMessengerKey,
         title: widget.title,
@@ -177,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onDoorIconClicked: handleDoorIconClicked,
               onDoorSequenceClicked: handleDoorSequenceClicked,
               onDoorSettingsClicked: handleDoorSettingsClicked,
+              onOverrideDoorStateClicked: handleOverrideDoorStateClicked,
             ),
             onRefresh: () => _refresh(),
           ),

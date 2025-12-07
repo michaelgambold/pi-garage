@@ -9,13 +9,15 @@ class DoorListItem extends StatelessWidget {
       required this.door,
       required this.onDoorIconClicked,
       required this.onSettingsClicked,
-      required this.onSequenceClicked})
+      required this.onSequenceClicked,
+      required this.onOverrideStateClicked})
       : super(key: key);
 
   final Door door;
   final Future<void> Function() onDoorIconClicked;
   final VoidCallback onSettingsClicked;
   final VoidCallback onSequenceClicked;
+  final VoidCallback onOverrideStateClicked;
 
   handleMenuClick(String value) {
     switch (value) {
@@ -24,6 +26,10 @@ class DoorListItem extends StatelessWidget {
         break;
       case 'Sequence':
         onSequenceClicked();
+        break;
+      case 'Override State':
+        onOverrideStateClicked();
+        break;
     }
   }
 
@@ -59,6 +65,7 @@ class _Menu extends StatelessWidget {
       itemBuilder: (BuildContext context) => [
         const PopupMenuItem(value: "Settings", child: Text("Settings")),
         const PopupMenuItem(value: "Sequence", child: Text("Sequence")),
+        const PopupMenuItem(value: "Override State", child: Text("Override State")),
       ],
     );
   }
@@ -89,10 +96,16 @@ Widget defaultUseCase(BuildContext context) {
     print("Handle sequence clicked");
   }
 
+  void handleOverrideStateClicked() {
+    // ignore: avoid_print
+    print("Handle override state clicked");
+  }
+
   return DoorListItem(
     door: door,
     onDoorIconClicked: handleDoorIconClicked,
     onSequenceClicked: handleSequenceClicked,
     onSettingsClicked: handleSettingsClicked,
+    onOverrideStateClicked: handleOverrideStateClicked,
   );
 }

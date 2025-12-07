@@ -8,6 +8,7 @@ import 'screens/door_sequence_screen.dart';
 import 'screens/door_settings_screen.dart';
 import 'screens/edit_config_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/override_door_state_screen.dart';
 import 'services/migration_service.dart';
 
 Future<void> main() async {
@@ -98,6 +99,15 @@ class MyApp extends StatelessWidget {
                             title: 'Door $doorId Sequence',
                             doorId: doorId,
                           ));
+                }
+
+                if (childPath == 'override-state') {
+                  return MaterialPageRoute(
+                    builder: (context) => OverrideDoorStateScreen(
+                      title: 'Door $doorId Override State',
+                      doorId: doorId,
+                    ),
+                  );
                 }
 
                 return null;
