@@ -17,12 +17,11 @@ import 'package:pi_garage/widgets/config/config_list.dart' as _i8;
 import 'package:pi_garage/widgets/config/config_list_item.dart' as _i9;
 import 'package:pi_garage/widgets/door/door_list.dart' as _i10;
 import 'package:pi_garage/widgets/door/door_list_item.dart' as _i11;
-import 'package:pi_garage/widgets/door/override_door_state.dart' as _i12;
 import 'package:pi_garage/widgets/floating_add_button.dart' as _i2;
 import 'package:pi_garage/widgets/menu_drawer.dart' as _i3;
 import 'package:pi_garage/widgets/release_notes.dart' as _i4;
-import 'package:pi_garage/widgets/sequence/sequence_list.dart' as _i13;
-import 'package:pi_garage/widgets/sequence/sequence_list_item.dart' as _i14;
+import 'package:pi_garage/widgets/sequence/sequence_list.dart' as _i12;
+import 'package:pi_garage/widgets/sequence/sequence_list_item.dart' as _i13;
 import 'package:widgetbook/widgetbook.dart' as _i1;
 
 final directories = <_i1.WidgetbookNode>[
@@ -112,13 +111,6 @@ final directories = <_i1.WidgetbookNode>[
               builder: _i11.defaultUseCase,
             ),
           ),
-          _i1.WidgetbookLeafComponent(
-            name: 'OverrideDoorState',
-            useCase: _i1.WidgetbookUseCase(
-              name: 'default',
-              builder: _i12.defaultUseCase,
-            ),
-          ),
         ],
       ),
       _i1.WidgetbookFolder(
@@ -128,14 +120,14 @@ final directories = <_i1.WidgetbookNode>[
             name: 'SequenceList',
             useCase: _i1.WidgetbookUseCase(
               name: 'default',
-              builder: _i13.defaultUseCase,
+              builder: _i12.defaultUseCase,
             ),
           ),
           _i1.WidgetbookLeafComponent(
             name: 'SequenceListItem',
             useCase: _i1.WidgetbookUseCase(
               name: 'default',
-              builder: _i14.defaultUseCase,
+              builder: _i13.defaultUseCase,
             ),
           ),
         ],
