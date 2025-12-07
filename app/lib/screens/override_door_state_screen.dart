@@ -35,7 +35,6 @@ class _OverrideDoorStateScreenState extends State<OverrideDoorStateScreen> {
         ),
       );
     } catch (e) {
-      print(e);
       _scaffoldMessengerKey.currentState?.clearSnackBars();
       _scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
@@ -48,6 +47,12 @@ class _OverrideDoorStateScreenState extends State<OverrideDoorStateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void handleOnChanged(value) {
+      setState(() {
+        dropdownValue = value.toString();
+      });
+    }
+
     return Layout(
       title: widget.title,
       scaffoldMessangerKey: _scaffoldMessengerKey,
@@ -59,11 +64,7 @@ class _OverrideDoorStateScreenState extends State<OverrideDoorStateScreen> {
             ),
             items: items,
             value: dropdownValue,
-            onChanged: (value) {
-              setState(() {
-                dropdownValue = value.toString();
-              });
-            }
+            onChanged: handleOnChanged,
           ),
           const Spacer(),
           FilledButton(
@@ -71,7 +72,7 @@ class _OverrideDoorStateScreenState extends State<OverrideDoorStateScreen> {
               minimumSize: const Size.fromHeight(40)),
               onPressed: _save,
               child: const Text('Save'),
-            ),
+          ),
         ],
         )
       );
