@@ -11,7 +11,8 @@ class DoorList extends StatelessWidget {
       required this.doors,
       required this.onDoorIconClicked,
       required this.onDoorSequenceClicked,
-      required this.onDoorSettingsClicked})
+      required this.onDoorSettingsClicked,
+      required this.onOverrideDoorStateClicked})
       : super(key: key);
 
   final List<Door> doors;
@@ -19,6 +20,7 @@ class DoorList extends StatelessWidget {
   final AsyncValueSetter<int> onDoorIconClicked;
   final ValueSetter<int> onDoorSequenceClicked;
   final ValueSetter<int> onDoorSettingsClicked;
+  final ValueSetter<int> onOverrideDoorStateClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class DoorList extends StatelessWidget {
                 onDoorIconClicked: () => onDoorIconClicked(door.id),
                 onSequenceClicked: () => onDoorSequenceClicked(door.id),
                 onSettingsClicked: () => onDoorSettingsClicked(door.id),
+                onOverrideStateClicked: () => onOverrideDoorStateClicked(door.id),
               ))
           .toList(),
     );
@@ -51,6 +54,11 @@ Widget defaultUseCase(BuildContext context) {
     // ignore: avoid_print
     print("Door $doorId settings clicked");
   }
+  
+  void handleOverrideDoorStateClicked(int doorId) {
+    // ignore: avoid_print
+    print("Door $doorId override state clicked");
+  }
 
   List<Door> doors = [];
 
@@ -69,5 +77,6 @@ Widget defaultUseCase(BuildContext context) {
     onDoorIconClicked: handleDoorIconClicked,
     onDoorSequenceClicked: handleDoorSequenceClicked,
     onDoorSettingsClicked: handleDoorSettingsClicked,
+    onOverrideDoorStateClicked: handleOverrideDoorStateClicked,
   );
 }

@@ -59,6 +59,17 @@ class DoorRepository {
     throw Exception(res.reasonPhrase);
   }
 
+  Future<void> overrideDoorState(int doorId, String state) async {
+    var res = await _apiService.put(
+        '/api/v1/doors/$doorId/state/override', {'state': state});
+
+    if (res.statusCode == 200) {
+      return;
+    }
+
+    throw Exception(res.reasonPhrase);  
+  }
+
   Future<void> updateDoor(int doorId, UpdateDoor updateDoor) async {
     var res = await _apiService.put('/api/v1/doors/$doorId', updateDoor);
 
