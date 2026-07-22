@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  FLUTTER_VERSION: 3.29.3
+  FLUTTER_VERSION: 3.44.7
   RUBY_VERSION: 3.2.2
 
 jobs:
@@ -61,7 +61,7 @@ jobs:
         working-directory: ./app/android
 
   ios:
-    runs-on: macos-15
+    runs-on: macos-latest
 
     defaults:
       run:
