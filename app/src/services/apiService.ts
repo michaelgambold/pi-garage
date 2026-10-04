@@ -9,7 +9,7 @@ export class ApiService {
   private _appVersionService = new AppVersionService();
 
   private async _getHeaders(config: Config): Promise<Record<string, string>> {
-    const clientVersion = await this._appVersionService.getAppVersion();
+    const clientVersion = this._appVersionService.getApiClientVersion();
     return {
       'x-api-key': config.apiKey ?? '',
       'x-client-version': clientVersion,

@@ -76,14 +76,14 @@ export const HomeScreen: React.FC = () => {
     }
 
     try {
-      const appVersion = await appVersionService.getAppVersion();
+      const clientVersion = appVersionService.getApiClientVersion();
       const cleanFqdn = config.fqdn.replace(/\/+$/, '');
 
       const socket = io(`${cleanFqdn}/doors`, {
         transports: ['websocket'],
         extraHeaders: {
           'x-api-key': config.apiKey || '',
-          'x-client-version': appVersion,
+          'x-client-version': clientVersion,
         },
       });
 

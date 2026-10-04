@@ -1,30 +1,29 @@
 import DeviceInfo from 'react-native-device-info';
 
-export const DEFAULT_APP_VERSION = '3.2.1';
+/**
+ * The API client version used for semver compatibility with the backend service.
+ * The backend validates `x-client-version` against its major version (e.g. 3.x.x).
+ * This is decoupled from the mobile app's native release/store version (e.g. 1.0).
+ */
+export const API_CLIENT_VERSION = '3.2.1';
 
 export class AppVersionService {
+  /**
+   * Returns the API client version to send in the `x-client-version` header.
+   */
+  getApiClientVersion(): string {
+    return API_CLIENT_VERSION;
+  }
+
+  /**
+   * Returns the mobile app version for UI display and release notes tracking.
+   */
   async getAppVersion(): Promise<string> {
     try {
-      const rawVersion = DeviceInfo.getVersion();
-      if (
-        !rawVersion ||
-        typeof rawVersion !== 'string' ||
-        rawVersion === '1.0' ||
-        rawVersion === '0.0.1'
-      ) {
-        return DEFAULT_APP_VERSION;
-      }
-      const parts = rawVersion.split('.');
-      while (parts.length < 3) {
-        parts.push('0');
-      }
-      const semverVersion = parts.slice(0, 3).join('.');
-      if (semverVersion === '1.0.0') {
-        return DEFAULT_APP_VERSION;
-      }
-      return semverVersion;
+      const version = DeviceInfo.getVersion();
+      return version || '1.0.0';
     } catch {
-      return DEFAULT_APP_VERSION;
+      return '1.0.0';
     }
   }
 }

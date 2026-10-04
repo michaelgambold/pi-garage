@@ -60,7 +60,7 @@ export const EditConfigScreen: React.FC = () => {
 
     setTesting(true);
     const cleanFqdn = fqdn.trim().replace(/\/+$/, '');
-    const clientVersion = await appVersionService.getAppVersion();
+    const clientVersion = appVersionService.getApiClientVersion();
     const headers: Record<string, string> = {
       'x-client-version': clientVersion,
     };
