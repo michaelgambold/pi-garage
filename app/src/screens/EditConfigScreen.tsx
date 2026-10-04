@@ -17,7 +17,7 @@ export const EditConfigScreen: React.FC = () => {
   const route = useRoute<RootStackRouteProp<'EditConfig'>>();
   const { configId } = route.params;
 
-  const { currentConfig, reloadCurrentConfig } = useCurrentConfig();
+  const { currentConfig, reloadCurrentConfig, reloadConfigs } = useCurrentConfig();
   const configRepo = React.useMemo(() => new ConfigRepository(), []);
   const httpService = React.useMemo(() => new HttpService(), []);
 
@@ -107,6 +107,7 @@ export const EditConfigScreen: React.FC = () => {
       };
 
       await configRepo.updateConfig(updatedConfig);
+      await reloadConfigs();
       if (currentConfig?.id === config.id) {
         await reloadCurrentConfig();
       }

@@ -86,6 +86,7 @@ export const DoorSequenceScreen: React.FC = () => {
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={styles.scrollContent}
+          alwaysBounceVertical={true}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }

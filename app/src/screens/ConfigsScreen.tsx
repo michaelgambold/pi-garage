@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { FAB, Snackbar } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { Config } from '../types/config';
@@ -18,6 +18,12 @@ export const ConfigsScreen: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
   const configRepo = React.useMemo(() => new ConfigRepository(), []);
+
+  useFocusEffect(
+    useCallback(() => {
+      reloadConfigs();
+    }, [reloadConfigs])
+  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -61,6 +67,8 @@ export const ConfigsScreen: React.FC = () => {
       <View style={styles.container}>
         <ConfigList
           configs={configs}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
           onEditConfig={handleEditConfig}
           onRemoveConfig={handleRemoveConfig}
         />

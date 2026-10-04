@@ -1,10 +1,12 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { Door } from '../../types/door';
 import { DoorListItem } from './DoorListItem';
 
 interface DoorListProps {
   doors: Door[];
+  refreshing?: boolean;
+  onRefresh?: () => void;
   onDoorIconClicked: (doorId: number) => void | Promise<void>;
   onDoorSequenceClicked: (doorId: number) => void;
   onDoorSettingsClicked: (doorId: number) => void;
@@ -13,6 +15,8 @@ interface DoorListProps {
 
 export const DoorList: React.FC<DoorListProps> = ({
   doors,
+  refreshing = false,
+  onRefresh,
   onDoorIconClicked,
   onDoorSequenceClicked,
   onDoorSettingsClicked,
@@ -23,6 +27,12 @@ export const DoorList: React.FC<DoorListProps> = ({
       data={doors}
       keyExtractor={(item) => String(item.id)}
       contentContainerStyle={styles.listContent}
+      alwaysBounceVertical={true}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        ) : undefined
+      }
       renderItem={({ item }) => (
         <DoorListItem
           door={item}
@@ -39,5 +49,6 @@ export const DoorList: React.FC<DoorListProps> = ({
 const styles = StyleSheet.create({
   listContent: {
     paddingVertical: 4,
+    flexGrow: 1,
   },
 });

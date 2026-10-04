@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -43,8 +43,11 @@ export const AuditLogScreen: React.FC = () => {
   return (
     <Layout title="Audit Log" onBack={() => navigation.goBack()}>
       <View style={styles.container}>
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        <AuditLogList auditLogs={auditLogs} />
+        <AuditLogList
+          auditLogs={auditLogs}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        />
 
         <Snackbar
           visible={!!snackbarMessage}

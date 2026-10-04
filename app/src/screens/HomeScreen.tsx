@@ -181,6 +181,8 @@ export const HomeScreen: React.FC = () => {
       <View style={styles.container}>
         <DoorList
           doors={doors}
+          refreshing={refreshing}
+          onRefresh={refresh}
           onDoorIconClicked={handleDoorIconClicked}
           onDoorSequenceClicked={handleDoorSequenceClicked}
           onDoorSettingsClicked={handleDoorSettingsClicked}
