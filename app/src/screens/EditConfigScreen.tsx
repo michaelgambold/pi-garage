@@ -9,6 +9,7 @@ import { Config } from '../types/config';
 import { useCurrentConfig } from '../context/CurrentConfigContext';
 import { ConfigRepository } from '../repositories/configRepository';
 import { HttpService } from '../services/httpService';
+import { AppVersionService } from '../services/appVersionService';
 import { Layout } from '../components/Layout';
 
 export const EditConfigScreen: React.FC = () => {
@@ -20,6 +21,7 @@ export const EditConfigScreen: React.FC = () => {
   const { currentConfig, reloadCurrentConfig, reloadConfigs } = useCurrentConfig();
   const configRepo = React.useMemo(() => new ConfigRepository(), []);
   const httpService = React.useMemo(() => new HttpService(), []);
+  const appVersionService = React.useMemo(() => new AppVersionService(), []);
 
   const [config, setConfig] = useState<Config | null>(null);
   const [name, setName] = useState('');
@@ -58,7 +60,10 @@ export const EditConfigScreen: React.FC = () => {
 
     setTesting(true);
     const cleanFqdn = fqdn.trim().replace(/\/+$/, '');
-    const headers: Record<string, string> = {};
+    const clientVersion = await appVersionService.getAppVersion();
+    const headers: Record<string, string> = {
+      'x-client-version': clientVersion,
+    };
     if (apiKey.trim()) {
       headers['x-api-key'] = apiKey.trim();
     }
