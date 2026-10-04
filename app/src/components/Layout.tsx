@@ -22,7 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['left', 'right', 'bottom']}>
-      <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
+      <Appbar.Header mode="center-aligned" elevated style={{ backgroundColor: theme.colors.surface }}>
         {onOpenDrawer && (
           <Appbar.Action
             icon="menu"
@@ -36,7 +36,10 @@ export const Layout: React.FC<LayoutProps> = ({
             onPress={onBack}
           />
         )}
-        <Appbar.Content title={title} titleStyle={{ fontWeight: '500' }} />
+        <Appbar.Content
+          title={title}
+          titleStyle={{ fontWeight: '500', textAlign: 'center' }}
+        />
       </Appbar.Header>
 
       <View style={[styles.body, style]}>
