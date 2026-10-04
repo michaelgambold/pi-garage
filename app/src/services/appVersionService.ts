@@ -1,11 +1,12 @@
 import DeviceInfo from 'react-native-device-info';
+import packageJson from '../../package.json';
 
 /**
  * The API client version used for semver compatibility with the backend service.
+ * Sourced directly from package.json version (e.g. 3.2.1) to serve as the single source of truth.
  * The backend validates `x-client-version` against its major version (e.g. 3.x.x).
- * This is decoupled from the mobile app's native release/store version (e.g. 1.0).
  */
-export const API_CLIENT_VERSION = '3.2.1';
+export const API_CLIENT_VERSION: string = packageJson.version || '3.2.1';
 
 export class AppVersionService {
   /**
@@ -21,9 +22,9 @@ export class AppVersionService {
   async getAppVersion(): Promise<string> {
     try {
       const version = DeviceInfo.getVersion();
-      return version || '1.0.0';
+      return version || packageJson.version || '1.0.0';
     } catch {
-      return '1.0.0';
+      return packageJson.version || '1.0.0';
     }
   }
 }

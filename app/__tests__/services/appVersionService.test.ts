@@ -33,7 +33,7 @@ describe('AppVersionService', () => {
     it('returns fallback version when DeviceInfo returns null', async () => {
       (DeviceInfo.getVersion as jest.Mock).mockReturnValue(null);
       const version = await service.getAppVersion();
-      expect(version).toBe('1.0.0');
+      expect(version).toBe(API_CLIENT_VERSION);
     });
   });
 });
