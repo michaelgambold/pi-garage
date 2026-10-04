@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { RefreshControl, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { io, Socket } from 'socket.io-client';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';

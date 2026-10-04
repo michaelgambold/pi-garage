@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 /**
  * Generates an RFC4122 version 4 compliant UUID.
  * Works reliably in React Native/Hermes without requiring external crypto polyfills.

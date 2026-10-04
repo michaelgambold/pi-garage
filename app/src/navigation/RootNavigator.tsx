@@ -15,10 +15,12 @@ import { AuditLogScreen } from '../screens/AuditLogScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
+const renderDrawerContent = (props: any) => <MenuDrawer {...props} />;
+
 const HomeDrawerNavigator = () => {
   return (
     <Drawer.Navigator
-      drawerContent={(props) => <MenuDrawer {...props} />}
+      drawerContent={renderDrawerContent}
       screenOptions={{
         headerShown: false,
         drawerType: 'front',

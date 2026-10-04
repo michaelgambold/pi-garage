@@ -38,7 +38,7 @@ export const Layout: React.FC<LayoutProps> = ({
         )}
         <Appbar.Content
           title={title}
-          titleStyle={{ fontWeight: '500', textAlign: 'center' }}
+          titleStyle={styles.title}
         />
       </Appbar.Header>
 
@@ -52,6 +52,10 @@ export const Layout: React.FC<LayoutProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  title: {
+    fontWeight: '500',
+    textAlign: 'center',
   },
   body: {
     flex: 1,

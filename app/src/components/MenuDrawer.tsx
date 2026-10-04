@@ -6,6 +6,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCurrentConfig } from '../context/CurrentConfigContext';
 import { AppVersionService } from '../services/appVersionService';
 
+const renderConfigIcon = (props: any) => <List.Icon {...props} icon="cog-outline" />;
+const renderAuditLogIcon = (props: any) => <List.Icon {...props} icon="history" />;
+
 export const MenuDrawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
   const theme = useTheme();
   const { currentConfig, configs, setCurrentConfig } = useCurrentConfig();
@@ -63,7 +66,7 @@ export const MenuDrawer: React.FC<DrawerContentComponentProps> = ({ navigation }
       <View style={styles.menuItems}>
         <List.Item
           title="Configs"
-          left={(props) => <List.Icon {...props} icon="cog-outline" />}
+          left={renderConfigIcon}
           onPress={() => {
             navigation.closeDrawer();
             navigation.navigate('Configs' as never);
@@ -71,7 +74,7 @@ export const MenuDrawer: React.FC<DrawerContentComponentProps> = ({ navigation }
         />
         <List.Item
           title="Audit Log"
-          left={(props) => <List.Icon {...props} icon="history" />}
+          left={renderAuditLogIcon}
           onPress={() => {
             navigation.closeDrawer();
             navigation.navigate('AuditLog' as never);

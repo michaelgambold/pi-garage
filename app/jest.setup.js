@@ -1,9 +1,9 @@
+/* eslint-env jest */
 require('react-native-gesture-handler/jestSetup');
 
 jest.mock('react-native-worklets', () => ({}));
 
 jest.mock('react-native-reanimated', () => {
-  const React = require('react');
   const View = require('react-native').View;
   return {
     default: {
