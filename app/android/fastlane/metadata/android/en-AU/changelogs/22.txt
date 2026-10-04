@@ -1,0 +1,1 @@
+Add ability to set open/close durations for a given door.

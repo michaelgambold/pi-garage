@@ -30,15 +30,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
 
       - name: Install packages
-        run: flutter pub get
+        run: npm ci
 
       - name: Run Tests
-        run: flutter test
+        run: npm test
 
   service:
     runs-on: ubuntu-latest

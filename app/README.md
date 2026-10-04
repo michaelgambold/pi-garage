@@ -1,97 +1,91 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Pi Garage Mobile App (React Native)
 
-# Getting Started
+Cross-platform mobile application for **Pi Garage**, built with **React Native** and **Material Design 3** (`react-native-paper`).
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## Getting Started
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### Prerequisites
+- Node.js >= 20.x
+- JDK 17
+- Xcode (for iOS) & CocoaPods
+- Android Studio & Android SDK (for Android)
 
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+### Install Dependencies
+```bash
+npm install
+cd ios && bundle exec pod install && cd ..
 ```
 
-## Step 2: Build and run your app
+### Running Locally
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+#### Android
+```bash
+npm run android
+```
+
+#### iOS
+```bash
+npm run ios
+# Or open ios/PiGarage.xcworkspace in Xcode and hit Run
+```
+
+### Running Tests & Type Checks
+```bash
+npm test
+npx tsc --noEmit
+```
+
+---
+
+## Material Design 3 (Look & Feel)
+
+The UI is built with `react-native-paper` (v5) implementing Material Design 3 with:
+- Blue seed color scheme (`#1976D2`)
+- Elevation-based Cards
+- Material Appbar Header & Drawer
+- Material Floating Action Buttons (FAB)
+- Material text inputs and menus
+
+---
+
+## Automated Screenshots (Maestro)
+
+Screenshots can be automatically captured across required devices and resolutions using [Maestro](https://maestro.mobile.dev/):
+
+```bash
+# Install Maestro
+curl -FsSL "https://get.maestro.mobile.dev" | bash
+
+# Run screenshot flow
+maestro test .maestro/screenshots.yaml
+```
+
+Target screen sizes for App Store and Google Play:
+- **iOS 5.5"**: iPhone 8 Plus
+- **iOS 6.5"**: iPhone 14 Plus / 15 Plus
+- **iOS 12.9"**: iPad Pro 12.9" 2nd Gen & 6th Gen
+- **Android Phone**: Pixel 3a
+
+---
+
+## Publishing with Fastlane
+
+Publishing pipelines remain identical to previous versions using Fastlane.
 
 ### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+cd android
+bundle exec fastlane deploy
 ```
+*Outputs release bundle to `android/app/build/outputs/bundle/release/app-release.aab` and uploads to Google Play.*
 
 ### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```bash
+cd ios
+bundle exec fastlane update_signing_settings
+bundle exec fastlane get_ios_certs
+bundle exec fastlane release
 ```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+*Builds `PiGarage.xcworkspace` and uploads to App Store Connect.*

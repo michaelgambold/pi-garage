@@ -1,13 +1,13 @@
-/**
- * @format
- */
-
 import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import App from '../App';
 
-test('renders correctly', async () => {
-  await ReactTestRenderer.act(() => {
-    ReactTestRenderer.create(<App />);
+describe('App', () => {
+  it('renders correctly', async () => {
+    let tree: any;
+    await ReactTestRenderer.act(async () => {
+      tree = ReactTestRenderer.create(<App />);
+    });
+    expect(tree).toBeDefined();
   });
 });

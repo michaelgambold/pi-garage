@@ -1,0 +1,1 @@
+Fix Android app display name. Upgrade dependencies.

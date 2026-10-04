@@ -1,0 +1,2 @@
+Updated to fully support Material 3 UI.
+Various other fixes/improvements.

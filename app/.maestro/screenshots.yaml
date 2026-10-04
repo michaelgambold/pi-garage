@@ -1,0 +1,13 @@
+appId: com.michaelgambold.pigarage
+---
+- launchApp:
+    clearState: true
+- takeScreenshot: ../ios/fastlane/screenshots/0_APP_HOME
+- tapOn:
+    text: "Settings"
+    optional: true
+- takeScreenshot: ../ios/fastlane/screenshots/1_APP_DOOR_SETTINGS
+- back
+- openLink: "pigarage://configs"
+    optional: true
+- takeScreenshot: ../ios/fastlane/screenshots/2_APP_CONFIGS

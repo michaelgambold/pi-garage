@@ -1,0 +1,1 @@
+Re-add door lockout to prevent lockup of hardware.
