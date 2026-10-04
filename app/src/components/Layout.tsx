@@ -21,8 +21,8 @@ export const Layout: React.FC<LayoutProps> = ({
   const theme = useTheme();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top', 'left', 'right']}>
-      <Appbar.Header elevated style={{ backgroundColor: theme.colors.surface }}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['left', 'right', 'bottom']}>
+      <Appbar.Header mode="small" elevated style={{ backgroundColor: theme.colors.surface }}>
         {onOpenDrawer && (
           <Appbar.Action
             icon="menu"
