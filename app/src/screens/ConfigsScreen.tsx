@@ -3,14 +3,13 @@ import { View, StyleSheet, RefreshControl } from 'react-native';
 import { FAB, Snackbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { v4 as uuidv4 } from 'uuid';
-
 import { RootStackParamList } from '../navigation/types';
 import { Config } from '../types/config';
 import { useCurrentConfig } from '../context/CurrentConfigContext';
 import { ConfigRepository } from '../repositories/configRepository';
 import { Layout } from '../components/Layout';
 import { ConfigList } from '../components/config/ConfigList';
+import { generateUuid } from '../utils/uuid';
 
 export const ConfigsScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -32,7 +31,7 @@ export const ConfigsScreen: React.FC = () => {
   const handleAddPressed = async () => {
     try {
       const newConfig: Config = {
-        id: uuidv4(),
+        id: generateUuid(),
         name: 'New Config',
         fqdn: '',
         apiKey: null,

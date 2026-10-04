@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Config } from '../types/config';
 import { ConfigRepository } from '../repositories/configRepository';
 import { LocalStorageService } from './localStorageService';
+import { generateUuid } from '../utils/uuid';
 
 export class MigrationService {
   async runAll(): Promise<void> {
@@ -27,7 +27,7 @@ export class MigrationService {
 
     // Create new config item
     const config: Config = {
-      id: uuidv4(),
+      id: generateUuid(),
       name: 'default',
       fqdn,
       apiKey: apiKey || null,
