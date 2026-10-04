@@ -170,10 +170,12 @@ export const EditConfigScreen: React.FC = () => {
 
         <View style={styles.buttons}>
           <Button
-            mode="contained-tonal"
+            mode="contained"
             onPress={handleTestConnection}
             loading={testing}
             disabled={testing || saving}
+            buttonColor={theme.dark ? '#3E4246' : '#E0E0E0'}
+            textColor={theme.dark ? '#F0F0F0' : '#333333'}
             style={styles.button}
           >
             Test
