@@ -27,6 +27,9 @@ DerivedData
 build/
 .idea
 .gradle
+.cxx/
+*.apk
+*.aab
 # local.properties and keystore credentials
 local.properties
 key.properties
