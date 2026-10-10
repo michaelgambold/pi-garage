@@ -130,7 +130,9 @@ export const EditConfigScreen: React.FC = () => {
         <View style={styles.form}>
           <TextInput
             label="Name"
-            mode="outlined"
+            mode="flat"
+            underlineColor={theme.colors.outline}
+            activeUnderlineColor={theme.colors.primary}
             value={name}
             onChangeText={(text) => {
               setName(text);
@@ -138,12 +140,15 @@ export const EditConfigScreen: React.FC = () => {
             }}
             error={!!nameError}
             style={styles.input}
+            contentStyle={styles.inputContent}
           />
           {!!nameError && <HelperText type="error">{nameError}</HelperText>}
 
           <TextInput
             label="FQDN"
-            mode="outlined"
+            mode="flat"
+            underlineColor={theme.colors.outline}
+            activeUnderlineColor={theme.colors.primary}
             value={fqdn}
             autoCapitalize="none"
             autoCorrect={false}
@@ -154,17 +159,21 @@ export const EditConfigScreen: React.FC = () => {
             }}
             error={!!fqdnError}
             style={styles.input}
+            contentStyle={styles.inputContent}
           />
           {!!fqdnError && <HelperText type="error">{fqdnError}</HelperText>}
 
           <TextInput
             label="API Key"
-            mode="outlined"
+            mode="flat"
+            underlineColor={theme.colors.outline}
+            activeUnderlineColor={theme.colors.primary}
             value={apiKey}
             autoCapitalize="none"
             autoCorrect={false}
             onChangeText={setApiKey}
             style={styles.input}
+            contentStyle={styles.inputContent}
           />
         </View>
 
@@ -174,9 +183,10 @@ export const EditConfigScreen: React.FC = () => {
             onPress={handleTestConnection}
             loading={testing}
             disabled={testing || saving}
-            buttonColor={theme.dark ? '#3E4246' : '#E0E0E0'}
-            textColor={theme.dark ? '#F0F0F0' : '#333333'}
-            style={styles.button}
+            buttonColor="#9E9E9E"
+            textColor="#FFFFFF"
+            style={styles.pillButton}
+            labelStyle={styles.buttonLabel}
           >
             Test
           </Button>
@@ -186,7 +196,10 @@ export const EditConfigScreen: React.FC = () => {
             onPress={handleSave}
             loading={saving}
             disabled={testing || saving}
-            style={styles.button}
+            buttonColor="#0061A4"
+            textColor="#FFFFFF"
+            style={styles.pillButton}
+            labelStyle={styles.buttonLabel}
           >
             Save
           </Button>
@@ -212,16 +225,27 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   form: {
-    gap: 12,
+    gap: 8,
   },
   input: {
     backgroundColor: 'transparent',
+    paddingHorizontal: 0,
+  },
+  inputContent: {
+    paddingHorizontal: 0,
   },
   buttons: {
     gap: 12,
     marginTop: 24,
+    marginBottom: 8,
   },
-  button: {
-    borderRadius: 8,
+  pillButton: {
+    borderRadius: 24,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { TextInput, Button, Switch, Text, Snackbar, useTheme } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { TextInput, Button, Checkbox, Text, Snackbar, useTheme } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -71,39 +71,53 @@ export const DoorSettingsScreen: React.FC = () => {
     <Layout title={`Door ${doorId} Settings`} onBack={() => navigation.goBack()}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.form}>
-          <View style={styles.switchRow}>
-            <Text variant="titleMedium">Enabled</Text>
-            <Switch
-              value={isEnabled}
-              onValueChange={setIsEnabled}
-              color={theme.colors.primary}
+          <Pressable
+            style={styles.checkboxRow}
+            onPress={() => setIsEnabled(!isEnabled)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: isEnabled }}
+          >
+            <Text style={styles.checkboxLabel}>Enabled</Text>
+            <Checkbox.Android
+              status={isEnabled ? 'checked' : 'unchecked'}
+              onPress={() => setIsEnabled(!isEnabled)}
+              color="#0061A4"
             />
-          </View>
+          </Pressable>
 
           <TextInput
             label="Label"
-            mode="outlined"
+            mode="flat"
+            underlineColor={theme.colors.outline}
+            activeUnderlineColor={theme.colors.primary}
             value={label}
             onChangeText={setLabel}
             style={styles.input}
+            contentStyle={styles.inputContent}
           />
 
           <TextInput
             label="Open Duration (ms)"
-            mode="outlined"
+            mode="flat"
+            underlineColor={theme.colors.outline}
+            activeUnderlineColor={theme.colors.primary}
             keyboardType="numeric"
             value={openDuration}
             onChangeText={(text) => setOpenDuration(text.replace(/[^0-9]/g, ''))}
             style={styles.input}
+            contentStyle={styles.inputContent}
           />
 
           <TextInput
             label="Close Duration (ms)"
-            mode="outlined"
+            mode="flat"
+            underlineColor={theme.colors.outline}
+            activeUnderlineColor={theme.colors.primary}
             keyboardType="numeric"
             value={closeDuration}
             onChangeText={(text) => setCloseDuration(text.replace(/[^0-9]/g, ''))}
             style={styles.input}
+            contentStyle={styles.inputContent}
           />
         </View>
 
@@ -113,7 +127,10 @@ export const DoorSettingsScreen: React.FC = () => {
             onPress={handleSave}
             loading={saving}
             disabled={saving}
-            style={styles.button}
+            buttonColor="#0061A4"
+            textColor="#FFFFFF"
+            style={styles.pillButton}
+            labelStyle={styles.buttonLabel}
           >
             Save
           </Button>
@@ -139,21 +156,36 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   form: {
-    gap: 16,
+    gap: 8,
   },
-  switchRow: {
+  checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 4,
+    paddingVertical: 6,
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    fontWeight: '400',
   },
   input: {
     backgroundColor: 'transparent',
+    paddingHorizontal: 0,
+  },
+  inputContent: {
+    paddingHorizontal: 0,
   },
   buttonContainer: {
     marginTop: 24,
+    marginBottom: 8,
   },
-  button: {
-    borderRadius: 8,
+  pillButton: {
+    borderRadius: 24,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });

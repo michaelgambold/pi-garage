@@ -18,11 +18,12 @@ export const ConfigListItem: React.FC<ConfigListItemProps> = ({
   const [menuVisible, setMenuVisible] = useState(false);
 
   return (
-    <Card style={styles.card} mode="elevated">
+    <Card style={[styles.card, { backgroundColor: theme.colors.surfaceVariant }]} mode="elevated">
       <List.Item
         title={config.name}
         description={config.fqdn}
         titleStyle={styles.title}
+        descriptionStyle={styles.description}
         right={() => (
           <View style={styles.menuAnchor}>
             <Menu
@@ -32,6 +33,7 @@ export const ConfigListItem: React.FC<ConfigListItemProps> = ({
                 <IconButton
                   icon="dots-vertical"
                   size={24}
+                  iconColor={theme.colors.onSurfaceVariant}
                   onPress={() => setMenuVisible(true)}
                   accessibilityLabel={`Options for ${config.name}`}
                 />
@@ -66,7 +68,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   title: {
-    fontWeight: '500',
+    fontWeight: '400',
+    fontSize: 16,
+  },
+  description: {
+    fontSize: 14,
   },
   menuAnchor: {
     justifyContent: 'center',

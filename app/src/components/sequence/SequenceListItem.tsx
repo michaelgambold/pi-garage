@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Card, TextInput, Menu, Button, IconButton, useTheme } from 'react-native-paper';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { Card, TextInput, Menu, IconButton, Text, useTheme } from 'react-native-paper';
 import { SequenceObject, SequenceAction, SequenceTarget } from '../../types/sequence';
 
 interface SequenceListItemProps {
@@ -41,7 +41,7 @@ export const SequenceListItem: React.FC<SequenceListItemProps> = ({
     TARGET_OPTIONS.find((o) => o.value === sequenceObject.target)?.label || sequenceObject.target;
 
   return (
-    <Card style={styles.card} mode="elevated">
+    <Card style={[styles.card, { backgroundColor: theme.colors.surfaceVariant }]} mode="elevated">
       <View style={styles.row}>
         <View style={styles.formColumn}>
           {/* Action Dropdown */}
@@ -49,15 +49,23 @@ export const SequenceListItem: React.FC<SequenceListItemProps> = ({
             visible={actionMenuVisible}
             onDismiss={() => setActionMenuVisible(false)}
             anchor={
-              <Button
-                mode="outlined"
-                icon="menu-down"
-                contentStyle={styles.buttonContent}
-                style={styles.dropdown}
+              <Pressable
+                style={[styles.dropdownContainer, { borderBottomColor: theme.colors.outline }]}
                 onPress={() => setActionMenuVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Select Action"
               >
-                {`Action: ${selectedActionLabel}`}
-              </Button>
+                <View style={styles.dropdownTextWrapper}>
+                  <Text style={[styles.fieldLabel, { color: theme.colors.onSurfaceVariant }]}>Action</Text>
+                  <Text style={styles.fieldValue}>{selectedActionLabel}</Text>
+                </View>
+                <IconButton
+                  icon="menu-down"
+                  size={24}
+                  iconColor={theme.colors.onSurfaceVariant}
+                  style={styles.dropdownIcon}
+                />
+              </Pressable>
             }
           >
             {ACTION_OPTIONS.map((option) => (
@@ -77,15 +85,23 @@ export const SequenceListItem: React.FC<SequenceListItemProps> = ({
             visible={targetMenuVisible}
             onDismiss={() => setTargetMenuVisible(false)}
             anchor={
-              <Button
-                mode="outlined"
-                icon="menu-down"
-                contentStyle={styles.buttonContent}
-                style={styles.dropdown}
+              <Pressable
+                style={[styles.dropdownContainer, { borderBottomColor: theme.colors.outline }]}
                 onPress={() => setTargetMenuVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Select Target"
               >
-                {`Target: ${selectedTargetLabel}`}
-              </Button>
+                <View style={styles.dropdownTextWrapper}>
+                  <Text style={[styles.fieldLabel, { color: theme.colors.onSurfaceVariant }]}>Target</Text>
+                  <Text style={styles.fieldValue}>{selectedTargetLabel}</Text>
+                </View>
+                <IconButton
+                  icon="menu-down"
+                  size={24}
+                  iconColor={theme.colors.onSurfaceVariant}
+                  style={styles.dropdownIcon}
+                />
+              </Pressable>
             }
           >
             {TARGET_OPTIONS.map((option) => (
@@ -103,7 +119,9 @@ export const SequenceListItem: React.FC<SequenceListItemProps> = ({
           {/* Duration Input */}
           <TextInput
             label="Duration (ms)"
-            mode="outlined"
+            mode="flat"
+            underlineColor={theme.colors.outline}
+            activeUnderlineColor={theme.colors.primary}
             keyboardType="numeric"
             value={String(sequenceObject.duration || 0)}
             onChangeText={(text) => {
@@ -112,6 +130,7 @@ export const SequenceListItem: React.FC<SequenceListItemProps> = ({
               onChanged({ ...sequenceObject, duration: parsed });
             }}
             style={styles.input}
+            contentStyle={styles.inputContent}
           />
         </View>
 
@@ -119,11 +138,12 @@ export const SequenceListItem: React.FC<SequenceListItemProps> = ({
         <View style={styles.actionColumn}>
           <IconButton
             icon="close"
-            size={20}
-            mode="contained-tonal"
-            containerColor={theme.colors.surfaceVariant}
-            iconColor={theme.colors.onSurfaceVariant}
+            size={18}
+            containerColor="#9E9E9E"
+            iconColor="#FFFFFF"
+            mode="contained"
             onPress={onRemove}
+            style={styles.removeButton}
             accessibilityLabel="Remove Sequence Step"
           />
         </View>
@@ -146,19 +166,46 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 8,
   },
-  buttonContent: {
-    flexDirection: 'row-reverse',
+  dropdownContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    paddingVertical: 4,
   },
-  dropdown: {
-    borderRadius: 8,
+  dropdownTextWrapper: {
+    flex: 1,
+  },
+  fieldLabel: {
+    fontSize: 12,
+    fontWeight: '400',
+  },
+  fieldValue: {
+    fontSize: 16,
+    fontWeight: '400',
+    marginTop: 2,
+  },
+  dropdownIcon: {
+    margin: 0,
+    width: 24,
+    height: 24,
   },
   input: {
     backgroundColor: 'transparent',
+    paddingHorizontal: 0,
+  },
+  inputContent: {
+    paddingHorizontal: 0,
   },
   actionColumn: {
     marginLeft: 8,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  removeButton: {
+    margin: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
 });

@@ -22,12 +22,12 @@ export const DoorListItem: React.FC<DoorListItemProps> = ({
   const [menuVisible, setMenuVisible] = useState(false);
 
   return (
-    <Card style={styles.card} mode="elevated">
+    <Card style={[styles.card, { backgroundColor: theme.colors.surfaceVariant }]} mode="elevated">
       <View style={styles.cardRow}>
         <IconButton
-          icon="garage"
+          icon="garage-variant"
           size={48}
-          iconColor={door.isEnabled ? theme.colors.primary : theme.colors.surfaceDisabled}
+          iconColor={door.isEnabled ? theme.colors.onSurfaceVariant : theme.colors.surfaceDisabled}
           disabled={!door.isEnabled}
           onPress={onDoorIconClicked}
           style={styles.doorIcon}
@@ -45,6 +45,7 @@ export const DoorListItem: React.FC<DoorListItemProps> = ({
             <IconButton
               icon="dots-vertical"
               size={24}
+              iconColor={theme.colors.onSurfaceVariant}
               onPress={() => setMenuVisible(true)}
               accessibilityLabel={`Options for ${door.label}`}
             />
@@ -95,6 +96,6 @@ const styles = StyleSheet.create({
   label: {
     flex: 1,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '400',
   },
 });

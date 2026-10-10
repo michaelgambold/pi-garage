@@ -75,6 +75,7 @@ export const ConfigsScreen: React.FC = () => {
 
         <FAB
           icon="plus"
+          color="#FFFFFF"
           style={styles.fab}
           onPress={handleAddPressed}
           accessibilityLabel="Add New Configuration"
@@ -100,5 +101,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     bottom: 16,
+    backgroundColor: '#0061A4',
   },
 });

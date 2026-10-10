@@ -22,7 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['left', 'right', 'bottom']}>
-      <Appbar.Header mode="center-aligned" elevated style={{ backgroundColor: theme.colors.surface }}>
+      <Appbar.Header mode="center-aligned" style={{ backgroundColor: theme.colors.surface }}>
         {onOpenDrawer && (
           <Appbar.Action
             icon="menu"
@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontWeight: '500',
+    fontWeight: '400',
+    fontSize: 22,
     textAlign: 'center',
   },
   body: {

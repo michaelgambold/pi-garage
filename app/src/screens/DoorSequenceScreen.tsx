@@ -102,7 +102,10 @@ export const DoorSequenceScreen: React.FC = () => {
             onPress={handleSave}
             loading={saving}
             disabled={saving}
-            style={styles.saveButton}
+            buttonColor="#0061A4"
+            textColor="#FFFFFF"
+            style={styles.pillButton}
+            labelStyle={styles.buttonLabel}
           >
             Save
           </Button>
@@ -110,6 +113,7 @@ export const DoorSequenceScreen: React.FC = () => {
 
         <FAB
           icon="plus"
+          color="#FFFFFF"
           style={styles.fab}
           onPress={handleAddSequenceObject}
           accessibilityLabel="Add Sequence Step"
@@ -135,13 +139,20 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 80,
   },
-  saveButton: {
+  pillButton: {
     marginTop: 16,
-    borderRadius: 8,
+    borderRadius: 24,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: '500',
   },
   fab: {
     position: 'absolute',
     right: 16,
     bottom: 16,
+    backgroundColor: '#0061A4',
   },
 });

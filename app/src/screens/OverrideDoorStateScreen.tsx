@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Menu, Snackbar, useTheme } from 'react-native-paper';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { Button, Menu, IconButton, Text, Snackbar, useTheme } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -47,15 +47,23 @@ export const OverrideDoorStateScreen: React.FC = () => {
             visible={menuVisible}
             onDismiss={() => setMenuVisible(false)}
             anchor={
-              <Button
-                mode="outlined"
-                icon="menu-down"
-                contentStyle={styles.buttonContent}
-                style={[styles.dropdownButton, { borderColor: theme.colors.outline }]}
+              <Pressable
+                style={[styles.dropdownContainer, { borderBottomColor: theme.colors.outline }]}
                 onPress={() => setMenuVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Select State"
               >
-                {`State: ${stateValue === 'open' ? 'Open' : 'Closed'}`}
-              </Button>
+                <View style={styles.dropdownTextWrapper}>
+                  <Text style={[styles.fieldLabel, { color: theme.colors.onSurfaceVariant }]}>State</Text>
+                  <Text style={styles.fieldValue}>{stateValue === 'open' ? 'Open' : 'Closed'}</Text>
+                </View>
+                <IconButton
+                  icon="menu-down"
+                  size={24}
+                  iconColor={theme.colors.onSurfaceVariant}
+                  style={styles.dropdownIcon}
+                />
+              </Pressable>
             }
           >
             <Menu.Item
@@ -81,7 +89,10 @@ export const OverrideDoorStateScreen: React.FC = () => {
             onPress={handleSave}
             loading={saving}
             disabled={saving}
-            style={styles.saveButton}
+            buttonColor="#0061A4"
+            textColor="#FFFFFF"
+            style={styles.pillButton}
+            labelStyle={styles.buttonLabel}
           >
             Save
           </Button>
@@ -109,17 +120,40 @@ const styles = StyleSheet.create({
   form: {
     paddingVertical: 8,
   },
-  dropdownButton: {
-    borderRadius: 8,
-  },
-  buttonContent: {
-    flexDirection: 'row-reverse',
+  dropdownContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    paddingVertical: 4,
+  },
+  dropdownTextWrapper: {
+    flex: 1,
+  },
+  fieldLabel: {
+    fontSize: 12,
+    fontWeight: '400',
+  },
+  fieldValue: {
+    fontSize: 16,
+    fontWeight: '400',
+    marginTop: 2,
+  },
+  dropdownIcon: {
+    margin: 0,
+    width: 24,
+    height: 24,
   },
   buttonContainer: {
     marginBottom: 8,
   },
-  saveButton: {
-    borderRadius: 8,
+  pillButton: {
+    borderRadius: 24,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });

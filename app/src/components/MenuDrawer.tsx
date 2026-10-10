@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
-import { Text, Menu, Button, List, Divider, useTheme } from 'react-native-paper';
+import { Text, Menu, Icon, Divider, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCurrentConfig } from '../context/CurrentConfigContext';
 import { AppVersionService } from '../services/appVersionService';
-
-const renderConfigIcon = (props: any) => <List.Icon {...props} icon="cog-outline" />;
-const renderAuditLogIcon = (props: any) => <List.Icon {...props} icon="history" />;
 
 export const MenuDrawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
   const theme = useTheme();
@@ -21,7 +18,7 @@ export const MenuDrawer: React.FC<DrawerContentComponentProps> = ({ navigation }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.surface }]} edges={['top', 'bottom', 'left']}>
-      <View style={[styles.header, { backgroundColor: theme.colors.surfaceVariant }]}>
+      <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
         <Text variant="headlineSmall" style={styles.headerTitle}>
           Menu
         </Text>
@@ -32,15 +29,21 @@ export const MenuDrawer: React.FC<DrawerContentComponentProps> = ({ navigation }
             visible={dropdownVisible}
             onDismiss={() => setDropdownVisible(false)}
             anchor={
-              <Button
-                mode="outlined"
-                icon="menu-down"
-                contentStyle={styles.buttonContent}
-                style={[styles.dropdownButton, { borderColor: theme.colors.outline }]}
+              <Pressable
+                style={[styles.dropdownButton, { borderBottomColor: theme.colors.outline }]}
                 onPress={() => setDropdownVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Select Config"
               >
-                {currentConfig ? currentConfig.name : 'Select Config'}
-              </Button>
+                <Text style={styles.dropdownLabel}>
+                  {currentConfig ? currentConfig.name : 'Select Config'}
+                </Text>
+                <Icon
+                  source="menu-down"
+                  size={24}
+                  color={theme.colors.onSurfaceVariant}
+                />
+              </Pressable>
             }
           >
             {configs.map((config) => (
@@ -56,30 +59,36 @@ export const MenuDrawer: React.FC<DrawerContentComponentProps> = ({ navigation }
           </Menu>
         </View>
 
-        <Text variant="labelSmall" style={styles.versionText}>
-          {appVersion ? `v${appVersion}` : ''}
+        <Text variant="labelSmall" style={[styles.versionText, { color: theme.colors.onSurfaceVariant }]}>
+          {appVersion || ''}
         </Text>
       </View>
 
       <Divider />
 
       <View style={styles.menuItems}>
-        <List.Item
-          title="Configs"
-          left={renderConfigIcon}
+        <Pressable
+          style={styles.menuItem}
           onPress={() => {
             navigation.closeDrawer();
             navigation.navigate('Configs' as never);
           }}
-        />
-        <List.Item
-          title="Audit Log"
-          left={renderAuditLogIcon}
+          accessibilityRole="button"
+          accessibilityLabel="Configs"
+        >
+          <Text style={styles.menuItemTitle}>Configs</Text>
+        </Pressable>
+        <Pressable
+          style={styles.menuItem}
           onPress={() => {
             navigation.closeDrawer();
             navigation.navigate('AuditLog' as never);
           }}
-        />
+          accessibilityRole="button"
+          accessibilityLabel="Audit Log"
+        >
+          <Text style={styles.menuItemTitle}>Audit Log</Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -90,29 +99,45 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 16,
-    paddingBottom: 12,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   headerTitle: {
-    fontWeight: '500',
+    fontSize: 24,
+    fontWeight: '400',
     marginBottom: 8,
   },
   dropdownContainer: {
-    marginVertical: 8,
+    marginTop: 4,
+    marginBottom: 8,
   },
   dropdownButton: {
-    borderRadius: 8,
-  },
-  buttonContent: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    paddingVertical: 6,
+  },
+  dropdownLabel: {
+    fontSize: 16,
+    fontWeight: '400',
   },
   versionText: {
     marginTop: 8,
-    opacity: 0.7,
+    fontSize: 12,
   },
   menuItems: {
     flex: 1,
     paddingTop: 8,
+  },
+  menuItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    justifyContent: 'center',
+  },
+  menuItemTitle: {
+    fontSize: 16,
+    fontWeight: '400',
   },
 });

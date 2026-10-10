@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Card, List } from 'react-native-paper';
+import { Card, List, useTheme } from 'react-native-paper';
 import { format, parseISO } from 'date-fns';
 import { AuditLog } from '../../types/auditLog';
 
@@ -9,6 +9,7 @@ interface AuditLogCardProps {
 }
 
 export const AuditLogCard: React.FC<AuditLogCardProps> = ({ auditLog }) => {
+  const theme = useTheme();
   let formattedDate = auditLog.timestamp;
   try {
     const parsedDate = parseISO(auditLog.timestamp);
@@ -20,11 +21,12 @@ export const AuditLogCard: React.FC<AuditLogCardProps> = ({ auditLog }) => {
   }
 
   return (
-    <Card style={styles.card} mode="elevated">
+    <Card style={[styles.card, { backgroundColor: theme.colors.surfaceVariant }]} mode="elevated">
       <List.Item
         title={formattedDate}
         description={auditLog.detail}
         titleStyle={styles.title}
+        descriptionStyle={styles.description}
         descriptionNumberOfLines={4}
       />
     </Card>
@@ -37,6 +39,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   title: {
-    fontWeight: '500',
+    fontWeight: '400',
+    fontSize: 16,
+  },
+  description: {
+    fontSize: 14,
   },
 });
