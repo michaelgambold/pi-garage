@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
-import { Card, TextInput, Menu, IconButton, Text, useTheme } from 'react-native-paper';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Card, TextInput, IconButton, useTheme } from 'react-native-paper';
 import { SequenceObject, SequenceAction, SequenceTarget } from '../../types/sequence';
+import { DropdownField } from '../DropdownField';
 
 interface SequenceListItemProps {
   sequenceObject: SequenceObject;
@@ -31,90 +32,26 @@ export const SequenceListItem: React.FC<SequenceListItemProps> = ({
   onRemove,
 }) => {
   const theme = useTheme();
-  const [actionMenuVisible, setActionMenuVisible] = useState(false);
-  const [targetMenuVisible, setTargetMenuVisible] = useState(false);
-
-  const selectedActionLabel =
-    ACTION_OPTIONS.find((o) => o.value === sequenceObject.action)?.label || sequenceObject.action;
-
-  const selectedTargetLabel =
-    TARGET_OPTIONS.find((o) => o.value === sequenceObject.target)?.label || sequenceObject.target;
 
   return (
     <Card style={[styles.card, { backgroundColor: theme.colors.surfaceVariant }]} mode="elevated">
       <View style={styles.row}>
         <View style={styles.formColumn}>
           {/* Action Dropdown */}
-          <Menu
-            visible={actionMenuVisible}
-            onDismiss={() => setActionMenuVisible(false)}
-            anchor={
-              <Pressable
-                style={[styles.dropdownContainer, { borderBottomColor: theme.colors.outline }]}
-                onPress={() => setActionMenuVisible(true)}
-                accessibilityRole="button"
-                accessibilityLabel="Select Action"
-              >
-                <View style={styles.dropdownTextWrapper}>
-                  <Text style={[styles.fieldLabel, { color: theme.colors.onSurfaceVariant }]}>Action</Text>
-                  <Text style={styles.fieldValue}>{selectedActionLabel}</Text>
-                </View>
-                <IconButton
-                  icon="menu-down"
-                  size={24}
-                  iconColor={theme.colors.onSurfaceVariant}
-                  style={styles.dropdownIcon}
-                />
-              </Pressable>
-            }
-          >
-            {ACTION_OPTIONS.map((option) => (
-              <Menu.Item
-                key={option.value}
-                onPress={() => {
-                  setActionMenuVisible(false);
-                  onChanged({ ...sequenceObject, action: option.value });
-                }}
-                title={option.label}
-              />
-            ))}
-          </Menu>
+          <DropdownField<SequenceAction>
+            label="Action"
+            value={sequenceObject.action}
+            options={ACTION_OPTIONS}
+            onSelect={(action) => onChanged({ ...sequenceObject, action })}
+          />
 
           {/* Target Dropdown */}
-          <Menu
-            visible={targetMenuVisible}
-            onDismiss={() => setTargetMenuVisible(false)}
-            anchor={
-              <Pressable
-                style={[styles.dropdownContainer, { borderBottomColor: theme.colors.outline }]}
-                onPress={() => setTargetMenuVisible(true)}
-                accessibilityRole="button"
-                accessibilityLabel="Select Target"
-              >
-                <View style={styles.dropdownTextWrapper}>
-                  <Text style={[styles.fieldLabel, { color: theme.colors.onSurfaceVariant }]}>Target</Text>
-                  <Text style={styles.fieldValue}>{selectedTargetLabel}</Text>
-                </View>
-                <IconButton
-                  icon="menu-down"
-                  size={24}
-                  iconColor={theme.colors.onSurfaceVariant}
-                  style={styles.dropdownIcon}
-                />
-              </Pressable>
-            }
-          >
-            {TARGET_OPTIONS.map((option) => (
-              <Menu.Item
-                key={option.value}
-                onPress={() => {
-                  setTargetMenuVisible(false);
-                  onChanged({ ...sequenceObject, target: option.value });
-                }}
-                title={option.label}
-              />
-            ))}
-          </Menu>
+          <DropdownField<SequenceTarget>
+            label="Target"
+            value={sequenceObject.target}
+            options={TARGET_OPTIONS}
+            onSelect={(target) => onChanged({ ...sequenceObject, target })}
+          />
 
           {/* Duration Input */}
           <TextInput
@@ -165,30 +102,6 @@ const styles = StyleSheet.create({
   formColumn: {
     flex: 1,
     gap: 8,
-  },
-  dropdownContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    paddingVertical: 4,
-  },
-  dropdownTextWrapper: {
-    flex: 1,
-  },
-  fieldLabel: {
-    fontSize: 12,
-    fontWeight: '400',
-  },
-  fieldValue: {
-    fontSize: 16,
-    fontWeight: '400',
-    marginTop: 2,
-  },
-  dropdownIcon: {
-    margin: 0,
-    width: 24,
-    height: 24,
   },
   input: {
     backgroundColor: 'transparent',

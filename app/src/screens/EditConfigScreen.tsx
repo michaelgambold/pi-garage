@@ -17,7 +17,7 @@ export const EditConfigScreen: React.FC = () => {
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RootStackRouteProp<'EditConfig'>>();
-  const { configId } = route.params;
+  const configId = route.params?.configId;
 
   const { currentConfig, reloadCurrentConfig, reloadConfigs } = useCurrentConfig();
   const configRepo = React.useMemo(() => new ConfigRepository(), []);

@@ -34,7 +34,7 @@ export const useSnackbar = (options?: UseSnackbarOptions): UseSnackbarResult => 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarKey, setSnackbarKey] = useState(0);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dismissSnackbar = useCallback(() => {
     if (timerRef.current) {

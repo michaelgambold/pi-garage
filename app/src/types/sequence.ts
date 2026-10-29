@@ -9,7 +9,7 @@ export type SequenceTarget =
   | 'digitalOutput3';
 
 export interface SequenceObject {
-  action: SequenceAction | string;
+  action: SequenceAction;
   duration: number;
-  target: SequenceTarget | string;
+  target: SequenceTarget;
 }

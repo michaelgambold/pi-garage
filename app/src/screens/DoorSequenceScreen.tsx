@@ -15,7 +15,7 @@ import { useSnackbar } from '../hooks/useSnackbar';
 export const DoorSequenceScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RootStackRouteProp<'DoorSequence'>>();
-  const { doorId } = route.params;
+  const doorId = route.params?.doorId ?? 1;
 
   const doorRepository = React.useMemo(() => new DoorRepository(), []);
   const { showSnackbar, snackbarProps } = useSnackbar();
