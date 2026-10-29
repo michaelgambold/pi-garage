@@ -21,7 +21,7 @@ platform :ios do
   lane :update_signing_settings do
     update_code_signing_settings(
       use_automatic_signing: false,
-      path: "Runner.xcodeproj",
+      path: "PiGarage.xcodeproj",
       team_id: ENV["IOS_TEAM_ID"],
       bundle_identifier: ENV["IOS_APP_IDENTIFIER"],
       profile_name: ENV["IOS_PROFILE_NAME"],
@@ -37,7 +37,7 @@ platform :ios do
 
   lane :release do
     setup_ci if ENV["CI"]
-    build_app(skip_build_archive: true, archive_path: "../build/ios/archive/Runner.xcarchive")
+    build_app(workspace: "PiGarage.xcworkspace", scheme: "PiGarage", clean: true)
     upload_to_app_store(
       api_key_path: ENV["API_KEY_PATH"],
       force: true, # skip verification of html preview file

@@ -1,14 +1,18 @@
 {
   "folders": [
     {
-      "path": "service"
+      "name": "app",
+      "path": "app"
     },
     {
-      "path": "app"
+      "name": "service",
+      "path": "service"
     }
   ],
   "settings": {
-    "jest.disabledWorkspaceFolders": ["app"],
+    "jest.disabledWorkspaceFolders": [
+      "app"
+    ],
     "typescript.tsserver.nodePath": "node",
     "eslint.runtime": "node"
   }

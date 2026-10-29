@@ -1,0 +1,1 @@
+Fix bug where FQDN was not used for websocket host.

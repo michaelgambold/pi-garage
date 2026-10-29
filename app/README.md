@@ -1,79 +1,125 @@
-# App
+# Pi Garage Mobile App (React Native)
 
-Mobile app built with Flutter.
+Cross-platform mobile application for **Pi Garage**, built with **React Native** and **Material Design 3** (`react-native-paper`).
+
+---
 
 ## Getting Started
 
-Install Flutter. Go to the flutter website and install as per recommended way.
+### Prerequisites
+- Node.js >= 20.x
+- JDK 17
+- Xcode (for iOS) & CocoaPods
+- Android Studio & Android SDK (for Android)
 
-Updates of Flutter dependencies should be handled by dependabot. To update dependencies as per lock file
-run
-
-```
-$ flutter pub get
-```
-
-To run the app start a phone simulator (Android or iOS) and run
-
-```
-$ flutter run
+### Install Dependencies
+```bash
+npm install
+cd ios && bundle exec pod install && cd ..
 ```
 
-## Widgetbook
+### Running Locally
 
-To simplify widget creation Widgetbooks has been configured so that individual widgets can be created independent of one another.
+#### Android
+```bash
+npm run android
+```
 
-See the below commands to run widgetbooks
+#### iOS
+```bash
+npm run ios
+# Or open ios/PiGarage.xcworkspace in Xcode and hit Run
+```
+
+### Running Tests & Type Checks
+```bash
+npm test
+npx tsc --noEmit
+```
+
+---
+
+## Material Design 3 (Look & Feel)
+
+The UI is built with `react-native-paper` (v5) implementing Material Design 3 with:
+- Blue seed color scheme (`#1976D2`)
+- Elevation-based Cards
+- Material Appbar Header & Drawer
+- Material Floating Action Buttons (FAB)
+- Material text inputs and menus
+
+---
+
+## Automated Screenshots (Maestro)
+
+Screenshots can be automatically captured across required devices and resolutions using [Maestro](https://maestro.mobile.dev/):
 
 ```bash
-# Build widgetbooks
-flutter pub run build_runner build
+# Install Maestro
+curl -FsSL "https://get.maestro.mobile.dev" | bash
 
-# Watch for changes so you don't have to manually rebuild all the time
-flutter pub run build_runner watch
-
-# Run chrome widgetbook UI. Note you have to push "r" as it doesn't auto refresh changes
-bash flutter run -d chrome -t lib/widgetbook.dart
+# Run screenshot flow
+maestro test .maestro/screenshots.yaml
 ```
 
-## Build app icons
+Target screen sizes for App Store and Google Play:
+- **iOS 5.5"**: iPhone 8 Plus
+- **iOS 6.5"**: iPhone 14 Plus / 15 Plus
+- **iOS 12.9"**: iPad Pro 12.9" 2nd Gen & 6th Gen
+- **Android Phone**: Pixel 3a
 
-The source file is `icon.ai`. A PNG is then created and put into `assets/icons/icon.png`.
+---
 
-You can then run the following commands to generate icons for both android and ios.
+## Publishing with Fastlane
 
-```
-flutter pub get
-flutter pub run flutter_launcher_icons:main
-```
+Publishing pipelines remain identical to previous versions using Fastlane.
 
-## Screenshots
-
-For apple the following devices can be used for correct resolution images
-
-- 5.5", iPhone 8 Plus
-- 6.5", iPhone 14 Plus
-- iPad 12.9 inch 2nd Gen
-- iPad 12.9 inch 6th Gen (3rd gen screenshot)
-
-For android the following devices can be used for correct resolution images
-
-- "Phone Screenshots", Pixel 3a
-
-## Developer Notes
-
-### Dependency Install Notes
-
-Install dependencies
-
-For Mac you need to use ruby 3. The easiest way is to use `rbenv`.
-
-### Upgrade Gems/Fastlane
-
-In the `ios` and `android` folders run the following
-
+### Android
 ```bash
-# Update all gems
-$ bundle update
-
+cd android
+bundle exec fastlane deploy
 ```
+*Outputs release bundle to `android/app/build/outputs/bundle/release/app-release.aab` and uploads to Google Play.*
+
+### iOS
+```bash
+cd ios
+bundle exec fastlane update_signing_settings
+bundle exec fastlane get_ios_certs
+bundle exec fastlane release
+```
+*Builds `PiGarage.xcworkspace` and uploads to App Store Connect.*
+
+---
+
+## Manual Version & Build Number Updates
+
+When publishing a new release, versions and build numbers must currently be updated manually across the following files:
+
+### 1. App Version (`package.json`)
+- File: [`package.json`](package.json)
+- Update `"version": "X.Y.Z"` (e.g. `"3.2.2"`).
+- *This also automatically updates the in-app version display in the Menu Drawer and the `x-client-version` header sent to the backend.*
+
+### 2. Android Version & Build Code (`build.gradle`)
+- File: [`android/app/build.gradle`](android/app/build.gradle)
+- Inside `defaultConfig`:
+  - `versionName "X.Y.Z"` (matches `package.json`)
+  - `versionCode <N>` (must be an integer **strictly greater** than the previous store upload, e.g. `40`)
+
+### 3. iOS Marketing Version & Build Number (`project.pbxproj`)
+- File: [`ios/PiGarage.xcodeproj/project.pbxproj`](ios/PiGarage.xcodeproj/project.pbxproj) (or via the **General** tab in Xcode for the `PiGarage` target):
+  - `MARKETING_VERSION = X.Y.Z` (matches `package.json`)
+  - `CURRENT_PROJECT_VERSION = <N>` (integer build number, e.g. `40`)
+
+### 4. Store Release Notes & Changelogs
+- **Android**: Create or update [`android/fastlane/metadata/android/en-AU/changelogs/<versionCode>.txt`](android/fastlane/metadata/android/en-AU/changelogs/) (e.g. `40.txt`).
+- **iOS**: Update [`ios/fastlane/metadata/en-AU/release_notes.txt`](ios/fastlane/metadata/en-AU/release_notes.txt).
+- **In-App**: Update the bullet points in [`src/components/ReleaseNotesDialog.tsx`](src/components/ReleaseNotesDialog.tsx) if this release warrants in-app announcement notes.
+
+### 5. Backend Service Version (Only for Breaking / Major Releases)
+- File: [`../service/package.json`](../service/package.json)
+- The backend accepts any client on the same major version (`major.x.x`). If cutting a major release (e.g. `4.0.0`), bump `service/package.json` to match.
+
+> For the architecture analysis, store constraints, and future CI/CD automation options, see [`../VERSIONING.md`](../VERSIONING.md).
+
