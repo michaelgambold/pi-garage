@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { RootStackParamList, RootStackRouteProp } from '../navigation/types';
 import { DoorRepository } from '../repositories/doorRepository';
+import { useSnackbar } from '../hooks/useSnackbar';
 import { Layout } from '../components/Layout';
 
 export const OverrideDoorStateScreen: React.FC = () => {
@@ -15,17 +16,11 @@ export const OverrideDoorStateScreen: React.FC = () => {
   const { doorId } = route.params;
 
   const doorRepository = React.useMemo(() => new DoorRepository(), []);
+  const { showSnackbar, snackbarProps } = useSnackbar();
 
   const [stateValue, setStateValue] = useState<'open' | 'closed'>('open');
   const [menuVisible, setMenuVisible] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-  const [snackbarColor, setSnackbarColor] = useState<string | undefined>(undefined);
-
-  const showSnackbar = (message: string, isError = false) => {
-    setSnackbarMessage(message);
-    setSnackbarColor(isError ? '#D32F2F' : undefined);
-  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -99,12 +94,13 @@ export const OverrideDoorStateScreen: React.FC = () => {
         </View>
 
         <Snackbar
-          visible={!!snackbarMessage}
-          onDismiss={() => setSnackbarMessage(null)}
-          duration={3000}
-          style={snackbarColor ? { backgroundColor: snackbarColor } : undefined}
+          key={snackbarProps.key}
+          visible={snackbarProps.visible}
+          onDismiss={snackbarProps.onDismiss}
+          duration={snackbarProps.duration}
+          style={snackbarProps.style}
         >
-          {snackbarMessage || ''}
+          {snackbarProps.children}
         </Snackbar>
       </View>
     </Layout>

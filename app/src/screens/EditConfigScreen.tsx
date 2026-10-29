@@ -8,6 +8,7 @@ import { RootStackParamList, RootStackRouteProp } from '../navigation/types';
 import { Config } from '../types/config';
 import { useCurrentConfig } from '../context/CurrentConfigContext';
 import { ConfigRepository } from '../repositories/configRepository';
+import { useSnackbar } from '../hooks/useSnackbar';
 import { HttpService } from '../services/httpService';
 import { AppVersionService } from '../services/appVersionService';
 import { Layout } from '../components/Layout';
@@ -33,8 +34,7 @@ export const EditConfigScreen: React.FC = () => {
 
   const [testing, setTesting] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-  const [snackbarColor, setSnackbarColor] = useState<string | undefined>(undefined);
+  const { showSnackbar, snackbarProps } = useSnackbar();
 
   useEffect(() => {
     configRepo.findConfig(configId).then((found) => {
@@ -47,10 +47,7 @@ export const EditConfigScreen: React.FC = () => {
     });
   }, [configId, configRepo]);
 
-  const showSnackbar = (message: string, isError = false) => {
-    setSnackbarMessage(message);
-    setSnackbarColor(isError ? '#D32F2F' : undefined);
-  };
+
 
   const handleTestConnection = async () => {
     if (!fqdn.trim()) {
@@ -206,12 +203,13 @@ export const EditConfigScreen: React.FC = () => {
         </View>
 
         <Snackbar
-          visible={!!snackbarMessage}
-          onDismiss={() => setSnackbarMessage(null)}
-          duration={3000}
-          style={snackbarColor ? { backgroundColor: snackbarColor } : undefined}
+          key={snackbarProps.key}
+          visible={snackbarProps.visible}
+          onDismiss={snackbarProps.onDismiss}
+          duration={snackbarProps.duration}
+          style={snackbarProps.style}
         >
-          {snackbarMessage || ''}
+          {snackbarProps.children}
         </Snackbar>
       </ScrollView>
     </Layout>

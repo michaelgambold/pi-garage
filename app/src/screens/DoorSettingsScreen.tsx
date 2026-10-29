@@ -8,6 +8,7 @@ import { RootStackParamList, RootStackRouteProp } from '../navigation/types';
 import { DoorRepository } from '../repositories/doorRepository';
 import { Layout } from '../components/Layout';
 import { MOCK_DOORS } from '../fixtures/mockData';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export const DoorSettingsScreen: React.FC = () => {
   const theme = useTheme();
@@ -16,6 +17,7 @@ export const DoorSettingsScreen: React.FC = () => {
   const { doorId } = route.params;
 
   const doorRepository = React.useMemo(() => new DoorRepository(), []);
+  const { showSnackbar, snackbarProps } = useSnackbar();
 
   const [label, setLabel] = useState('');
   const [openDuration, setOpenDuration] = useState('0');
@@ -23,8 +25,6 @@ export const DoorSettingsScreen: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
 
   const [saving, setSaving] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-  const [snackbarColor, setSnackbarColor] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     doorRepository
@@ -45,10 +45,7 @@ export const DoorSettingsScreen: React.FC = () => {
       });
   }, [doorId, doorRepository]);
 
-  const showSnackbar = (message: string, isError = false) => {
-    setSnackbarMessage(message);
-    setSnackbarColor(isError ? '#D32F2F' : undefined);
-  };
+
 
   const handleSave = async () => {
     setSaving(true);
@@ -137,12 +134,13 @@ export const DoorSettingsScreen: React.FC = () => {
         </View>
 
         <Snackbar
-          visible={!!snackbarMessage}
-          onDismiss={() => setSnackbarMessage(null)}
-          duration={3000}
-          style={snackbarColor ? { backgroundColor: snackbarColor } : undefined}
+          key={snackbarProps.key}
+          visible={snackbarProps.visible}
+          onDismiss={snackbarProps.onDismiss}
+          duration={snackbarProps.duration}
+          style={snackbarProps.style}
         >
-          {snackbarMessage || ''}
+          {snackbarProps.children}
         </Snackbar>
       </ScrollView>
     </Layout>

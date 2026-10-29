@@ -10,12 +10,13 @@ import { ConfigRepository } from '../repositories/configRepository';
 import { Layout } from '../components/Layout';
 import { ConfigList } from '../components/config/ConfigList';
 import { generateUuid } from '../utils/uuid';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export const ConfigsScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { configs, reloadConfigs } = useCurrentConfig();
+  const { showSnackbar, snackbarProps } = useSnackbar();
   const [refreshing, setRefreshing] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
   const configRepo = React.useMemo(() => new ConfigRepository(), []);
 
@@ -45,7 +46,7 @@ export const ConfigsScreen: React.FC = () => {
       await configRepo.addConfig(newConfig);
       await reloadConfigs();
     } catch (e: any) {
-      setSnackbarMessage(e?.message || 'Failed to add config');
+      showSnackbar(e?.message || 'Failed to add config', true);
     }
   };
 
@@ -54,7 +55,7 @@ export const ConfigsScreen: React.FC = () => {
       await configRepo.removeConfig(config.id);
       await reloadConfigs();
     } catch (e: any) {
-      setSnackbarMessage(e?.message || 'Failed to remove config');
+      showSnackbar(e?.message || 'Failed to remove config', true);
     }
   };
 
@@ -82,11 +83,13 @@ export const ConfigsScreen: React.FC = () => {
         />
 
         <Snackbar
-          visible={!!snackbarMessage}
-          onDismiss={() => setSnackbarMessage(null)}
-          duration={3000}
+          key={snackbarProps.key}
+          visible={snackbarProps.visible}
+          onDismiss={snackbarProps.onDismiss}
+          duration={snackbarProps.duration}
+          style={snackbarProps.style}
         >
-          {snackbarMessage || ''}
+          {snackbarProps.children}
         </Snackbar>
       </View>
     </Layout>

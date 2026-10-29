@@ -15,17 +15,17 @@ import { LocalStorageService } from '../services/localStorageService';
 import { Layout } from '../components/Layout';
 import { DoorList } from '../components/door/DoorList';
 import { ReleaseNotesDialog } from '../components/ReleaseNotesDialog';
+import { useSnackbar } from '../hooks/useSnackbar';
 import { MOCK_DOORS } from '../fixtures/mockData';
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { currentConfig } = useCurrentConfig();
+  const { showSnackbar, snackbarProps } = useSnackbar();
 
   const [doors, setDoors] = useState<Door[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-  const [snackbarColor, setSnackbarColor] = useState<string | undefined>(undefined);
 
   const socketRef = useRef<Socket | null>(null);
   const prevConfigRef = useRef<Config | null>(null);
@@ -33,11 +33,6 @@ export const HomeScreen: React.FC = () => {
   const appVersionService = useRef(new AppVersionService()).current;
   const localStorageService = useRef(LocalStorageService.instance).current;
   const doorRepository = useRef(new DoorRepository()).current;
-
-  const showSnackbar = (message: string, isError = false) => {
-    setSnackbarMessage(message);
-    setSnackbarColor(isError ? '#D32F2F' : undefined);
-  };
 
   const checkToShowReleaseNotes = useCallback(async () => {
     try {
@@ -112,7 +107,7 @@ export const HomeScreen: React.FC = () => {
       setRefreshing(false);
       showSnackbar(e?.message || 'Failed to initialize connection', true);
     }
-  }, [appVersionService]);
+  }, [appVersionService, showSnackbar]);
 
   const refresh = useCallback(() => {
     setRefreshing(true);
@@ -195,12 +190,13 @@ export const HomeScreen: React.FC = () => {
         />
 
         <Snackbar
-          visible={!!snackbarMessage}
-          onDismiss={() => setSnackbarMessage(null)}
-          duration={3000}
-          style={snackbarColor ? { backgroundColor: snackbarColor } : undefined}
+          key={snackbarProps.key}
+          visible={snackbarProps.visible}
+          onDismiss={snackbarProps.onDismiss}
+          duration={snackbarProps.duration}
+          style={snackbarProps.style}
         >
-          {snackbarMessage || ''}
+          {snackbarProps.children}
         </Snackbar>
       </View>
     </Layout>

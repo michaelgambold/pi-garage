@@ -10,6 +10,7 @@ import { DoorRepository } from '../repositories/doorRepository';
 import { Layout } from '../components/Layout';
 import { SequenceList } from '../components/sequence/SequenceList';
 import { MOCK_SEQUENCE } from '../fixtures/mockData';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export const DoorSequenceScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -17,17 +18,11 @@ export const DoorSequenceScreen: React.FC = () => {
   const { doorId } = route.params;
 
   const doorRepository = React.useMemo(() => new DoorRepository(), []);
+  const { showSnackbar, snackbarProps } = useSnackbar();
 
   const [sequenceObjects, setSequenceObjects] = useState<SequenceObject[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-  const [snackbarColor, setSnackbarColor] = useState<string | undefined>(undefined);
-
-  const showSnackbar = (message: string, isError = false) => {
-    setSnackbarMessage(message);
-    setSnackbarColor(isError ? '#D32F2F' : undefined);
-  };
 
   const loadSequence = useCallback(async () => {
     try {
@@ -120,12 +115,13 @@ export const DoorSequenceScreen: React.FC = () => {
         />
 
         <Snackbar
-          visible={!!snackbarMessage}
-          onDismiss={() => setSnackbarMessage(null)}
-          duration={3000}
-          style={snackbarColor ? { backgroundColor: snackbarColor } : undefined}
+          key={snackbarProps.key}
+          visible={snackbarProps.visible}
+          onDismiss={snackbarProps.onDismiss}
+          duration={snackbarProps.duration}
+          style={snackbarProps.style}
         >
-          {snackbarMessage || ''}
+          {snackbarProps.children}
         </Snackbar>
       </View>
     </Layout>

@@ -10,14 +10,15 @@ import { AuditLogRepository } from '../repositories/auditLogRepository';
 import { Layout } from '../components/Layout';
 import { AuditLogList } from '../components/auditLog/AuditLogList';
 import { MOCK_AUDIT_LOGS } from '../fixtures/mockData';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 export const AuditLogScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const auditLogRepository = React.useMemo(() => new AuditLogRepository(), []);
+  const { snackbarProps } = useSnackbar();
 
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
   const loadAuditLogs = useCallback(async () => {
     try {
@@ -50,11 +51,13 @@ export const AuditLogScreen: React.FC = () => {
         />
 
         <Snackbar
-          visible={!!snackbarMessage}
-          onDismiss={() => setSnackbarMessage(null)}
-          duration={3000}
+          key={snackbarProps.key}
+          visible={snackbarProps.visible}
+          onDismiss={snackbarProps.onDismiss}
+          duration={snackbarProps.duration}
+          style={snackbarProps.style}
         >
-          {snackbarMessage || ''}
+          {snackbarProps.children}
         </Snackbar>
       </View>
     </Layout>
