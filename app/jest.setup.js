@@ -37,7 +37,7 @@ const mockAsyncStorage = (() => {
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 
 jest.mock('react-native-device-info', () => ({
-  getVersion: () => '3.2.1',
+  getVersion: () => '4.0.0',
 }));
 
 jest.mock('react-native-haptic-feedback', () => ({

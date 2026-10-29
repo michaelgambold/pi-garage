@@ -32,7 +32,7 @@ describe('DoorRepository', () => {
         method: 'GET',
         headers: expect.objectContaining({
           'x-api-key': 'test-key',
-          'x-client-version': '3.2.1',
+          'x-client-version': '4.0.0',
         }),
       }),
     );

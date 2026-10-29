@@ -18,13 +18,13 @@ export const ReleaseNotesDialog: React.FC<ReleaseNotesDialogProps> = ({
         <Dialog.Content>
           <View style={styles.content}>
             <Text variant="titleMedium" style={styles.bold}>
-              Version 3
+              Version 4
             </Text>
             <Paragraph style={styles.paragraph}>
-              This major release deprecates Android 4.4 (Kit Kat).
+              Migrate to React Native with Material Design 3.
             </Paragraph>
             <Paragraph style={styles.paragraph}>
-              Backend services should be updated to major version 3.
+              Backend services should be updated to major version 4.
             </Paragraph>
           </View>
         </Dialog.Content>

@@ -14,10 +14,10 @@ describe('AppVersionService', () => {
   });
 
   describe('getApiClientVersion', () => {
-    it('always returns a valid 3-part semver matching backend 3.x API', () => {
+    it('always returns a valid 3-part semver matching backend 4.x API', () => {
       const apiVersion = service.getApiClientVersion();
       expect(apiVersion).toBe(API_CLIENT_VERSION);
-      expect(apiVersion).toBe('3.2.1');
+      expect(apiVersion).toBe('4.0.0');
       // Verify it is a valid 3-digit semver
       expect(apiVersion).toMatch(/^\d+\.\d+\.\d+$/);
     });

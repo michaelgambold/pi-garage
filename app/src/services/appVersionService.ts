@@ -3,10 +3,10 @@ import packageJson from '../../package.json';
 
 /**
  * The API client version used for semver compatibility with the backend service.
- * Sourced directly from package.json version (e.g. 3.2.1) to serve as the single source of truth.
- * The backend validates `x-client-version` against its major version (e.g. 3.x.x).
+ * Sourced directly from package.json version (e.g. 4.0.0) to serve as the single source of truth.
+ * The backend validates `x-client-version` against its major version (e.g. 4.x.x).
  */
-export const API_CLIENT_VERSION: string = packageJson.version || '3.2.1';
+export const API_CLIENT_VERSION: string = packageJson.version || '4.0.0';
 
 export class AppVersionService {
   /**
